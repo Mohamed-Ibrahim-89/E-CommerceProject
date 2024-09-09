@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace E_CommerceProject.Models
+namespace E_CommerceProject.Entities.Models
 {
     public class Address
     {
@@ -21,7 +21,7 @@ namespace E_CommerceProject.Models
         [MaxLength(50)]
         public string? State { get; set; }
 
-        public int UserId { get; set; }
-        public User User { get; set; } = default!;
+        public int CustomerId { get; set; }
+        public Customer Customer { get; set; } = default!;
     }
 }

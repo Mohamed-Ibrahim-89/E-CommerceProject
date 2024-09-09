@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace E_CommerceProject.Models
+namespace E_CommerceProject.Entities.Models
 {
-    public class User
+    public class Customer
     {
-        public int UserId { get; set; }
+        public int CustomerId { get; set; }
         [MaxLength(500)]
         public string? Avatar { get; set; }
         [MaxLength(40)]
