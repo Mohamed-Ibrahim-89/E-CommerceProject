@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace E_CommerceProject.Entities.Models
 {
-    internal class Shipment
+    public class Shipment
     {
         public int ShipmentId { get; set; }
         public string Carrieer { get; set; }
