@@ -7,4 +7,12 @@
     <RootNamespace>E_CommerceProject</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\E-CommerceProject.Repositories\E-CommerceProject.Repositories.csproj" />
+  </ItemGroup>
+
 </Project>

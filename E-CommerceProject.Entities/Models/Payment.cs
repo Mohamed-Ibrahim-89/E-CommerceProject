@@ -3,7 +3,7 @@ using E_CommerceProject.Entities.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace E_CommerceProject.Models
+namespace E_CommerceProject.Entities.Models
 {
     public class Payment
     {

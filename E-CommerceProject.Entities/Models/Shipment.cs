@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace E_CommerceProject.Entities.Models
 {
-    internal class Shipment
+    public class Shipment
     {
         public int ShipmentId { get; set; }
         [MaxLength(50)]
