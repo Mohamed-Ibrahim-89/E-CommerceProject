@@ -17,12 +17,26 @@ namespace E_CommerceProject.Repositories.Implementations
         public BaseRepository(AppDbContext context)
         {
             _context = context;
-            _dbSet = context.Set<T>();
+            _dbSet = _context.Set<T>();
         }
         // It'll be done by Mohamed Ibrahim
         public async Task<IEnumerable<T>> GetAll(Expression<Func<T, bool>>? criteria = null, string[]? includes = null)
         {
-            throw new NotImplementedException();
+            IQueryable<T> query = _dbSet;
+
+            if (criteria != null) 
+                return await query.Where(criteria).ToListAsync();
+
+            if (includes != null) 
+            { 
+                foreach (var include in includes)
+                {
+                    query = query.Include(include).AsSplitQuery();
+                }
+                return await query.ToListAsync();
+            }
+
+            return await query.ToListAsync();
         }
         // It'll be done by Ahmed Medhat
         public async Task<T> GetById(int id)
