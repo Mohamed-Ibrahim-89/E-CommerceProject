@@ -11,7 +11,7 @@ namespace E_CommerceProject.Repositories.Data
         }
         public DbSet<Cart> Carts { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<CustomerInfo> Customers { get; set; }
+        public DbSet<CustomerInfo> CustomerInfo { get; set; }
         public DbSet<Discount> Discounts { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderItems { get; set; }
