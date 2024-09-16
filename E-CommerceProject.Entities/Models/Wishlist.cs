@@ -7,8 +7,8 @@
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime? DeletedAt { get; set; }
 
-        public int CustomerId { get; set; }
-        public CustomerInfo? Customer { get; set; }
+        public int CustomerInfoId { get; set; }
+        public CustomerInfo? CustomerInfo { get; set; }
 
         public int ProductId { get; set; }
         public Product? Product { get; set; }
