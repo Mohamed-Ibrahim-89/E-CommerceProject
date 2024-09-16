@@ -13,8 +13,9 @@ namespace E_CommerceProject.Entities.Models
         public decimal TotalPrice { get; set; }
 
         public int CustomerId { get; set; }
-        public Customer? Customer { get; set; }
+        public CustomerInfo? Customer { get; set; }
 
-        public List<OrderItem>? Items { get; set; }
+        [NotMapped]
+        public List<OrderDetail>? OrderDetails { get; set; }
     }
 }
