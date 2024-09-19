@@ -17,7 +17,7 @@ namespace E_CommerceProject.Entities.Models
         public string Cover { get; set; } = string.Empty;
         public int QuantityInStock { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime DeleatedAt { get; set; }
+        public DateTime? DeleatedAt { get; set; }
 
         public int CategoryId { get; set; }
         public Category? Category { get; set; }
