@@ -14,8 +14,8 @@ namespace E_CommerceProject.Entities.Models
         [Column(TypeName = "decimal(10, 2)")]
         public decimal PaymentAmount { get; set; }
 
-        public int CustomerId { get; set; }
-        public Customer? Customer { get; set; }
+        public int CustomerInfoId { get; set; }
+        public CustomerInfo? CustomerInfo { get; set; }
 
         public int OrderId { get; set; }
         public Order? Order { get; set; }

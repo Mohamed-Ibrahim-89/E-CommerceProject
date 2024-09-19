@@ -7,8 +7,8 @@
         public DateTime? CreatedAt { get; set; } = DateTime.Now;
         public DateTime? DeletedAt { get; set;}
 
-        public int CustomerId { get; set; }
-        public Customer Customer { get; set; } = default!;
+        public int CustomerInfoId { get; set; }
+        public CustomerInfo CustomerInfo { get; set; } = default!;
         public int OrderId { get; set; }
         public Order Order { get; set; } = default!;
     }

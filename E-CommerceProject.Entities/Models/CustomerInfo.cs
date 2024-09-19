@@ -2,9 +2,14 @@
 
 namespace E_CommerceProject.Entities.Models
 {
-    public class Address
+    public class CustomerInfo
     {
-        public int AddressId { get; set; }
+        public int CustomerInfoId { get; set; }
+        [MaxLength(40)]
+        public string FirstName { get; set; } = string.Empty;
+        [MaxLength(40)]
+        public string LastName { get; set; } = string.Empty;
+        public DateTime? DateOfBirth { get; set; }
         [MaxLength(30)]
         public string PhoneNumber { get; set; } = string.Empty;
         [MaxLength(200)]
@@ -21,7 +26,5 @@ namespace E_CommerceProject.Entities.Models
         [MaxLength(50)]
         public string? State { get; set; }
 
-        public int CustomerId { get; set; }
-        public Customer Customer { get; set; } = default!;
     }
 }
