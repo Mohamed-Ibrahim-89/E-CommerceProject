@@ -23,17 +23,17 @@ namespace E_CommerceProject.Repositories.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-                modelBuilder.Entity<Cart>()
-                    .HasOne(c => c.Order)
-                    .WithMany()
-                    .HasForeignKey(i => i.OrderId)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
+            modelBuilder.Entity<Cart>()
+                .HasOne(c => c.Order)
+                .WithMany()
+                .HasForeignKey(i => i.OrderId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
 
-                modelBuilder.Entity<Payment>()
-                    .HasOne(c => c.Order)
-                    .WithMany()
-                    .HasForeignKey(i => i.OrderId)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
+            modelBuilder.Entity<Payment>()
+                .HasOne(c => c.Order)
+                .WithMany()
+                .HasForeignKey(i => i.OrderId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
         }
     }
 }

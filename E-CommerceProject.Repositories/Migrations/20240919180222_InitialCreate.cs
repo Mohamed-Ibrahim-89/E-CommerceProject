@@ -27,23 +27,26 @@ namespace E_CommerceProject.Repositories.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Customers",
+                name: "CustomerInfo",
                 columns: table => new
                 {
-                    CustomerId = table.Column<int>(type: "int", nullable: false)
+                    CustomerInfoId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Avatar = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     FirstName = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    AddressLine1 = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    AddressLine2 = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    Country = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    City = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Landmark = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    ZipCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    State = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Customers", x => x.CustomerId);
+                    table.PrimaryKey("PK_CustomerInfo", x => x.CustomerInfoId);
                 });
 
             migrationBuilder.CreateTable(
@@ -66,33 +69,6 @@ namespace E_CommerceProject.Repositories.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Address",
-                columns: table => new
-                {
-                    AddressId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    AddressLine1 = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    AddressLine2 = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
-                    Country = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    City = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Landmark = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    ZipCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    State = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    CustomerId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Address", x => x.AddressId);
-                    table.ForeignKey(
-                        name: "FK_Address_Customers_CustomerId",
-                        column: x => x.CustomerId,
-                        principalTable: "Customers",
-                        principalColumn: "CustomerId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Orders",
                 columns: table => new
                 {
@@ -101,16 +77,16 @@ namespace E_CommerceProject.Repositories.Migrations
                     Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     TotalPrice = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    CustomerId = table.Column<int>(type: "int", nullable: false)
+                    CustomerInfoId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Orders", x => x.Orderid);
                     table.ForeignKey(
-                        name: "FK_Orders_Customers_CustomerId",
-                        column: x => x.CustomerId,
-                        principalTable: "Customers",
-                        principalColumn: "CustomerId",
+                        name: "FK_Orders_CustomerInfo_CustomerInfoId",
+                        column: x => x.CustomerInfoId,
+                        principalTable: "CustomerInfo",
+                        principalColumn: "CustomerInfoId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -126,7 +102,7 @@ namespace E_CommerceProject.Repositories.Migrations
                     Cover = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
                     QuantityInStock = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DeleatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeleatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
                     DiscountId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -156,17 +132,17 @@ namespace E_CommerceProject.Repositories.Migrations
                     Amount = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CustomerId = table.Column<int>(type: "int", nullable: false),
+                    CustomerInfoId = table.Column<int>(type: "int", nullable: false),
                     OrderId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Carts", x => x.CartId);
                     table.ForeignKey(
-                        name: "FK_Carts_Customers_CustomerId",
-                        column: x => x.CustomerId,
-                        principalTable: "Customers",
-                        principalColumn: "CustomerId",
+                        name: "FK_Carts_CustomerInfo_CustomerInfoId",
+                        column: x => x.CustomerInfoId,
+                        principalTable: "CustomerInfo",
+                        principalColumn: "CustomerInfoId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Carts_Orders_OrderId",
@@ -184,17 +160,17 @@ namespace E_CommerceProject.Repositories.Migrations
                     PaymentMethod = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PaymentAmount = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    CustomerId = table.Column<int>(type: "int", nullable: false),
+                    CustomerInfoId = table.Column<int>(type: "int", nullable: false),
                     OrderId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Payments", x => x.PaymentId);
                     table.ForeignKey(
-                        name: "FK_Payments_Customers_CustomerId",
-                        column: x => x.CustomerId,
-                        principalTable: "Customers",
-                        principalColumn: "CustomerId",
+                        name: "FK_Payments_CustomerInfo_CustomerInfoId",
+                        column: x => x.CustomerInfoId,
+                        principalTable: "CustomerInfo",
+                        principalColumn: "CustomerInfoId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Payments_Orders_OrderId",
@@ -231,7 +207,7 @@ namespace E_CommerceProject.Repositories.Migrations
                 name: "OrderItems",
                 columns: table => new
                 {
-                    OrderItemId = table.Column<int>(type: "int", nullable: false)
+                    OrderDetailId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
@@ -241,7 +217,7 @@ namespace E_CommerceProject.Repositories.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OrderItems", x => x.OrderItemId);
+                    table.PrimaryKey("PK_OrderItems", x => x.OrderDetailId);
                     table.ForeignKey(
                         name: "FK_OrderItems_Orders_Orderid",
                         column: x => x.Orderid,
@@ -263,17 +239,17 @@ namespace E_CommerceProject.Repositories.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CustomerId = table.Column<int>(type: "int", nullable: false),
+                    CustomerInfoId = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Wishlists", x => x.WishlistId);
                     table.ForeignKey(
-                        name: "FK_Wishlists_Customers_CustomerId",
-                        column: x => x.CustomerId,
-                        principalTable: "Customers",
-                        principalColumn: "CustomerId",
+                        name: "FK_Wishlists_CustomerInfo_CustomerInfoId",
+                        column: x => x.CustomerInfoId,
+                        principalTable: "CustomerInfo",
+                        principalColumn: "CustomerInfoId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Wishlists_Products_ProductId",
@@ -284,14 +260,9 @@ namespace E_CommerceProject.Repositories.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Address_CustomerId",
-                table: "Address",
-                column: "CustomerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Carts_CustomerId",
+                name: "IX_Carts_CustomerInfoId",
                 table: "Carts",
-                column: "CustomerId");
+                column: "CustomerInfoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Carts_OrderId",
@@ -309,14 +280,14 @@ namespace E_CommerceProject.Repositories.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_CustomerId",
+                name: "IX_Orders_CustomerInfoId",
                 table: "Orders",
-                column: "CustomerId");
+                column: "CustomerInfoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Payments_CustomerId",
+                name: "IX_Payments_CustomerInfoId",
                 table: "Payments",
-                column: "CustomerId");
+                column: "CustomerInfoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Payments_OrderId",
@@ -339,9 +310,9 @@ namespace E_CommerceProject.Repositories.Migrations
                 column: "OrderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Wishlists_CustomerId",
+                name: "IX_Wishlists_CustomerInfoId",
                 table: "Wishlists",
-                column: "CustomerId");
+                column: "CustomerInfoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Wishlists_ProductId",
@@ -352,9 +323,6 @@ namespace E_CommerceProject.Repositories.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Address");
-
             migrationBuilder.DropTable(
                 name: "Carts");
 
@@ -377,7 +345,7 @@ namespace E_CommerceProject.Repositories.Migrations
                 name: "Products");
 
             migrationBuilder.DropTable(
-                name: "Customers");
+                name: "CustomerInfo");
 
             migrationBuilder.DropTable(
                 name: "Categories");

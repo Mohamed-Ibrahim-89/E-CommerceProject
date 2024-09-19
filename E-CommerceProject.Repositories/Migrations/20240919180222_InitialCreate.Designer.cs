@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_CommerceProject.Repositories.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240912140442_InitialCreate")]
+    [Migration("20240919180222_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -24,59 +24,6 @@ namespace E_CommerceProject.Repositories.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("E_CommerceProject.Entities.Models.Address", b =>
-                {
-                    b.Property<int>("AddressId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AddressId"));
-
-                    b.Property<string>("AddressLine1")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("AddressLine2")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Country")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Landmark")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("State")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("ZipCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("AddressId");
-
-                    b.HasIndex("CustomerId");
-
-                    b.ToTable("Address");
-                });
 
             modelBuilder.Entity("E_CommerceProject.Entities.Models.Cart", b =>
                 {
@@ -92,7 +39,7 @@ namespace E_CommerceProject.Repositories.Migrations
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CustomerId")
+                    b.Property<int>("CustomerInfoId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("DeletedAt")
@@ -103,7 +50,7 @@ namespace E_CommerceProject.Repositories.Migrations
 
                     b.HasKey("CartId");
 
-                    b.HasIndex("CustomerId");
+                    b.HasIndex("CustomerInfoId");
 
                     b.HasIndex("OrderId");
 
@@ -134,52 +81,65 @@ namespace E_CommerceProject.Repositories.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("E_CommerceProject.Entities.Models.Customer", b =>
+            modelBuilder.Entity("E_CommerceProject.Entities.Models.CustomerInfo", b =>
                 {
-                    b.Property<int>("CustomerId")
+                    b.Property<int>("CustomerInfoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CustomerId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CustomerInfoId"));
 
-                    b.Property<string>("Avatar")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DateOfBirth")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
+                    b.Property<string>("AddressLine1")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("AddressLine2")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("DateOfBirth")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(40)
                         .HasColumnType("nvarchar(40)");
 
+                    b.Property<string>("Landmark")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(40)
                         .HasColumnType("nvarchar(40)");
 
-                    b.Property<string>("Password")
+                    b.Property<string>("PhoneNumber")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
-                    b.Property<string>("Username")
-                        .IsRequired()
+                    b.Property<string>("State")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.HasKey("CustomerId");
+                    b.Property<string>("ZipCode")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("Customers");
+                    b.HasKey("CustomerInfoId");
+
+                    b.ToTable("CustomerInfo");
                 });
 
             modelBuilder.Entity("E_CommerceProject.Entities.Models.Discount", b =>
@@ -227,7 +187,7 @@ namespace E_CommerceProject.Repositories.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Orderid"));
 
-                    b.Property<int>("CustomerId")
+                    b.Property<int>("CustomerInfoId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("OrderDate")
@@ -243,18 +203,18 @@ namespace E_CommerceProject.Repositories.Migrations
 
                     b.HasKey("Orderid");
 
-                    b.HasIndex("CustomerId");
+                    b.HasIndex("CustomerInfoId");
 
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("E_CommerceProject.Entities.Models.OrderItem", b =>
+            modelBuilder.Entity("E_CommerceProject.Entities.Models.OrderDetail", b =>
                 {
-                    b.Property<int>("OrderItemId")
+                    b.Property<int>("OrderDetailId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderItemId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderDetailId"));
 
                     b.Property<int>("OrdeId")
                         .HasColumnType("int");
@@ -271,7 +231,7 @@ namespace E_CommerceProject.Repositories.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.HasKey("OrderItemId");
+                    b.HasKey("OrderDetailId");
 
                     b.HasIndex("Orderid");
 
@@ -288,7 +248,7 @@ namespace E_CommerceProject.Repositories.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentId"));
 
-                    b.Property<int>("CustomerId")
+                    b.Property<int>("CustomerInfoId")
                         .HasColumnType("int");
 
                     b.Property<int>("OrderId")
@@ -307,7 +267,7 @@ namespace E_CommerceProject.Repositories.Migrations
 
                     b.HasKey("PaymentId");
 
-                    b.HasIndex("CustomerId");
+                    b.HasIndex("CustomerInfoId");
 
                     b.HasIndex("OrderId");
 
@@ -333,7 +293,7 @@ namespace E_CommerceProject.Repositories.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("DeleatedAt")
+                    b.Property<DateTime?>("DeleatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
@@ -412,7 +372,7 @@ namespace E_CommerceProject.Repositories.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CustomerId")
+                    b.Property<int>("CustomerInfoId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("DeletedAt")
@@ -423,29 +383,18 @@ namespace E_CommerceProject.Repositories.Migrations
 
                     b.HasKey("WishlistId");
 
-                    b.HasIndex("CustomerId");
+                    b.HasIndex("CustomerInfoId");
 
                     b.HasIndex("ProductId");
 
                     b.ToTable("Wishlists");
                 });
 
-            modelBuilder.Entity("E_CommerceProject.Entities.Models.Address", b =>
-                {
-                    b.HasOne("E_CommerceProject.Entities.Models.Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
-                });
-
             modelBuilder.Entity("E_CommerceProject.Entities.Models.Cart", b =>
                 {
-                    b.HasOne("E_CommerceProject.Entities.Models.Customer", "Customer")
+                    b.HasOne("E_CommerceProject.Entities.Models.CustomerInfo", "CustomerInfo")
                         .WithMany()
-                        .HasForeignKey("CustomerId")
+                        .HasForeignKey("CustomerInfoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -454,26 +403,26 @@ namespace E_CommerceProject.Repositories.Migrations
                         .HasForeignKey("OrderId")
                         .IsRequired();
 
-                    b.Navigation("Customer");
+                    b.Navigation("CustomerInfo");
 
                     b.Navigation("Order");
                 });
 
             modelBuilder.Entity("E_CommerceProject.Entities.Models.Order", b =>
                 {
-                    b.HasOne("E_CommerceProject.Entities.Models.Customer", "Customer")
+                    b.HasOne("E_CommerceProject.Entities.Models.CustomerInfo", "CustomerInfo")
                         .WithMany()
-                        .HasForeignKey("CustomerId")
+                        .HasForeignKey("CustomerInfoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Customer");
+                    b.Navigation("CustomerInfo");
                 });
 
-            modelBuilder.Entity("E_CommerceProject.Entities.Models.OrderItem", b =>
+            modelBuilder.Entity("E_CommerceProject.Entities.Models.OrderDetail", b =>
                 {
                     b.HasOne("E_CommerceProject.Entities.Models.Order", "OrderId")
-                        .WithMany("Items")
+                        .WithMany("OrderDetails")
                         .HasForeignKey("Orderid");
 
                     b.HasOne("E_CommerceProject.Entities.Models.Product", "Productid")
@@ -489,9 +438,9 @@ namespace E_CommerceProject.Repositories.Migrations
 
             modelBuilder.Entity("E_CommerceProject.Entities.Models.Payment", b =>
                 {
-                    b.HasOne("E_CommerceProject.Entities.Models.Customer", "Customer")
+                    b.HasOne("E_CommerceProject.Entities.Models.CustomerInfo", "CustomerInfo")
                         .WithMany()
-                        .HasForeignKey("CustomerId")
+                        .HasForeignKey("CustomerInfoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -500,7 +449,7 @@ namespace E_CommerceProject.Repositories.Migrations
                         .HasForeignKey("OrderId")
                         .IsRequired();
 
-                    b.Navigation("Customer");
+                    b.Navigation("CustomerInfo");
 
                     b.Navigation("Order");
                 });
@@ -537,9 +486,9 @@ namespace E_CommerceProject.Repositories.Migrations
 
             modelBuilder.Entity("E_CommerceProject.Entities.Models.Wishlist", b =>
                 {
-                    b.HasOne("E_CommerceProject.Entities.Models.Customer", "Customer")
+                    b.HasOne("E_CommerceProject.Entities.Models.CustomerInfo", "CustomerInfo")
                         .WithMany()
-                        .HasForeignKey("CustomerId")
+                        .HasForeignKey("CustomerInfoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -549,14 +498,14 @@ namespace E_CommerceProject.Repositories.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Customer");
+                    b.Navigation("CustomerInfo");
 
                     b.Navigation("Product");
                 });
 
             modelBuilder.Entity("E_CommerceProject.Entities.Models.Order", b =>
                 {
-                    b.Navigation("Items");
+                    b.Navigation("OrderDetails");
                 });
 #pragma warning restore 612, 618
         }

@@ -15,7 +15,6 @@ namespace E_CommerceProject.Entities.Models
         public int CustomerInfoId { get; set; }
         public CustomerInfo? CustomerInfo { get; set; }
 
-        [NotMapped]
         public List<OrderDetail>? OrderDetails { get; set; }
     }
 }

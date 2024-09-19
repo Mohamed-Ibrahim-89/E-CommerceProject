@@ -36,22 +36,32 @@ namespace E_CommerceProject.Repositories.Implementations
 
         public async Task<T> GetById(int id)
         {
-            throw new NotImplementedException();
+            var item = await _dbSet.FindAsync(id);
+
+            return item ?? throw new InvalidOperationException("Item not found");
         }
 
         public async Task<T> AddItem(T item)
         {
-            throw new NotImplementedException();
+            await _dbSet.AddAsync(item);
+            await _context.SaveChangesAsync();
+            return item;
         }
 
         public async Task<T> UpdateItem(T item)
         {
-            throw new NotImplementedException();
+            var oldItem = _dbSet.Attach(item);
+            oldItem.State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return item;
         }
 
         public async Task DeleteItem(int id)
         {
-            throw new NotImplementedException();
+            var item = await GetById(id) ?? throw new InvalidOperationException("Item not found");
+
+            _dbSet.Remove(item);
+            await _context.SaveChangesAsync();
         }
 
     }
