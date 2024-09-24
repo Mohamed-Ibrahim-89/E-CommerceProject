@@ -19,7 +19,7 @@ namespace E_CommerceProject.Repositories.Implementations
             _context = context;
             _dbSet = _context.Set<T>();
         }
-        // It'll be done by Mohamed Ibrahim
+
         public async Task<IEnumerable<T>> GetAll(Expression<Func<T, bool>>? criteria = null, string[]? includes = null)
         {
             IQueryable<T> query = _dbSet;

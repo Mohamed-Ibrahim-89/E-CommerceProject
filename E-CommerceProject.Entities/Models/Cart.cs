@@ -8,8 +8,8 @@
         public DateTime? DeletedAt { get; set;}
 
         public int CustomerInfoId { get; set; }
-        public CustomerInfo CustomerInfo { get; set; } = default!;
+        public CustomerInfo? CustomerInfo { get; set; } = default!;
         public int OrderId { get; set; }
-        public Order Order { get; set; } = default!;
+        public Order? Order { get; set; } = default!;
     }
 }
