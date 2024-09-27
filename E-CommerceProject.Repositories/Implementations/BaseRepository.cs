@@ -46,12 +46,16 @@ namespace E_CommerceProject.Repositories.Implementations
         // It'll be done by Ahmed Ibrahim
         public async Task<T> AddItem(T item)
         {
-            throw new NotImplementedException();
+            await _dbSet.AddAsync(item);
+            await _context.SaveChangesAsync();
+            return item;
         }
         // It'll be done by Ibrahim Khalil
         public async Task<T> UpdateItem(T item)
         {
-            throw new NotImplementedException();
+            _dbSet.Update(item);
+            await _context.SaveChangesAsync();
+            return item;
         }
         // It'll be done by Mostafa Hamed
         public async Task DeleteItem(int id)
