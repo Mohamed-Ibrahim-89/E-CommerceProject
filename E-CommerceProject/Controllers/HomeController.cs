@@ -1,32 +1,19 @@
-using E_CommerceProject.Models;
+using E_CommerceProject.Entities.Models;
+using E_CommerceProject.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
 namespace E_CommerceProject.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController(IBaseRepository<Product> productRepository) : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly IBaseRepository<Product> _productRepository = productRepository;
 
-        public HomeController(ILogger<HomeController> logger)
+        public async Task<IActionResult> Index()
         {
-            _logger = logger;
+            var products = await _productRepository.GetAll(null, ["Category"]);
+
+            return View(products);
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
     }
 }
