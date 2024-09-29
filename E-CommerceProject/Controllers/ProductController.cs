@@ -7,12 +7,13 @@ using NToastNotify;
 
 namespace E_CommerceProject.Controllers
 {
-    public class ProductController(IBaseRepository<Product> productRepository, IUploadFile uploadFile, IBaseRepository<Category> categoryRepository, IToastNotification toastNotification) : Controller
+    public class ProductController(IBaseRepository<Product> productRepository, IUploadFile uploadFile, IBaseRepository<Category> categoryRepository, IToastNotification toastNotification, IWebHostEnvironment webHostingEnvironment) : Controller
     {
         private readonly IBaseRepository<Product> _productRepository = productRepository;
         private readonly IBaseRepository<Category> _categoryRepository = categoryRepository;
         private readonly IUploadFile _uploadFile = uploadFile;
         private readonly IToastNotification _toastNotification = toastNotification;
+        private readonly IWebHostEnvironment _webHostingEnvironment = webHostingEnvironment;
 
         public async Task<IActionResult> List()
         {
@@ -138,6 +139,24 @@ namespace E_CommerceProject.Controllers
         {
             try
             {
+                var product = await _productRepository.GetById(id);
+
+                if (product == null)
+                {
+                    return NotFound();
+                }
+                string imagePath = product.Cover;
+
+                if (!string.IsNullOrEmpty(imagePath))
+                {
+                    string fullPath = _webHostingEnvironment.WebRootPath + imagePath;
+
+                    if (System.IO.File.Exists(fullPath))
+                    {
+                        System.IO.File.Delete(fullPath);
+                    }
+                }
+
                 await _productRepository.DeleteItem(id);
 
                 return Ok();
