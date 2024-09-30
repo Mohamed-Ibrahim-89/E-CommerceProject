@@ -1,0 +1,148 @@
+﻿@model IEnumerable<Product>
+
+@{
+    ViewData["Title"] = "List";
+    Layout = "_CustomLayout";
+}
+
+<h1>List of products</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-success">Create New</a>
+</p>
+<table class="table table-info">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Cover)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.QuantityInStock)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CategoryId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DiscountId)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr class="data">
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @(item.Description.Length > 15 ? $"{item.Description.Substring(0, 13)}..." : item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
+            <td>
+                    <img src="@item.Cover" width="50" height="50"/>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.QuantityInStock)
+            </td>
+            <td>
+                @item.CreatedAt.ToString("d")
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Category!.Name)
+            </td>
+            <td>
+                    @if(item.Discount == null)
+                    {
+                        <p> No Discount</p>
+                    }
+                    else
+                    {
+                        @Html.DisplayFor(modelItem => item.Discount.Name)               
+                    }
+            </td>
+            <td>
+                <div class="btn-group">
+                    <a asp-action="Details" asp-route-productId="@item.ProductId" class="btn btn-info">
+                            <i class="bi bi-info-circle"></i>
+                        Details
+                    </a>
+                        <a asp-action="Edit" asp-route-productId="@item.ProductId" class="btn btn-warning">
+                        <i class="bi bi-pencil"></i>
+                        Edit
+                    </a>
+                        <a href="javascript:;" class="btn btn-danger js-delete" data-id="@item.ProductId">
+                        <i class="bi bi-trash"></i>
+                        Delete
+                    </a>
+                </div>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('.js-delete').on('click', function () {
+                var btn = $(this);
+                var productId = btn.data('id');
+                console.log(productId);
+
+                bootbox.confirm({
+                    message: "Are you sure that you need to delete this item?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-danger'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-outline-secondary'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            $.ajax({
+                                url: '/Product/Delete/' + productId,
+                                success: function () {
+                                    btn.parents('.data').fadeOut();
+
+                                    toastr.success('Item deleted successfully');
+                                },
+                                error: function () {
+                                    console.log("error: ",productId);
+                                    toastr.error('Something went wrong!');
+                                }
+                            });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+}

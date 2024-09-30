@@ -1,0 +1,95 @@
+﻿@model ProductViewModel
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "_CustomLayout";
+}
+
+<h1>@(Model.Product.ProductId > 0 ? $"Edit {Model.Product.Name}" : "Create a product")</h1>
+<hr />
+
+<div class="row justify-content-between">
+    <div class="col-md-4">
+        <form asp-action="@(Model.Product.ProductId > 0 ? "Edit" : "Create")" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Product.ProductId" />
+
+            <div class="form-group">
+                <label asp-for="Product.Name" class="control-label"></label>
+                <input asp-for="Product.Name" class="form-control" />
+                <span asp-validation-for="Product.Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Product.Description" class="control-label"></label>
+                <textarea asp-for="Product.Description" class="form-control"></textarea>
+                <span asp-validation-for="Product.Description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Product.Price" class="control-label"></label>
+                <input asp-for="Product.Price" class="form-control" />
+                <span asp-validation-for="Product.Price" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="Product.Cover" class="control-label"></label>
+                <div class="custom-file">
+                    <input asp-for="File" class="form-control" value="@(string.IsNullOrEmpty(Model.Product.Cover) ? "Choose file" : Model.Product.Cover)" onchange="loadFile(event)" />
+                </div>
+                <span asp-validation-for="File" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Product.QuantityInStock" class="control-label"></label>
+                <input asp-for="Product.QuantityInStock" class="form-control" />
+                <span asp-validation-for="Product.QuantityInStock" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Product.CategoryId" class="control-label"></label>
+                <select asp-for="Product.CategoryId" class="form-control" asp-items="@(new SelectList(Model.Categories, "CategoryId", "Name"))" required>
+                    <option value="">--Select a category--</option>
+                </select>
+                <span asp-validation-for="Product.CategoryId" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-4" >
+                <i class="bi bi-check"></i>
+                Save
+            </button>
+            <a class="btn btn-secondary mt-4" asp-controller="Product" asp-action="List">
+                <i class="bi bi-x"></i>
+                Cancel
+            </a>
+
+        </form>
+    </div>
+
+    <div class="col-md-4">
+        @if (!string.IsNullOrEmpty(Model.Product.Cover))
+        {
+            <img src="@Url.Content(Model.Product.Cover)" id="displayedImage" alt="@Model.Product.Name" width="400" height="300" />
+        }
+        else
+        {
+            <img id="displayedImage" width="400" height="300" alt="@Model.Product.Name" />
+        }
+    </div>
+
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        var loadFile = function (event) {
+            var output = document.getElementById('displayedImage');
+            output.src = URL.createObjectURL(event.target.files[0]);
+            output.onload = function () {
+                URL.revokeObjectURL(output.src)
+            }
+        };
+    </script>
+}

@@ -1,8 +1,51 @@
-﻿@{
+﻿@model IEnumerable<Product>
+@{
     ViewData["Title"] = "Home Page";
+    Layout = "_CustomLayout";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@if (!Model.Any())
+{
+    <div class="text-center text-warning">
+        <h1>No products at this point</h1>
+    </div>
+}
+else
+{
+    <div class="text-center">
+        <img src="https://img.freepik.com/premium-photo/shopping-cart-with-shopping-cart-full-items_445983-9226.jpg" class="logo-mark mx-auto" width="900px" height="350px" />
+        <h1>Products of the week</h1>
+        <h5>Enjoy a weekly selection of our favorite Products</h5>
+
+        <div class="col-md-3">
+            <input class="form-control me-2" type="search" id="liveSearchTag" value="@ViewBag.SearchQuery" placeholder="Search for products" aria-label="Search" style="background-color:lightsteelblue">
+    </div>
+
+        <div class="row mt-5" id="productCards">
+            <partial name="_ProductCard" model="Model" />
+        </div>
+
+    </div>
+}
+
+@section scripts {
+    <script>
+        $('#liveSearchTag').on('keyup', function () {
+            LiveSearch()
+        });
+
+        function LiveSearch(){
+            var searchValue = $('#liveSearchTag').val();
+
+            $.ajax({
+                url: '@Url.Action("Search", "Product")',
+                type: "GET",
+                data: { searchQuery: searchValue },
+                datatype:"html",
+                success: function (data) {
+                    $('#productCards').html(data);
+                }
+            });
+        }
+    </script>
+}

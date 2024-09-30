@@ -11,10 +11,8 @@ namespace E_CommerceProject.Entities.Models
         [MaxLength(200)]
         public string? Description { get; set; }
         [Column(TypeName = "decimal(4, 2)")]
-        public decimal DiscountPercent { get; set; }
+        public decimal Percentage { get; set; }
         public bool Active { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime? UpdatedAt { get; set;}
-        public DateTime? DeletedAt { get; set; }
     }
 }

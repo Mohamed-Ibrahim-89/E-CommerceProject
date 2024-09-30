@@ -38,7 +38,7 @@ namespace E_CommerceProject.Repositories.Implementations
         {
             var item = await _dbSet.FindAsync(id);
 
-            return item ?? throw new InvalidOperationException("Item not found");
+            return item ?? throw new InvalidOperationException("Item not found");;
         }
 
         public async Task<T> AddItem(T item)

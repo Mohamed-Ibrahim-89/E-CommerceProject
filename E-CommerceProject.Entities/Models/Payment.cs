@@ -10,7 +10,7 @@ namespace E_CommerceProject.Entities.Models
         public int PaymentId { get; set; }
         [MaxLength(30)]
         public string PaymentMethod { get; set; } = string.Empty;
-        public DateTime PaymentDate { get; set; }
+        public DateTime PaymentDate { get; set; } = DateTime.Now;
         [Column(TypeName = "decimal(10, 2)")]
         public decimal PaymentAmount { get; set; }
 
