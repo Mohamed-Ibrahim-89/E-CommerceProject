@@ -11,7 +11,7 @@
             }
             else
             {
-                <img class="card-img" src="@item.Cover" width="400" height="200" alt="No Image"/>
+                <img class="card-img" src="@item.Cover" width="400" height="200" alt="@item.Name" />
             }
 
             <p class="card-text">@(item.Description.Length > 30? $"{item.Description.Substring(0, 30)}..." : item.Description)</p>

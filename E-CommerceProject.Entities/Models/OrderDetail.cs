@@ -12,6 +12,6 @@ namespace E_CommerceProject.Entities.Models
         public int OrdeId { get; set; }
         public Order? OrderId { get; set; }
         public int ProductId { get; set; }
-        public Product? Productid { get; set; }
+        public Product? Product { get; set; }
     }
 }

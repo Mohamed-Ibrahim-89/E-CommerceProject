@@ -11,7 +11,15 @@
 
     <div class="col-md-4">
         <div class="product-image">
-            <img src="@Model.Cover" alt="@Model.Name" width="350px" height="auto">
+            @* <img src="@Model.Cover" alt="@Model.Name" width="350px" height="auto"> *@
+            @if (Model.Cover == null || Model.Cover == "")
+            {
+                <img src="https://cdn4.iconfinder.com/data/icons/picture-sharing-sites/32/No_Image-1024.png" width="150" height="150" alt="@Model.Name" />
+            }
+            else
+            {
+                <img src="@Model.Cover" width="350" alt="@Model.Name" />
+            }
         </div>
         <div class="product-details">
             <h1 class="product-name">@Model.Name</h1>
@@ -27,8 +35,8 @@
     <div class="product-info col-md-4">
         <div class="info-item">
             <div class="info-label">
-                <p class="last-price">Old Price: <span>$257.00</span></p>
-                <p class="new-price">New Price: <span>$249.00</span>
+                <p class="last-price">Old Price: <span>@Model.Price</span></p>
+                <p class="new-price">New Price: <span>@((Model.Price) - (Model.Price * 0.05M))</span>
             </div>
             <span class="badge badge-discount">5% off</span>
         </div>
