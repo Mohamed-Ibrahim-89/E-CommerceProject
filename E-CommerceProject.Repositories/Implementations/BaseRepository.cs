@@ -52,6 +52,7 @@ namespace E_CommerceProject.Repositories.Implementations
         {
             var oldItem = _dbSet.Attach(item);
             oldItem.State = EntityState.Modified;
+            _dbSet.Update(item);
             await _context.SaveChangesAsync();
             return item;
         }
