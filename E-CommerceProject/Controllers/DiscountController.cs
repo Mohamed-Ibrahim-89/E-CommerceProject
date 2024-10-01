@@ -1,51 +1,25 @@
 ﻿using E_CommerceProject.Entities.Models;
 using E_CommerceProject.Repositories.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace E_CommerceProject.Controllers
 {
-    public class DiscountController : Controller
+    public class DiscountController(IBaseRepository<Discount> discount) : Controller
     {
-        // GET: HomeController1
-        private IBaseRepository<Discount> _discount ;
+        private readonly IBaseRepository<Discount> _discountRepository = discount;
 
-        public DiscountController(IBaseRepository<Discount> discount)
+        public async Task<IActionResult> List()
         {
-           _discount = discount;
-        }
-
-        public async Task<IActionResult> Index()
-        {
-            // Asynchronously retrieve all discounts from the repository
-            var discounts =await _discount.GetAll();
+            var discounts = await _discountRepository.GetAll();
             return View(discounts);
         }
 
-        // GET: HomeController1/Details/5
-        public async Task<IActionResult> Details(int id)
-        {
-            // Asynchronously retrieve a discount by its ID
-            var discount = await _discount.GetById(id);
-            if (discount == null)
-            {
-                // Return a 404 Not Found response if the discount does not exist
-
-                return NotFound();
-            }
-            
-
-            return View(discount);
-        }
-
-        // GET:Discount/Create
         public ActionResult Create()
         {
-            // Return the view for creating a new discount
-            return View("NewDiscount");
+            var discount = new Discount();
+            return View("DiscountForm", discount);
         }
 
-        // POST: HomeController1/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Discount discount)
@@ -54,84 +28,58 @@ namespace E_CommerceProject.Controllers
             {
                 try
                 {
-                    // Asynchronously add the new discount to the repository
-                    var discountText = await _discount.AddItem(discount);
+                    var discountText = await _discountRepository.AddItem(discount);
 
-                    // Redirect to the Index action to show the updated list of discounts
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction(nameof(List));
                 }
                 catch
                 {
-                    // If an error occurs, return the view to create a new discoun
-                    return View("NewDiscount");
+                    return View("DiscountForm", discount);
                 }
             }
-            // If the model is invalid, return the view with the current discount data
-            return View("NewDiscount");
+            return View("DiscountForm", discount);
         }
 
-        // GET: HomeController1/Edit/5
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(int discountId)
         {
-            // Asynchronously retrieve the discount to edit by its ID
-            var discount = await _discount.GetById(id);
+            var discount = await _discountRepository.GetById(d => d.DiscountId == discountId);
+
             if (discount == null)
-            {
                 return NotFound();
-            }
-            // Return the view with the discount data to edit
-            return View(discount);
+
+            return View("DiscountForm", discount);
         }
 
-        // POST: HomeController1/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Discount discount)
+        public async Task<IActionResult> Edit(Discount discount)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    // Asynchronously update the discount in the repository
-                    await _discount.UpdateItem(discount);
-                    return RedirectToAction(nameof(Index));
-
+                    await _discountRepository.UpdateItem(discount);
+                    return RedirectToAction(nameof(List));
                 }
                 catch
                 {
-                    return View(discount);
+                    return View("DiscountForm", discount);
                 }
 
             }
-            return View(discount);
+            return View("DiscountForm", discount);
         }
 
-        // GET: HomeController1/Delete/5
         public async Task<IActionResult> Delete(int id)
-        {
-            // Asynchronously retrieve the discount to delete by its ID
-            var discount= await _discount.GetById(id);
-            if (discount == null)
-            {
-                return NotFound();
-            }
-            return View(discount);
-        }
-
-        // POST: HomeController1/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             try
             {
-                // Asynchronously delete the discount from the repository
-
-                await _discount.DeleteItem(id);
-                return RedirectToAction(nameof(Index));
+                await _discountRepository.DeleteItem(id);
+                return Ok();
             }
-            catch
+            catch (Exception ex)
             {
+                ViewBag.Error = ex.Message;
                 return View();
             }
         }

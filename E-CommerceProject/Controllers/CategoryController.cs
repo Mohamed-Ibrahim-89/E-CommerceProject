@@ -31,14 +31,14 @@ namespace SunPiontOfSaleFinalProject.App.Controllers
                 if (categoryTest)
                 {
                     ViewBag.ExistsError = "Category Name already exists";
-                    return View("CategoryForm");
+                    return View("CategoryForm", item);
                 }
                 await _categoryRepository.AddItem(item);
                 return RedirectToAction(nameof(List));
             }
             catch
             {
-                return View();
+                return View("CategoryForm", item);
             }
         }
 

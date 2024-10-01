@@ -22,6 +22,10 @@ body {
 }
 
 /* Customized style*/
+.dropdown-menu{
+    background-color: gray !important;
+    color: chocolate !important;
+}
 .card {
     border: 1px solid #ddd;
     border-radius: 8px;

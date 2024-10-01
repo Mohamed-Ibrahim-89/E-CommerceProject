@@ -16,7 +16,23 @@
     <header>
         <nav class="navbar" data-bs-theme="light">
             <div class="container-fluid">
-                <a class="navbar-brand text-dark" asp-controller="Home" asp-action="Index">E-Commerce</a>
+                <div>
+                    <a class="navbar-brand text-dark" asp-controller="Home" asp-action="Index">E-Commerce</a>
+
+                    @if (User.Identity!.IsAuthenticated && User.IsInRole("Admin"))
+                    {
+                        <div class="dropdown d-inline-block">
+                            <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                Actions List
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="nav-link" asp-controller="Product" asp-action="List">Product List</a></li>
+                                <li><a class="nav-link" asp-controller="Category" asp-action="List">Category List</a></li>
+                                <li><a class="nav-link" asp-controller="Discount" asp-action="List">Discount List</a></li>
+                            </ul>
+                        </div>
+                    }
+                </div>
 
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="user-info-container">
@@ -24,28 +40,6 @@
                     </div>
                 </div>
 
-            </div>
-
-            <div class="container-fluid">
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link active" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        @if (User.Identity!.IsAuthenticated && User.IsInRole("Admin"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Product" asp-action="List">Product List</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Category" asp-action="List">Category List</a>
-                            </li>
-                        }
-                    </ul>
-                </div>
             </div>
         </nav>
     </header>
