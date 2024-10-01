@@ -24,7 +24,7 @@ namespace SunPiontOfSaleFinalProject.App.Controllers
         public async Task<ActionResult> Details(int categoryId)
         {
             var category = await _categoryRepository.GetById(categoryId);
-            return View(category);
+            return category != null ? View(category) : NotFound();
         }
         public ActionResult Create()
         {

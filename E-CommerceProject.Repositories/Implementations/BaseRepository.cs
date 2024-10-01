@@ -41,7 +41,7 @@ namespace E_CommerceProject.Repositories.Implementations
         // It'll be done by Ahmed Medhat
         public async Task<T> GetById(int id)
         {
-            throw new NotImplementedException();
+            return await _dbSet.FindAsync(id);
         }
         // It'll be done by Ahmed Ibrahim
         public async Task<T> AddItem(T item)
@@ -60,7 +60,9 @@ namespace E_CommerceProject.Repositories.Implementations
         // It'll be done by Mostafa Hamed
         public async Task DeleteItem(int id)
         {
-            throw new NotImplementedException();
+            var entity = await GetById(id);
+            _dbSet.Remove(entity);
+            await _context.SaveChangesAsync();
         }
 
     }
