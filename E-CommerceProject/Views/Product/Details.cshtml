@@ -41,7 +41,7 @@
     <div class="product-info col-md-4">
         <div class="info-item">
             
-            @if(Model.Discount.Percentage > 0)
+            @if(Model.Discount!.Percentage > 0)
             {
                 <div class="info-label">
                     <p class="last-price">Old Price: <span>@Model.Price</span></p>
@@ -71,7 +71,7 @@
         </div>
         <div class="info-item">
             <div class="info-label">Category:</div>
-            <div class="info-value">@Model.Category.Name</div>
+            <div class="info-value">@Model.Category!.Name</div>
         </div>
     </div>
 

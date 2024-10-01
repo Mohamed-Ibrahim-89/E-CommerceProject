@@ -18,18 +18,22 @@ namespace E_CommerceProject.Repositories.Implementations
 
         public async Task<IEnumerable<T>> GetAll(Expression<Func<T, bool>>? criteria = null, string[]? includes = null)
         {
-            IQueryable<T> query = _dbSet;
+            IQueryable<T> query = _dbSet.AsNoTracking();
 
-            if (criteria != null) 
-                return await query.Where(criteria).ToListAsync();
-
-            if (includes != null) 
-            { 
-                foreach (var include in includes)
+            if (criteria != null || includes != null)
+            {
+                if (includes != null)
                 {
-                    query = query.Include(include).AsSplitQuery();
+                    foreach (var include in includes)
+                    {
+                        query = query.Include(include).AsSplitQuery();
+                    }
                 }
-                return await query.ToListAsync();
+
+                if (criteria != null)
+                {
+                    return await query.Where(criteria).ToListAsync();
+                }
             }
 
             return await query.ToListAsync();
@@ -37,7 +41,7 @@ namespace E_CommerceProject.Repositories.Implementations
 
         public async Task<T> GetById(Expression<Func<T, bool>> caretiria, string[]? Includes = null)
         {
-            IQueryable<T> query = _dbSet;
+            IQueryable<T> query = _dbSet.AsNoTracking();
 
             if (Includes != null)
             {

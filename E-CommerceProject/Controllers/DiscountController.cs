@@ -1,9 +1,11 @@
 ﻿using E_CommerceProject.Entities.Models;
 using E_CommerceProject.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace E_CommerceProject.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class DiscountController(IBaseRepository<Discount> discount) : Controller
     {
         private readonly IBaseRepository<Discount> _discountRepository = discount;

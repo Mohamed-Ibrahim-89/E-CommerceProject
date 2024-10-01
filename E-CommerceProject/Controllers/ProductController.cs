@@ -195,11 +195,11 @@ namespace E_CommerceProject.Controllers
             if (searchQuery != null)
             {
                 ViewBag.SearchQuery = searchQuery;
-                products = await _productRepository.GetAll(p => p.Name.Contains(searchQuery), ["Category"]);
+                products = await _productRepository.GetAll(p => p.Name.Contains(searchQuery), ["Category", "Discount"]);
             }
             else
             {
-                products = await _productRepository.GetAll(null, ["Category"]);
+                products = await _productRepository.GetAll(null, ["Category", "Discount"]);
             }
 
             return PartialView("_ProductCard", products);
