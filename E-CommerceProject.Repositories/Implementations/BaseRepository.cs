@@ -64,8 +64,7 @@ namespace E_CommerceProject.Repositories.Implementations
 
         public async Task<T> UpdateItem(T item)
         {
-            var oldItem = _dbSet.Attach(item);
-            oldItem.State = EntityState.Modified;
+            _dbSet.Update(item);
             await _context.SaveChangesAsync();
             return item;
         }
