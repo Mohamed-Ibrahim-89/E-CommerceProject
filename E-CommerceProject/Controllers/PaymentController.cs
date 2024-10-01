@@ -1,20 +1,35 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using E_CommerceProject.Entities.Models;
+using E_CommerceProject.Repositories.Interfaces;
+using System.Threading.Tasks;
 
 namespace E_CommerceProject.Controllers
 {
     public class PaymentController : Controller
     {
-        // GET: PaymentController
-        public ActionResult Index()
+        private readonly IBaseRepository<Payment> _paymentRepository;
+
+        public PaymentController(IBaseRepository<Payment> paymentRepository)
         {
-            return View();
+            _paymentRepository = paymentRepository;
+        }
+
+        // GET: PaymentController/List
+        public async Task<ActionResult> List()
+        {
+            var payments = await _paymentRepository.GetAll();
+            return View(payments);
         }
 
         // GET: PaymentController/Details/5
-        public ActionResult Details(int id)
+        public async Task<ActionResult> Details(int id)
         {
-            return View();
+            var payment = await _paymentRepository.GetById(id);
+            if (payment == null)
+            {
+                return NotFound();
+            }
+            return View(payment);
         }
 
         // GET: PaymentController/Create
@@ -26,11 +41,16 @@ namespace E_CommerceProject.Controllers
         // POST: PaymentController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Create(Payment payment)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    await _paymentRepository.AddItem(payment);
+                    return RedirectToAction(nameof(List));
+                }
+                return View(payment);
             }
             catch
             {
@@ -39,19 +59,29 @@ namespace E_CommerceProject.Controllers
         }
 
         // GET: PaymentController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
-            return View();
+            var payment = await _paymentRepository.GetById(id);
+            if (payment == null)
+            {
+                return NotFound();
+            }
+            return View(payment);
         }
 
         // POST: PaymentController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(Payment payment)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    await _paymentRepository.UpdateItem(payment);
+                    return RedirectToAction(nameof(List));
+                }
+                return View(payment);
             }
             catch
             {
@@ -60,19 +90,25 @@ namespace E_CommerceProject.Controllers
         }
 
         // GET: PaymentController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            return View();
+            var payment = await _paymentRepository.GetById(id);
+            if (payment == null)
+            {
+                return NotFound();
+            }
+            return View(payment);
         }
 
         // POST: PaymentController/Delete/5
-        [HttpPost]
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> DeleteConfirmed(int id)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                await _paymentRepository.DeleteItem(id);
+                return RedirectToAction(nameof(List));
             }
             catch
             {
