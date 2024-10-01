@@ -11,12 +11,26 @@
 
     <div class="col-md-4">
         <div class="product-image">
-            <img src="@Model.Cover" alt="@Model.Name" width="350px" height="auto">
+            @if (Model.Cover == null || Model.Cover == "")
+            {
+                <img src="https://cdn4.iconfinder.com/data/icons/picture-sharing-sites/32/No_Image-1024.png" width="150" height="150" alt="@Model.Name" />
+            }
+            else
+            {
+                <img src="@Model.Cover" width="350" alt="@Model.Name" />
+            }
         </div>
         <div class="product-details">
             <h1 class="product-name">@Model.Name</h1>
-    </div>
-
+        </div>
+        <div>
+            <button type="button" class="btn btn-primary" style="font-size: xx-large">
+                Add to Cart
+                <svg xmlns="http://www.w3.org/2000/svg" width="50" height="30" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
+                    <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
+                </svg>
+            </button>
+        </div>
     </div>
     <div class="product-details col-md-4">
         <p class="product-description">
@@ -30,7 +44,7 @@
                 <p class="last-price">Old Price: <span>$257.00</span></p>
                 <p class="new-price">New Price: <span>$249.00</span>
             </div>
-            <span class="badge badge-discount">5% off</span>
+            <span class="badge badge-discount">@(Model.Discount.Percentage.ToString("0"))% off</span>
         </div>
         <div class="info-item">
             <div class="info-label">Quantity in Stock:</div>
@@ -39,17 +53,10 @@
         </div>
         <div class="info-item">
             <div class="info-label">Category:</div>
-            <div class="info-value">Wearable Tech</div>
+            <div class="info-value">@Model.Category.Name</div>
         </div>
     </div>
 
-    <div class="">
-        <button type="button" class="btn btn-primary" style="font-size: xx-large">
-            Add to Cart 
-            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="30" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
-                <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
-            </svg>
-        </button>
-    </div>
+    
 
 </div>

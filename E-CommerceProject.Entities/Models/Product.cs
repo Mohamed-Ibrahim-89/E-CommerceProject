@@ -9,7 +9,7 @@ namespace E_CommerceProject.Entities.Models
 
         [MaxLength(50)]
         public string Name { get; set; } = string.Empty;
-        [MaxLength(700)]
+        [MaxLength(1500)]
         public string Description { get; set; } = string.Empty;
         [Column(TypeName = "decimal(8,2)")]
         [Range(1, 1000000, ErrorMessage = "Price must be greater than 0")]

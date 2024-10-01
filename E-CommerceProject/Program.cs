@@ -1,6 +1,8 @@
+using E_CommerceProject.Entities.Models;
 using E_CommerceProject.Repositories.Data;
 using E_CommerceProject.Repositories.Implementations;
 using E_CommerceProject.Repositories.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NToastNotify;
 
@@ -15,6 +17,7 @@ builder.Services.AddScoped<IUploadFile, UploadFile>();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Add NToastNotify for notifications
 builder.Services.AddMvc().AddNToastNotifyToastr(new NToastNotify.ToastrOptions
 {
     ProgressBar = true,
@@ -22,6 +25,19 @@ builder.Services.AddMvc().AddNToastNotifyToastr(new NToastNotify.ToastrOptions
     PreventDuplicates = true,
     CloseButton = true
 });
+
+// Add configuration for identity
+builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
+{
+    options.Password.RequiredLength = 4;
+    options.Password.RequiredUniqueChars = 0;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireDigit = false;
+
+}).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
+
 
 var app = builder.Build();
 

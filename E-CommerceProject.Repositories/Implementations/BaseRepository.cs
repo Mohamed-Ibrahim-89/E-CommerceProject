@@ -1,4 +1,5 @@
-﻿using E_CommerceProject.Repositories.Data;
+﻿using E_CommerceProject.Entities.Models;
+using E_CommerceProject.Repositories.Data;
 using E_CommerceProject.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -34,11 +35,24 @@ namespace E_CommerceProject.Repositories.Implementations
             return await query.ToListAsync();
         }
 
-        public async Task<T> GetById(int id)
+        public async Task<T> GetById(Expression<Func<T, bool>> caretiria, string[]? Includes = null)
         {
-            var item = await _dbSet.FindAsync(id);
+            IQueryable<T> query = _dbSet;
 
-            return item ?? throw new InvalidOperationException("Item not found");;
+            if (Includes != null)
+            {
+                foreach (var include in Includes)
+                {
+                    query = query.Include(include).AsSplitQuery();
+                }
+            }
+
+            if (caretiria != null)
+            {
+                return await query.Where(caretiria).FirstOrDefaultAsync();
+            }
+
+            return await query.FirstOrDefaultAsync();
         }
 
         public async Task<T> AddItem(T item)
@@ -58,7 +72,7 @@ namespace E_CommerceProject.Repositories.Implementations
 
         public async Task DeleteItem(int id)
         {
-            var item = await GetById(id) ?? throw new InvalidOperationException("Item not found");
+            var item = await _dbSet.FindAsync(id) ?? throw new InvalidOperationException("Item not found");
 
             _dbSet.Remove(item);
             await _context.SaveChangesAsync();

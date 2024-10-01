@@ -8,5 +8,7 @@ namespace E_CommerceProject.Entities.ViewModels
         public Product Product { get; set; } = default!;
         public IFormFile File { get; set; } = default!;
         public IEnumerable<Category>? Categories { get; set; }
+        public IEnumerable<Discount>? Discounts { get; set; }
+
     }
 }

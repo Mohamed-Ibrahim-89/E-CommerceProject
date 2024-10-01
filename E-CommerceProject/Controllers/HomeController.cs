@@ -10,7 +10,7 @@ namespace E_CommerceProject.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var products = await _productRepository.GetAll(null, ["Category"]);
+            var products = await _productRepository.GetAll(null, ["Category", "Discount"]);
 
             return View(products);
         }

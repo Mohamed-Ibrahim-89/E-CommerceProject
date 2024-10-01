@@ -12,18 +12,29 @@
 }
 else
 {
-    <div class="text-center">
-        <img src="https://img.freepik.com/premium-photo/shopping-cart-with-shopping-cart-full-items_445983-9226.jpg" class="logo-mark mx-auto" width="900px" height="350px" />
-        <h1>Products of the week</h1>
-        <h5>Enjoy a weekly selection of our favorite Products</h5>
+    <div class="home">
+        <div class="col-md-8 text-info">
+            <h1>Welcome to our E-Commerce Store!</h1>
+            <p>
+                Our store offers a wide variety of products, from clothing and accessories to electronics and home appliances.
+                Feel free to explore our selection and make an informed purchase.
+            </p>
+        </div>
+    </div>
+
+    <div>   
+        <div class="row mt-5 text-center">
+            <h1>Featured Products</h1>
+            <h5>Check out our most popular and recommended products</h5>
+        </div>
 
         <div class="col-md-3">
             <input class="form-control me-2" type="search" id="liveSearchTag" value="@ViewBag.SearchQuery" placeholder="Search for products" aria-label="Search" style="background-color:lightsteelblue">
-    </div>
-
-        <div class="row mt-5" id="productCards">
-            <partial name="_ProductCard" model="Model" />
         </div>
+
+            <div class="row mt-5" id="productCards">
+                <partial name="_ProductCard" model="Model" />
+            </div>
 
     </div>
 }

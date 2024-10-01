@@ -1,45 +1,62 @@
 ﻿using E_CommerceProject.Entities.Models;
 using E_CommerceProject.Entities.ViewModels;
-using E_CommerceProject.Repositories.Implementations;
 using E_CommerceProject.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using NToastNotify;
+using System.Linq.Expressions;
 
 namespace E_CommerceProject.Controllers
 {
-    public class ProductController(IBaseRepository<Product> productRepository, IUploadFile uploadFile, IBaseRepository<Category> categoryRepository, IToastNotification toastNotification, IWebHostEnvironment webHostingEnvironment) : Controller
+    [Authorize(Roles = "Admin")]
+    public class ProductController(IBaseRepository<Product> productRepository, IUploadFile uploadFile, IBaseRepository<Category> categoryRepository, IToastNotification toastNotification, IWebHostEnvironment webHostingEnvironment, IBaseRepository<Discount> discountRepository) : Controller
     {
         private readonly IBaseRepository<Product> _productRepository = productRepository;
         private readonly IBaseRepository<Category> _categoryRepository = categoryRepository;
+        private readonly IBaseRepository<Discount> _discountRepository = discountRepository;
         private readonly IUploadFile _uploadFile = uploadFile;
         private readonly IToastNotification _toastNotification = toastNotification;
         private readonly IWebHostEnvironment _webHostingEnvironment = webHostingEnvironment;
 
+
         public async Task<IActionResult> List()
         {
-            var products = await _productRepository.GetAll(null, ["Category"]);
+            var products = await _productRepository.GetAll(null, ["Category", "Discount"]);
 
             return View(products);
         }
 
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int productId)
         {
-            var product = await _productRepository.GetById(productId);
-            if (product == null)
+            try
             {
-                return NotFound();
+                var product = await _productRepository.GetById(p => p.ProductId == productId, ["Category", "Discount"]);
+                if (product == null)
+                {
+                    return NotFound();
+                }
+                return View(product);
             }
-            return View(product);
+            catch (InvalidOperationException ex)
+            {
+                ViewData["Error"] = ex.Message;
+            }
+
+            return View();
         }
 
         public async Task<IActionResult> Create()
         {
             var categories = await _categoryRepository.GetAll();
+            var discounts = await _discountRepository.GetAll();
 
             var productViewModel = new ProductViewModel
             {
                 Product = new Product(),
                 Categories = categories,
+                Discounts = discounts
             };
 
             return View("ProductForm", productViewModel);
@@ -65,7 +82,8 @@ namespace E_CommerceProject.Controllers
                         Price = model.Product.Price,
                         Cover = model.Product.Cover,
                         QuantityInStock = model.Product.QuantityInStock,
-                        CategoryId = model.Product.CategoryId
+                        CategoryId = model.Product.CategoryId,
+                        DiscountId = model.Product.DiscountId
                     };
 
                     await _productRepository.AddItem(product);
@@ -86,16 +104,18 @@ namespace E_CommerceProject.Controllers
 
         public async Task<IActionResult> Edit(int productId)
         {
-            var product = await _productRepository.GetById(productId);
+            var product = await _productRepository.GetById(p => p.ProductId == productId, ["Category", "Discount"]);
             if (product == null)
             {
                 return NotFound();
             }
             var categories = await _categoryRepository.GetAll();
+            var discounts = await _discountRepository.GetAll();
             var productViewModel = new ProductViewModel
             {
                 Product = product,
                 Categories = categories,
+                Discounts = discounts
             };
             return View("ProductForm", productViewModel);
         }
@@ -120,7 +140,8 @@ namespace E_CommerceProject.Controllers
                         Price = model.Product.Price,
                         Cover = model.Product.Cover,
                         QuantityInStock = model.Product.QuantityInStock,
-                        CategoryId = model.Product.CategoryId
+                        CategoryId = model.Product.CategoryId,
+                        DiscountId = model.Product.DiscountId
                     };
                     await _productRepository.UpdateItem(product);
                     _toastNotification.AddSuccessToastMessage("Item updated successfully");
@@ -139,7 +160,7 @@ namespace E_CommerceProject.Controllers
         {
             try
             {
-                var product = await _productRepository.GetById(id);
+                var product = await _productRepository.GetById(p => p.ProductId == id);
 
                 if (product == null)
                 {
@@ -168,6 +189,7 @@ namespace E_CommerceProject.Controllers
             }
         }
 
+        [AllowAnonymous]
         public async Task<IActionResult> Search(string searchQuery)
         {
             IEnumerable<Product> products;
