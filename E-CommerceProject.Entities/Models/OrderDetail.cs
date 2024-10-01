@@ -4,6 +4,7 @@ namespace E_CommerceProject.Entities.Models
 {
     public class OrderDetail
     {
+        public int Id { get; set; }
         public int OrderDetaild { get; set; }
         public int Quantity { get; set; }
         [Column(TypeName = "decimal(10, 2)")]

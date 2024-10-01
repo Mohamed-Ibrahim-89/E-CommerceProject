@@ -7,6 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace E_CommerceProject.Repositories.Implementations
 {
@@ -22,27 +23,34 @@ namespace E_CommerceProject.Repositories.Implementations
         // It'll be done by Mohamed Ibrahim
         public async Task<IEnumerable<T>> GetAll(Expression<Func<T, bool>>? criteria = null, string[]? includes = null)
         {
-            throw new NotImplementedException();
+            return await _dbSet.ToListAsync();
         }
         // It'll be done by Ahmed Medhat
         public async Task<T> GetById(int id)
         {
-            throw new NotImplementedException();
+            return await _dbSet.FindAsync(id);
         }
         // It'll be done by Ahmed Ibrahim
         public async Task<T> AddItem(T item)
         {
-            throw new NotImplementedException();
+            await _dbSet.AddAsync(item);
+            await _context.SaveChangesAsync();
+            return item; 
         }
         // It'll be done by Ibrahim Khalil
         public async Task<T> UpdateItem(T item)
         {
-            throw new NotImplementedException();
+            _dbSet.Update(item);
+            await _context.SaveChangesAsync();
+            return item;
         }
         // It'll be done by Mostafa Hamed
         public async Task DeleteItem(int id)
         {
-            throw new NotImplementedException();
+
+            var entity = await GetById(id);
+            _dbSet.Remove(entity);
+            await _context.SaveChangesAsync();
         }
 
     }

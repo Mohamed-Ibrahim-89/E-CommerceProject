@@ -5,7 +5,6 @@
 
         public int WishlistId { get; set; }  
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime? DeletedAt { get; set; }
 
         public int CustomerInfoId { get; set; }
         public CustomerInfo? CustomerInfo { get; set; }
