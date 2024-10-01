@@ -41,8 +41,8 @@
     <div class="product-info col-md-4">
         <div class="info-item">
             <div class="info-label">
-                <p class="last-price">Old Price: <span>$257.00</span></p>
-                <p class="new-price">New Price: <span>$249.00</span>
+                <p class="last-price">Old Price: <span>@Model.Price</span></p>
+                <p class="new-price">New Price: <span>@((Model.Price) - (Model.Price * 0.05M))</span>
             </div>
             <span class="badge badge-discount">@(Model.Discount.Percentage.ToString("0"))% off</span>
         </div>

@@ -59,7 +59,14 @@
                 @Html.DisplayFor(modelItem => item.Price)
             </td>
             <td>
-                    <img src="@item.Cover" width="50" height="50"/>
+                @if (item.Cover == null || item.Cover == "")
+                {
+                    <img src="https://cdn4.iconfinder.com/data/icons/picture-sharing-sites/32/No_Image-1024.png" width="40" height="40" alt="No Image" />
+                }
+                else
+                {
+                    <img src="@item.Cover" width="40" height="40" alt="@item.Name" />
+                }
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.QuantityInStock)
