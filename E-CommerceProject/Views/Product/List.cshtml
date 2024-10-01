@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "List";
-    Layout = "_CustomLayout";
+    Layout = "_AdminLayout";
 }
 
 <h1>List of products</h1>
@@ -84,7 +84,7 @@
                     }
                     else
                     {
-                        @item.Discount.Percentage.ToString("0")             
+                        @item.Discount.Percentage.ToString("0")
                     }
             </td>
             <td>

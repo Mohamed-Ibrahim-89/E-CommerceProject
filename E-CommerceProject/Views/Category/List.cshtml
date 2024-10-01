@@ -2,14 +2,23 @@
 
 @{
     ViewData["Title"] = "List";
+    Layout = "_AdminLayout";
 }
 
-<h1>List</h1>
+@if (ViewBag.ExistsError != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @ViewBag.ExistsError
+    </div>
+}
 
+<h1>List of categories</h1>
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-success">Add new category</a>
 </p>
-<table class="table">
+<hr />
+
+<table class="table table-info">
     <thead>
         <tr>
             <th>
@@ -18,30 +27,76 @@
             <th>
                 @Html.DisplayNameFor(model => model.CreatedAt)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DeleatedAt)
-            </th>
-            <th></th>
+            <th style="text-align:right;">Actions</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DeleatedAt)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.CategoryId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.CategoryId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.CategoryId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr class="data">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @item.CreatedAt.ToString("d")
+                </td>
+                <td style="text-align:right;">
+                    <div class="btn-group">
+                        <a asp-action="Edit" asp-route-categoryId="@item.CategoryId" class="btn btn-warning">
+                            <i class="bi bi-pencil"></i> Edit
+                        </a>
+                        <a href="javascript:;" class="btn btn-danger js-delete" data-id="@item.CategoryId">
+                            <i class="bi bi-trash"></i> Delete
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('.js-delete').on('click', function () {
+                var btn = $(this);
+                var categoryId = btn.data('id');
+                console.log(categoryId);
+
+                bootbox.confirm({
+                    message: "Are you sure that you need to delete this item?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-danger'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-outline-secondary'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            $.ajax({
+                                url: '/Category/Delete/' + categoryId,
+                                success: function () {
+                                    btn.parents('.data').fadeOut();
+
+                                    toastr.success('Item deleted successfully');
+                                },
+                                error: function () {
+                                    console.log("error: ", productId);
+                                    toastr.error('Something went wrong!');
+                                }
+                            });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+}
