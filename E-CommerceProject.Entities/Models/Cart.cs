@@ -5,7 +5,6 @@
         public int CartId { get; set; }
         public int Amount { get; set; }
         public DateTime? CreatedAt { get; set; } = DateTime.Now;
-
         public int CustomerInfoId { get; set; }
         public CustomerInfo? CustomerInfo { get; set; }
         public int OrderId { get; set; }

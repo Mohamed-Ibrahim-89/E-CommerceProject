@@ -21,7 +21,6 @@ namespace E_CommerceProject.Repositories.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<Shipment> Shipments { get; set; }
         public DbSet<Wishlist> Wishlists { get; set; }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
