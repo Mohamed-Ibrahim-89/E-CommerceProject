@@ -8,7 +8,7 @@
 <h1>List of products</h1>
 
 <p>
-    <a asp-action="Create" class="btn btn-success">Create New</a>
+    <a asp-action="Create" class="btn btn-success">Add new item</a>
 </p>
 <table class="table table-info">
     <thead>
@@ -40,7 +40,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.DiscountId)
             </th>
-            <th></th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -84,7 +84,7 @@
                     }
                     else
                     {
-                        @Html.DisplayFor(modelItem => item.Discount.Name)               
+                        @item.Discount.Percentage.ToString("0")             
                     }
             </td>
             <td>

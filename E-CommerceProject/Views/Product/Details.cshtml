@@ -40,11 +40,22 @@
 
     <div class="product-info col-md-4">
         <div class="info-item">
-            <div class="info-label">
-                <p class="last-price">Old Price: <span>@Model.Price</span></p>
-                <p class="new-price">New Price: <span>@((Model.Price) - (Model.Price * 0.05M))</span>
-            </div>
-            <span class="badge badge-discount">@(Model.Discount.Percentage.ToString("0"))% off</span>
+            
+            @if(Model.Discount.Percentage > 0)
+            {
+                <div class="info-label">
+                    <p class="last-price">Old Price: <span>@Model.Price</span></p>
+                    <p class="new-price">New Price: <span>@((Model.Price) - (Model.Price * 0.05M))</span>
+                    <span class="badge badge-discount text-dark">@(Model.Discount.Percentage.ToString("0"))% off</span>
+                </div>
+            }
+            else
+            {
+                <div class="info-label">
+                    <div class="info-label">Price:</div>
+                    <span class="text-dark" style="font-size:40px">$@(Model.Price.ToString("0"))</span>
+                </div>
+            }
         </div>
         <div class="info-item">
             <div class="info-label">Quantity in Stock:</div>

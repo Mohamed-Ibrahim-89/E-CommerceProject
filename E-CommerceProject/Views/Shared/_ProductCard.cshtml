@@ -19,13 +19,20 @@
         </div>
 
         <div >
-            <h2 class="card-title text-center">
+            <h2 class=" text-center">
                 <a asp-controller="Product" asp-action="Details" asp-route-productId="@item.ProductId" class="product-link">@(item.Name.Length > 15 ? $"{item.Name.Substring(0, 15)}..." : item.Name)</a>
             </h2>
-
-            <p class="last-price"><span>$@item.Price</span></p>
-            <p class="new-price"><span>$@((item.Price) - (item.Price * 0.05M))</span>
-            <span class="badge badge-discount text-dark">@(item.Discount.Percentage.ToString("0"))% off</span>
+            @if (item.Discount.Percentage > 0)
+            {
+                <p class="last-price"><span>$@item.Price</span></p>
+                <p class="new-price"><span>$@((item.Price) - (item.Price * 0.05M))</span>
+                <span class="badge badge-discount text-dark">@(item.Discount.Percentage.ToString("0"))% off</span>
+                </p>
+            }
+            else
+            {
+                <span class="text-light" style="font-size:40px">$@item.Price.ToString("0")</span>
+            }
 
         </div>
 
