@@ -22,10 +22,10 @@
             <h2 class=" text-center">
                 <a asp-controller="Product" asp-action="Details" asp-route-productId="@item.ProductId" class="product-link">@(item.Name.Length > 15 ? $"{item.Name.Substring(0, 15)}..." : item.Name)</a>
             </h2>
-            @if (item.Discount.Percentage > 0)
+            @if (item.Discount!.Percentage > 0)
             {
-                <p class="last-price"><span>$@item.Price</span></p>
-                <p class="new-price"><span>$@((item.Price) - (item.Price * 0.05M))</span>
+                <p class="last-price"><span>$@item.Price.ToString("f2")</span></p>
+                <p class="new-price"><span>$@(((item.Price) - (item.Price * (item.Discount.Percentage / 100))).ToString("f2"))</span>
                 <span class="badge badge-discount text-dark">@(item.Discount.Percentage.ToString("0"))% off</span>
                 </p>
             }

@@ -10,13 +10,13 @@ namespace E_CommerceProject.Controllers
         private readonly IBaseRepository<Order> _orderRepository = orderRepository;
         public async Task<IActionResult> List()
         {
-            var shipments = await _shipmentRepository.GetAll(null, new[] { "Order" });
+            var shipments = await _shipmentRepository.GetAll(null, ["Order"]);
             return View(shipments);
         }
 
         public async Task<IActionResult> Details(int shipmentId)
         {
-            var shipment = await _shipmentRepository.GetById(shipmentId);
+            var shipment = await _shipmentRepository.GetById(s => s.ShipmentId == shipmentId);
             if (shipment == null)
             {
                 return NotFound();
@@ -26,7 +26,11 @@ namespace E_CommerceProject.Controllers
 
         public IActionResult Create()
         {
-            var shipment = new Shipment();
+            var shipment = new Shipment
+            {
+                ShippingDate = DateTime.Now,
+                EstimatedDeliveryDate = DateTime.Now.AddDays(2)
+            };
             return View("ShipmentForm", shipment);
         }
 
@@ -51,7 +55,7 @@ namespace E_CommerceProject.Controllers
 
         public async Task<IActionResult> Edit(int shipmentId)
         {
-            var shipment = await _shipmentRepository.GetById(shipmentId);
+            var shipment = await _shipmentRepository.GetById(s => s.ShipmentId == shipmentId);
             if (shipment == null)
             {
                 return NotFound();
@@ -83,7 +87,7 @@ namespace E_CommerceProject.Controllers
         {
             try
             {
-                var shipment = await _shipmentRepository.GetById(id);
+                var shipment = await _shipmentRepository.GetById(s => s.ShipmentId == id);
 
                 if (shipment == null)
                 {

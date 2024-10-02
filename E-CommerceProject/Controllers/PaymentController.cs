@@ -1,30 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using E_CommerceProject.Entities.Models;
 using E_CommerceProject.Repositories.Interfaces;
-using System.Threading.Tasks;
 
 namespace E_CommerceProject.Controllers
 {
-    public class PaymentController : Controller
+    public class PaymentController(IBaseRepository<Payment> paymentRepository) : Controller
     {
-        private readonly IBaseRepository<Payment> _paymentRepository;
+        private readonly IBaseRepository<Payment> _paymentRepository = paymentRepository;
 
-        public PaymentController(IBaseRepository<Payment> paymentRepository)
-        {
-            _paymentRepository = paymentRepository;
-        }
-
-        // GET: PaymentController/List
         public async Task<ActionResult> List()
         {
             var payments = await _paymentRepository.GetAll();
             return View(payments);
         }
 
-        // GET: PaymentController/Details/5
         public async Task<ActionResult> Details(int id)
         {
-            var payment = await _paymentRepository.GetById(id);
+            var payment = await _paymentRepository.GetById(p => p.PaymentId == id);
             if (payment == null)
             {
                 return NotFound();
@@ -32,13 +24,11 @@ namespace E_CommerceProject.Controllers
             return View(payment);
         }
 
-        // GET: PaymentController/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: PaymentController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(Payment payment)
@@ -58,10 +48,9 @@ namespace E_CommerceProject.Controllers
             }
         }
 
-        // GET: PaymentController/Edit/5
         public async Task<ActionResult> Edit(int id)
         {
-            var payment = await _paymentRepository.GetById(id);
+            var payment = await _paymentRepository.GetById(p => p.PaymentId == id);
             if (payment == null)
             {
                 return NotFound();
@@ -69,7 +58,6 @@ namespace E_CommerceProject.Controllers
             return View(payment);
         }
 
-        // POST: PaymentController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(Payment payment)
@@ -89,29 +77,23 @@ namespace E_CommerceProject.Controllers
             }
         }
 
-        // GET: PaymentController/Delete/5
-        public async Task<ActionResult> Delete(int id)
-        {
-            var payment = await _paymentRepository.GetById(id);
-            if (payment == null)
-            {
-                return NotFound();
-            }
-            return View(payment);
-        }
-
-        // POST: PaymentController/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
+                var shipment = await _paymentRepository.GetById(s => s.PaymentId == id);
+
+                if (shipment == null)
+                {
+                    return NotFound();
+                }
+
                 await _paymentRepository.DeleteItem(id);
-                return RedirectToAction(nameof(List));
+                return Ok();
             }
-            catch
+            catch (Exception ex)
             {
+                ViewBag.Error = ex.Message;
                 return View();
             }
         }
