@@ -51,7 +51,7 @@ namespace E_CommerceProject.Repositories.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("Carts");
+                    b.ToTable("Carts", (string)null);
                 });
 
             modelBuilder.Entity("E_CommerceProject.Entities.Models.Category", b =>
@@ -75,7 +75,7 @@ namespace E_CommerceProject.Repositories.Migrations
 
                     b.HasKey("CategoryId");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("E_CommerceProject.Entities.Models.CustomerInfo", b =>
@@ -136,7 +136,7 @@ namespace E_CommerceProject.Repositories.Migrations
 
                     b.HasKey("CustomerInfoId");
 
-                    b.ToTable("CustomerInfo");
+                    b.ToTable("CustomerInfo", (string)null);
                 });
 
             modelBuilder.Entity("E_CommerceProject.Entities.Models.Discount", b =>
@@ -173,7 +173,7 @@ namespace E_CommerceProject.Repositories.Migrations
 
                     b.HasKey("DiscountId");
 
-                    b.ToTable("Discounts");
+                    b.ToTable("Discounts", (string)null);
                 });
 
             modelBuilder.Entity("E_CommerceProject.Entities.Models.Order", b =>
@@ -202,7 +202,7 @@ namespace E_CommerceProject.Repositories.Migrations
 
                     b.HasIndex("CustomerInfoId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("E_CommerceProject.Entities.Models.OrderDetail", b =>
@@ -234,7 +234,7 @@ namespace E_CommerceProject.Repositories.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderItems");
+                    b.ToTable("OrderItems", (string)null);
                 });
 
             modelBuilder.Entity("E_CommerceProject.Entities.Models.Payment", b =>
@@ -268,7 +268,7 @@ namespace E_CommerceProject.Repositories.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("Payments");
+                    b.ToTable("Payments", (string)null);
                 });
 
             modelBuilder.Entity("E_CommerceProject.Entities.Models.Product", b =>
@@ -318,7 +318,7 @@ namespace E_CommerceProject.Repositories.Migrations
 
                     b.HasIndex("DiscountId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("E_CommerceProject.Entities.Models.Shipment", b =>
@@ -355,7 +355,7 @@ namespace E_CommerceProject.Repositories.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("Shipments");
+                    b.ToTable("Shipments", (string)null);
                 });
 
             modelBuilder.Entity("E_CommerceProject.Entities.Models.Wishlist", b =>
@@ -384,7 +384,7 @@ namespace E_CommerceProject.Repositories.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Wishlists");
+                    b.ToTable("Wishlists", (string)null);
                 });
 
             modelBuilder.Entity("E_CommerceProject.Entities.Models.Cart", b =>
