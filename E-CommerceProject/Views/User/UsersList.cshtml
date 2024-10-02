@@ -1,0 +1,45 @@
+﻿@model IEnumerable<UserViewModel>
+
+@{
+    ViewData["Title"] = "UsersList";
+    Layout = "_AdminLayout";
+}
+
+<h1>Users List</h1>
+<hr />
+
+<table class="table table-info">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Username)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Roles)
+            </th>
+            <th style="text-align:right;">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Username)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @string.Join(", ", item.Roles)
+                </td>
+                <td style="text-align:right;">
+                    <a class="btn btn-primary" asp-action="ManageRole" asp-route-userId="@item.Id">Manage roles</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

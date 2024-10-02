@@ -1,0 +1,37 @@
+﻿@model UserRolesViewModel
+
+@{
+    ViewData["Title"] = "User Roles";
+    Layout = "_AdminLayout";    
+}
+
+<form asp-action="UpdateRole" method="post">
+    <div class="card mt-5 mx-auto">
+        <div class="card-header">
+            <h2>User: <span>@Model.Username</span></h2>
+            <h3>Email: <span>@Model.Email</span></h3>
+        </div>
+
+        <div class="card-body">
+            <div class="bg-light rounded h-11 p-4 shadow">
+                <input asp-for="UserId" hidden />
+
+                @for (int i = 0; i < Model.Roles.Count; i++)
+                {
+                    <div class="form-check">
+                        <input asp-for="UserId" hidden />
+                        <input asp-for="Roles[i].RoleName" hidden />
+                        <input class="form-check-input" asp-for="Roles[i].IsSelected" />
+                        <label asp-for="Roles[i].RoleName">@Model.Roles[i].RoleName</label>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="form-group">
+                <button type="submit" class="btn btn-success"><i class="bi bi-check"></i>Save</button>
+                <a asp-action="UsersList" class="btn btn-danger"><i class="bi bi-x"></i>Cancel</a>
+            </div>
+        </div>
+    </div>
+</form>
