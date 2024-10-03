@@ -15,15 +15,23 @@ namespace E_CommerceProject.Controllers
 
         public async Task<IActionResult> UsersList()
         {
-            var users = await _userManager.Users.Select(u => new UserViewModel()
-            {
-                Id = u.Id,
-                Username = u.UserName!,
-                Email = u.Email!,
-                Roles = _userManager.GetRolesAsync(u).Result
-            }).ToListAsync();
+            var users = await _userManager.Users.ToListAsync();
 
-            return View(users);
+            var userViewModels = new List<UserViewModel>();
+
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                userViewModels.Add(new UserViewModel
+                {
+                    Id = user.Id,
+                    Username = user.UserName!,
+                    Email = user.Email!,
+                    Roles = roles
+                });
+            }
+
+            return View(userViewModels);
         }
 
         public async Task<IActionResult> RolesList()
@@ -94,7 +102,7 @@ namespace E_CommerceProject.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateRole(UserRolesViewModel model)
+        public async Task<IActionResult> AssignRole(UserRolesViewModel model)
         {
             var user = await _userManager.FindByIdAsync(model.UserId);
             if (user == null)

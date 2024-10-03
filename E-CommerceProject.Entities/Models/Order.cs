@@ -8,7 +8,7 @@ namespace E_CommerceProject.Entities.Models
         public int Orderid { get; set; }
 
         [MaxLength(50)]
-        public string Status { get; set; } = string.Empty;
+        public string Status { get; set; } = "Pending";
 
         [Display(Name = "Order Date")]
         public DateTime OrderDate { get; set; } = DateTime.Now;
@@ -18,6 +18,9 @@ namespace E_CommerceProject.Entities.Models
 
         public int CustomerInfoId { get; set; }
         public CustomerInfo? CustomerInfo { get; set; }
+
+        public int CartId { get; set; }
+        public Cart? Cart { get; set; }
 
         public List<OrderDetail>? OrderDetails { get; set; }
     }
