@@ -1,0 +1,45 @@
+﻿@model CartViewModel
+@{
+    ViewData["Title"] = "Cart";
+    Layout = "_CustomLayout";
+}
+
+<div class="row gx-3 mt-5">
+    <div class="col-8">
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            @foreach (var item in Model.CartItems)
+            {
+                <div class="col">
+                    <div class="card h-100">
+                        <img src="@item.Product.Cover" alt="@item.Product.Name" class="card-img-top" />
+                        <div class="card-body">
+                            <h5 class="text-light">@item.Amount x @item.Product.Name</h5>
+                            <div class="d-flex justify-content-between">
+                                <h6>@item.Product.Discount</h6>
+                                <h2 class="text-light">@item.Product.Price.ToString("c")</h2>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a asp-action="RemoveFromCart" asp-route-productId="@item.Product.ProductId" class="btn btn-outline-danger">Remove</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="col-4">
+        <div class="card p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="text-light">Total:</h4>
+                <h5 class="text-light">@Model.CartTotal.ToString("c")</h5>
+            </div>
+            <hr />
+            <div class="text-center d-grid">
+                <a class="btn btn-success" asp-controller="Order" asp-action="Checkout">
+                    <h4>Check out now</h4>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

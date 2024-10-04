@@ -8,7 +8,9 @@ namespace E_CommerceProject.Entities.Models
 
         public int Amount { get; set; }
 
+        public string? ShoppingCartId { get; set; }
+
         public int ProductId { get; set; }
-        public Product Product { get; set; } = default!;
+        public Product? Product { get; set; }
     }
 }

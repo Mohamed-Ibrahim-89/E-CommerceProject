@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\E-CommerceProject.Entities\E-CommerceProject.Entities.csproj" />
     <ProjectReference Include="..\E-CommerceProject.Repositories\E-CommerceProject.Repositories.csproj" />
   </ItemGroup>
 

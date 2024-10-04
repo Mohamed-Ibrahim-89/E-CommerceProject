@@ -2,13 +2,15 @@
 using E_CommerceProject.Entities.Models;
 using E_CommerceProject.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using NToastNotify;
 
 namespace SunPiontOfSaleFinalProject.App.Controllers
 {
     [Authorize(Roles = "Admin")]
-    public class CategoryController(IBaseRepository<Category> categoryRepository) : Controller
+    public class CategoryController(IBaseRepository<Category> categoryRepository, IToastNotification toastNotification) : Controller
     {
         private readonly IBaseRepository<Category> _categoryRepository = categoryRepository;
+        private readonly IToastNotification _toastNotification = toastNotification;
 
         public async Task<ActionResult> List()
         {
@@ -34,6 +36,8 @@ namespace SunPiontOfSaleFinalProject.App.Controllers
                     return View("CategoryForm", item);
                 }
                 await _categoryRepository.AddItem(item);
+
+                _toastNotification.AddSuccessToastMessage("Category added successfully");
                 return RedirectToAction(nameof(List));
             }
             catch
@@ -58,6 +62,8 @@ namespace SunPiontOfSaleFinalProject.App.Controllers
             try
             {
                 await _categoryRepository.UpdateItem(Item);
+
+                _toastNotification.AddSuccessToastMessage("Category updated successfully");
                 return RedirectToAction(nameof(List));
             }
             catch

@@ -2,13 +2,15 @@
 using E_CommerceProject.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NToastNotify;
 
 namespace E_CommerceProject.Controllers
 {
     [Authorize(Roles = "Admin")]
-    public class DiscountController(IBaseRepository<Discount> discount) : Controller
+    public class DiscountController(IBaseRepository<Discount> discount, IToastNotification toastNotification) : Controller
     {
         private readonly IBaseRepository<Discount> _discountRepository = discount;
+        private readonly IToastNotification _toastNotification = toastNotification;
 
         public async Task<IActionResult> List()
         {
@@ -32,6 +34,7 @@ namespace E_CommerceProject.Controllers
                 {
                     var discountText = await _discountRepository.AddItem(discount);
 
+                    _toastNotification.AddSuccessToastMessage("Discount added successfully");
                     return RedirectToAction(nameof(List));
                 }
                 catch
@@ -61,6 +64,8 @@ namespace E_CommerceProject.Controllers
                 try
                 {
                     await _discountRepository.UpdateItem(discount);
+
+                    _toastNotification.AddSuccessToastMessage("Discount updated successfully");
                     return RedirectToAction(nameof(List));
                 }
                 catch
