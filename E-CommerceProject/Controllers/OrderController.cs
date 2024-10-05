@@ -9,6 +9,7 @@ namespace E_CommerceProject.Controllers
     {
         // GET: OrderController
         private IBaseRepository<Order> _order;
+        private IBaseRepository<Cart> _cart;
         public OrderController(IBaseRepository<Order> order)
         {
             _order = order;
@@ -34,8 +35,10 @@ namespace E_CommerceProject.Controllers
         // GET: OrderController/Create
         public ActionResult Create(int cartId)
         {
-
-            var order=new Order();
+            var order = new Order
+            {
+                CartId = cartId
+            };
             return View("OrderForm",order);
            
         }
