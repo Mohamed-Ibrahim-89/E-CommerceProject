@@ -26,7 +26,7 @@ namespace E_CommerceProject.Controllers
 
         public async Task<IActionResult> AddToCart(int productId)
         {
-            var product = await _productRepository.GetById(p => p.ProductId == productId);
+            var product = await _productRepository.GetById(p => p.ProductId == productId, ["Discount"]);
 
             if (product != null)
             {

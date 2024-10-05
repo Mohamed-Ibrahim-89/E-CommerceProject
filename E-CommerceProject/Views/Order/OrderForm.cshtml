@@ -2,8 +2,7 @@
 
 @{
     ViewData["Title"] = "Create";
-    
-
+    Layout = "_CustomLayout";
 }
 
 
@@ -15,7 +14,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="@(Model.Orderid > 0 ? "Edit" : "Create")">
+        <form asp-action="@(Model.Orderid > 0 ? "Edit" : "Checkout")">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Orderid" />
             

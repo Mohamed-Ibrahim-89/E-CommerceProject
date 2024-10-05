@@ -64,7 +64,7 @@ namespace E_CommerceProject.Repositories.Interfaces
         public async Task<List<Cart>> GetCartItems()
         {
             return await _context.Carts.Where(
-                c => c.ShoppingCartId == ShoppingCartId).Include(p => p.Product).ToListAsync();
+                c => c.ShoppingCartId == ShoppingCartId).Include(p => p.Product).ThenInclude(d => d.Discount).ToListAsync();
 
         }
 

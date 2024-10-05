@@ -15,8 +15,7 @@
                         <div class="card-body">
                             <h5 class="text-light">@item.Amount x @item.Product.Name</h5>
                             <div class="d-flex justify-content-between">
-                                <h6>@item.Product.Discount</h6>
-                                <h2 class="text-light">@item.Product.Price.ToString("c")</h2>
+                                <h2 class="text-light">$@(((item.Product.Price) - (item.Product.Price * (item.Product.Discount.Percentage / 100))).ToString("f2"))</h2>
                             </div>
                         </div>
                         <div class="card-footer">
@@ -32,7 +31,7 @@
         <div class="card p-3">
             <div class="d-flex justify-content-between align-items-center">
                 <h4 class="text-light">Total:</h4>
-                <h5 class="text-light">@Model.CartTotal.ToString("c")</h5>
+                <h5 class="text-light">$@Model.CartTotal.ToString("f2")</h5>
             </div>
             <hr />
             <div class="text-center d-grid">

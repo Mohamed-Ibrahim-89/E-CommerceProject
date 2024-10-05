@@ -1,4 +1,5 @@
 ﻿using E_CommerceProject.Entities.Models;
+using E_CommerceProject.Repositories.Implementations;
 using E_CommerceProject.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,11 +8,12 @@ namespace E_CommerceProject.Controllers
 {
     public class OrderController : Controller
     {
-        // GET: OrderController
         private IBaseRepository<Order> _order;
-        public OrderController(IBaseRepository<Order> order)
+        private readonly ICartRepository _cartRepository;
+        public OrderController(IBaseRepository<Order> order, ICartRepository cartRepository)
         {
             _order = order;
+            _cartRepository = cartRepository;
         }
 
         public async Task< ActionResult> Index()
@@ -20,49 +22,48 @@ namespace E_CommerceProject.Controllers
             return View(orders);
         }
 
-        // GET: OrderController/Details/5
         public async Task< ActionResult >Details(int id)
         {
-            var order =await _order.GetById(id);
+            var order =await _order.GetById(o => o.Orderid == id);
             if (order == null)
             { 
                    return NotFound();
             }
             return View(order);
         }
-
-        // GET: OrderController/Create
-        public ActionResult Create()
+        public ActionResult Checkout()
         {
-            var order=new Order();
+            var cart = _cartRepository.GetCartItems().Result.Last();
+            var order = new Order
+            {
+                CartId = cart.CartId
+            };
             return View("OrderForm",order);
            
         }
 
-        // POST: OrderController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task< ActionResult> Create(Order order)
+        public async Task< ActionResult> Checkout(Order order)
         {
                 if (ModelState.IsValid)
                 {
-                try
-                {
-                    var orderCreate =await _order.AddItem(order);
-                    return RedirectToAction(nameof(Index));
-                }
-                catch
-                {
-                    return View("OrderForm");
-                }
+                    try
+                    {
+                        var orderCreate =await _order.AddItem(order);
+                        return RedirectToAction(nameof(Index));
+                    }
+                    catch
+                    {
+                        return View("OrderForm");
+                    }
                 }
                 return View("OrderForm");
         }
 
-        // GET: OrderController/Edit/5
         public async Task< ActionResult> Edit(int id)
         {
-            var order= await _order.GetById(id);
+            var order= await _order.GetById(o => o.Orderid == id);
             if (order==null) 
             {
                 return NotFound();
@@ -71,7 +72,6 @@ namespace E_CommerceProject.Controllers
             
         }
 
-        // POST: OrderController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Order order)
@@ -92,10 +92,9 @@ namespace E_CommerceProject.Controllers
             return View("OrderForm", order);
         }
 
-        // GET: OrderController/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
-            var order = await _order.GetById(id);
+            var order = await _order.GetById(o => o.Orderid == id);
             if (order == null)
             {
                 return NotFound();
@@ -103,7 +102,6 @@ namespace E_CommerceProject.Controllers
             return View(order);
         }
 
-        // POST: OrderController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id )
