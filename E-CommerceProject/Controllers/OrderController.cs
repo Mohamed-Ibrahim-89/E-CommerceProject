@@ -23,7 +23,7 @@ namespace E_CommerceProject.Controllers
         // GET: OrderController/Details/5
         public async Task< ActionResult >Details(int id)
         {
-            var order =await _order.GetById(id);
+            var order =await _order.GetById(o => o.Orderid == id);
             if (order == null)
             { 
                    return NotFound();
@@ -32,8 +32,9 @@ namespace E_CommerceProject.Controllers
         }
 
         // GET: OrderController/Create
-        public ActionResult Create()
+        public ActionResult Create(int cartId)
         {
+
             var order=new Order();
             return View("OrderForm",order);
            
@@ -62,7 +63,7 @@ namespace E_CommerceProject.Controllers
         // GET: OrderController/Edit/5
         public async Task< ActionResult> Edit(int id)
         {
-            var order= await _order.GetById(id);
+            var order= await _order.GetById(o => o.Orderid == id);
             if (order==null) 
             {
                 return NotFound();
@@ -95,7 +96,7 @@ namespace E_CommerceProject.Controllers
         // GET: OrderController/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
-            var order = await _order.GetById(id);
+            var order = await _order.GetById(o => o.Orderid == id);
             if (order == null)
             {
                 return NotFound();
