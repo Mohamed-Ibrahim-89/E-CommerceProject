@@ -34,7 +34,9 @@ namespace E_CommerceProject.Controllers
         // GET: OrderController/Create
         public ActionResult Create()
         {
-            return View();
+            var order=new Order();
+            return View("OrderForm",order);
+           
         }
 
         // POST: OrderController/Create
@@ -51,10 +53,10 @@ namespace E_CommerceProject.Controllers
                 }
                 catch
                 {
-                    return View("Create");
+                    return View("OrderForm");
                 }
                 }
-                return View("Create");
+                return View("OrderForm");
         }
 
         // GET: OrderController/Edit/5
@@ -65,7 +67,8 @@ namespace E_CommerceProject.Controllers
             {
                 return NotFound();
             }
-            return View(order);
+            return View("OrderForm", order);
+            
         }
 
         // POST: OrderController/Edit/5
@@ -82,11 +85,11 @@ namespace E_CommerceProject.Controllers
                 }
                 catch
                 {
-                    return View(order);
+                    return View("OrderForm", order);
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(order);
+            return View("OrderForm", order);
         }
 
         // GET: OrderController/Delete/5

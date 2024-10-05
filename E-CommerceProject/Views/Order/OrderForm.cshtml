@@ -2,14 +2,14 @@
 
 @{
     ViewData["Title"] = "Create";
-    Layout = "_AdminLayout";
+    
 
 }
 
 
 
 <h4>
-    @(Model.Orderid > 0 ? $"Edit {Model.CustomerInfo.FirstName} {Model.CustomerInfo.LastName} Order" : "Add new Order")
+    @(Model.Orderid > 0 ? $"Edit Order" : "Add new Order")
 
 </h4>
 <hr />
