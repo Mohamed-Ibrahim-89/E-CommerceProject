@@ -17,7 +17,10 @@
         <nav class="navbar" data-bs-theme="light">
             <div class="container-fluid">
                 <div>
-                    <a class="navbar-brand text-dark" asp-controller="Home" asp-action="Index">E-Commerce</a>
+                    <div class="d-flex align-items-center">
+                        <a class="navbar-brand text-dark me-3 fw-bold" asp-controller="Home" asp-action="Index">E-Commerce</a>
+                        @await Component.InvokeAsync("CategoryMenu")
+                    </div>
 
                     @if (User.Identity!.IsAuthenticated && User.IsInRole("Admin"))
                     {
@@ -40,8 +43,8 @@
                     @if (!User.IsInRole("Admin"))
                     {
                         <div class="cart-wishlist-container">
-                            <a class="btn btn-primary me-2" asp-controller="Cart" asp-action="Index"><i class="fa fa-shopping-cart"></i> Cart(0)</a>
-                            <a class="btn btn-primary me-2" asp-controller="Wishlist" asp-action="Index"><i class="fa fa-heart"></i> Wishlist(0)</a>
+                            @await Component.InvokeAsync("ShoppingCartSummary")
+                            <a class="btn btn-warning me-2" asp-controller="Wishlist" asp-action="Index"><i class="fa fa-heart"></i> Wishlist (0)</a>
                         </div>
                     }
                     <div class="user-info-container">

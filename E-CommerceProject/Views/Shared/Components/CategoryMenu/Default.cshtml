@@ -1,0 +1,46 @@
+﻿@model IEnumerable<Category>
+
+<div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+        Category</button>
+
+    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
+        @foreach (var category in Model)
+        {
+            <li>
+                <a class="dropdown-item" asp-controller="Home" asp-action="Index"
+                   asp-route-categoryName="@category.Name">
+                    @category.Name
+                </a>
+            </li>
+        }
+        <li>
+            <a class="dropdown-item" asp-controller="Home" asp-action="Index">
+                All Products
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+<style>
+    /* Custom dropdown menu styles */
+    .dropdown-menu {
+        background-color: transparent;
+        border-color: transparent;
+    }
+
+        .dropdown-menu .dropdown-item {
+            color: #212529;
+        }
+
+            .dropdown-menu .dropdown-item:hover {
+                background-color: #e9ecef;
+                color: #212529;
+            }
+
+            .dropdown-menu .dropdown-item.active {
+                background-color: #dee2e6;
+                color: #212529;
+            }
+</style>

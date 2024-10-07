@@ -8,10 +8,15 @@ namespace E_CommerceProject.Controllers
     {
         private readonly IBaseRepository<Product> _productRepository = productRepository;
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? categoryName)
         {
-            var products = await _productRepository.GetAll(null, ["Category", "Discount"]);
+            if (categoryName != null)
+            {
+                var SelectedProducts = await _productRepository.GetAll(c => c.Category!.Name.Contains(categoryName), ["Category", "Discount"]);
+                return View(SelectedProducts);
+            }
 
+            var products = await _productRepository.GetAll(null, ["Category", "Discount"]);
             return View(products);
         }
 
