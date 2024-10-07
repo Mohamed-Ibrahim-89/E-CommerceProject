@@ -1,0 +1,128 @@
+﻿@model IEnumerable<Order>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "_AdminLayout";
+}
+
+<h1>Order</h1>
+
+<p>
+    <a asp-action="Checkout" class="btn btn-success">Create New</a>
+</p>
+<table class="table table-info">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TotalPrice)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CustomerInfo!.FirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CustomerInfo!.LastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CustomerInfo!.PhoneNumber)
+            </th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr class="data">
+                <td>
+                @Html.DisplayFor(modelItem => item.OrderId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalPrice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CustomerInfo!.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CustomerInfo!.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CustomerInfo!.PhoneNumber)
+            </td>
+            <td>
+                <div class="btn-group">
+                    <a asp-action="Details" asp-route-orderId="@item.OrderId" class="btn btn-info">
+                        <i class="bi bi-info-circle"></i>
+                        Details
+                    </a>
+                    <a asp-action="Edit" asp-route-orderId="@item.OrderId" class="btn btn-warning">
+                        <i class="bi bi-pencil"></i>
+                        Edit
+                    </a>
+                    <a href="javascript:;" class="btn btn-danger js-delete" data-id="@item.OrderId">
+                        <i class="bi bi-trash"></i>
+                        Delete
+                    </a>
+                </div>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('.js-delete').on('click', function () {
+                var btn = $(this);
+                var orderId = btn.data('id');
+
+                bootbox.confirm({
+                    message: "Are you sure that you need to delete this item?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-danger'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-outline-secondary'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            $.ajax({
+                                url: '/Order/Delete/' + orderId,
+                                success: function () {
+                                    btn.parents('.data').fadeOut();
+
+                                    toastr.success('Item deleted successfully');
+                                },
+                                error: function () {
+                                    toastr.error('Something went wrong!');
+                                }
+                            });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+}

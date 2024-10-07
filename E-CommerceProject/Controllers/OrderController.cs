@@ -1,124 +1,133 @@
 ﻿using E_CommerceProject.Entities.Models;
 using E_CommerceProject.Repositories.Implementations;
 using E_CommerceProject.Repositories.Interfaces;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NToastNotify;
 
 namespace E_CommerceProject.Controllers
 {
-    public class OrderController : Controller
+    public class OrderController(IBaseRepository<Order> orderRepository, ICartRepository cartRepository, IToastNotification toastNotification) : Controller
     {
-        private IBaseRepository<Order> _order;
-        private readonly ICartRepository _cartRepository;
-        public OrderController(IBaseRepository<Order> order, ICartRepository cartRepository)
-        {
-            _order = order;
-            _cartRepository = cartRepository;
-        }
+        private readonly IBaseRepository<Order> _orderRepository = orderRepository;
+        private readonly ICartRepository _cartRepository = cartRepository;
+        private readonly IToastNotification _toastNotification = toastNotification;
 
-        public async Task< ActionResult> Index()
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult> List()
         {
-            var orders =await _order.GetAll();
+            var orders = await _orderRepository.GetAll(null, ["CustomerInfo"]);
             return View(orders);
         }
 
-        public async Task< ActionResult >Details(int id)
+        public async Task<ActionResult> Details(int orderId)
         {
-            var order =await _order.GetById(o => o.Orderid == id);
+            var order = await _orderRepository.GetById(o => o.OrderId == orderId, ["CustomerInfo", "OrderDetails", "OrderDetails.Product"]);
             if (order == null)
-            { 
-                   return NotFound();
+            {
+                return NotFound();
             }
             return View(order);
         }
-        public ActionResult Checkout()
+
+        public async Task<ActionResult> Checkout()
         {
-            var cart = _cartRepository.GetCartItems().Result.Last();
-            var order = new Order
+            var cartItems = await _cartRepository.GetCartItems();
+            if (cartItems.Count == 0)
             {
-                CartId = cart.CartId
-            };
-            return View("OrderForm",order);
-           
+                _toastNotification.AddErrorToastMessage("Your cart is empty, add some pies first");
+                return RedirectToAction("Index", "Cart");
+            }
+            else
+            {
+                var order = new Order();
+                return View("OrderForm", order);
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task< ActionResult> Checkout(Order order)
+        public async Task<ActionResult> Checkout(Order order)
         {
-                if (ModelState.IsValid)
+            var cartItems = await _cartRepository.GetCartItems();
+
+            if (ModelState.IsValid)
+            {
+                try
                 {
-                    try
+                    order.TotalPrice = cartItems.Sum(c => c.Product!.Price * c.Amount);
+                    order.OrderDetails = [];
+                    foreach (var item in cartItems)
                     {
-                        var orderCreate =await _order.AddItem(order);
-                        return RedirectToAction(nameof(Index));
+                        order.OrderDetails.Add(new OrderDetail
+                        {
+                            ProductId = item.ProductId,
+                            Quantity = item.Amount,
+                            Price = item.Product!.Price
+                        });
                     }
-                    catch
-                    {
-                        return View("OrderForm");
-                    }
+
+                    await _orderRepository.AddItem(order);
+                    await _cartRepository.ClearCart();
+
+                    _toastNotification.AddSuccessToastMessage("Thanks for your order. You'll get it soon");
+                    return RedirectToAction("Index", "Home");
                 }
-                return View("OrderForm");
+                catch(Exception ex)
+                {
+                    _toastNotification.AddErrorToastMessage(ex.Message);
+                    return View("OrderForm");
+                }
+            }
+            return View("OrderForm");
         }
 
-        public async Task< ActionResult> Edit(int id)
+        public async Task<ActionResult> Edit(int orderId)
         {
-            var order= await _order.GetById(o => o.Orderid == id);
-            if (order==null) 
+            var order = await _orderRepository.GetById(o => o.OrderId == orderId, ["CustomerInfo"]);
+            if (order == null)
             {
                 return NotFound();
             }
             return View("OrderForm", order);
-            
+
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Order order)
+        public async Task<IActionResult> Edit(Order order)
         {
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    await _order.UpdateItem(order);
+                    await _orderRepository.UpdateItem(order);
                 }
                 catch
                 {
                     return View("OrderForm", order);
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(List));
             }
             return View("OrderForm", order);
         }
 
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> Delete(int id)
-        {
-            var order = await _order.GetById(o => o.Orderid == id);
-            if (order == null)
-            {
-                return NotFound();
-            }
-            return View(order);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteConfirmed(int id )
         {
             try
             {
-               
-
-                await _order.DeleteItem(id);
-                return RedirectToAction(nameof(Index));
+                await _orderRepository.DeleteItem(id);
+                return Ok();
             }
-            catch
+            catch (Exception ex)
             {
+                ViewBag.Error = ex.Message;
                 return View();
             }
         }
-             
-                    
+
+
     }
 }

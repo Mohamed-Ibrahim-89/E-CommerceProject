@@ -7,11 +7,10 @@ using NToastNotify;
 
 namespace E_CommerceProject.Controllers
 {
-    public class CartController(IBaseRepository<Product> productRepository, ICartRepository cartRepository, IToastNotification toastNotification) : Controller
+    public class CartController(IBaseRepository<Product> productRepository, ICartRepository cartRepository) : Controller
     {
         private readonly ICartRepository _cartRepository = cartRepository;
         private readonly IBaseRepository<Product> _productRepository = productRepository;
-        private readonly IToastNotification _toastNotification = toastNotification;
 
 
         public async Task<IActionResult> Index()
@@ -19,7 +18,7 @@ namespace E_CommerceProject.Controllers
             var cartItem = await _cartRepository.GetCartItems();
             var cartTotal = await _cartRepository.GetCartTotal();
 
-            var cartViewModel = new CartViewModel(cartItem, (int)cartTotal);
+            var cartViewModel = new CartViewModel(cartItem, cartTotal);
 
             return View(cartViewModel);
         }
@@ -33,7 +32,6 @@ namespace E_CommerceProject.Controllers
                 await _cartRepository.AddToCart(product);
             }
 
-            _toastNotification.AddSuccessToastMessage("Item added successfully");
             return RedirectToAction("Index");
         }
 
@@ -46,7 +44,6 @@ namespace E_CommerceProject.Controllers
                 await _cartRepository.RemoveFromCart(product);
             }
 
-            _toastNotification.AddAlertToastMessage("Item Removed successfully");
             return RedirectToAction("Index");
         }
     }

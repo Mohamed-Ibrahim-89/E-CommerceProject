@@ -5,7 +5,7 @@ namespace E_CommerceProject.Entities.Models
 {
     public class Order
     {
-        public int Orderid { get; set; }
+        public int OrderId { get; set; }
 
         [MaxLength(50)]
         public string Status { get; set; } = "Pending";
@@ -18,9 +18,6 @@ namespace E_CommerceProject.Entities.Models
 
         public int CustomerInfoId { get; set; }
         public CustomerInfo? CustomerInfo { get; set; }
-
-        public int CartId { get; set; }
-        public Cart? Cart { get; set; }
 
         public List<OrderDetail>? OrderDetails { get; set; }
     }

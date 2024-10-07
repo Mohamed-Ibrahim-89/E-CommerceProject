@@ -70,8 +70,8 @@ namespace E_CommerceProject.Repositories.Interfaces
 
         public async Task<decimal> GetCartTotal()
         {
-            var total = await _context.Carts.Where(c => c.ShoppingCartId == ShoppingCartId)
-                .Select(c => c.Product.Price * c.Amount).SumAsync();
+            var total = await _context.Carts.Where(c => c.ShoppingCartId == ShoppingCartId).Include(p => p.Product).ThenInclude(d => d.Discount)
+                .Select(c => (c.Product.Price - (c.Product.Price * c.Product.Discount.Percentage / 100)) * c.Amount).SumAsync();
 
             return total;
         }

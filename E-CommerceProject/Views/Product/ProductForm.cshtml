@@ -56,7 +56,7 @@
 
             <div class="form-group">
                 <label asp-for="Product.DiscountId" class="control-label"></label>
-                <select asp-for="Product.DiscountId" class="form-control" asp-items="@(new SelectList(Model.Discounts, "DiscountId", "Percentage"))" required>
+                <select asp-for="Product.DiscountId" class="form-control" asp-items="@(new SelectList(Model.Discounts, "DiscountId", "Name"))" required>
                     <option value="">--Select a discount--</option>
                 </select>
                 <span asp-validation-for="Product.DiscountId" class="text-danger"></span>
