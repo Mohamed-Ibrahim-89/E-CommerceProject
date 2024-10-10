@@ -8,10 +8,11 @@ using Microsoft.EntityFrameworkCore;
 namespace E_CommerceProject.Controllers
 {
     [Authorize(Roles = "Admin")]
-    public class UserController(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager) : Controller
+    public class UserController(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, IHttpContextAccessor contextAccessor) : Controller
     {
         private readonly UserManager<AppUser> _userManager = userManager;
         private readonly RoleManager<IdentityRole> _roleManager = roleManager;
+        private readonly IHttpContextAccessor _contextAccessor = contextAccessor;
 
         public async Task<IActionResult> UsersList()
         {
@@ -117,6 +118,32 @@ namespace E_CommerceProject.Controllers
             return RedirectToAction("UsersList");
         }
 
+
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+        [AllowAnonymous]
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                string Username = _contextAccessor.HttpContext!.User.Identity!.Name!;
+                var user = await _userManager.FindByNameAsync(Username);
+                var result = await _userManager.ChangePasswordAsync(user!, model.CurrentPassword, model.NewPassword);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("index", "home");
+                }
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+            return View(model);
+        }
     }
 
 }
