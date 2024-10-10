@@ -5,20 +5,22 @@
     Layout = "_CustomLayout";
 }
 
-<h4>
-    @(Model.OrderId > 0 ? $"Edit Order" : "Add new Order")
-
-</h4>
-<hr />
+@if(Model.OrderId > 0)
+{
+    <h4>Edit Order</h4>
+    <hr />
+}
 
 <form asp-action="@(Model.OrderId > 0 ? "Edit" : "Checkout")">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <input type="hidden" asp-for="OrderId" />
-
-    <h3 class="text-center mb-3">
-        You're just one step away from your order
-    </h3>
-
+    @if (Model.OrderId == 0)
+    {
+        <h3 class="text-center mb-3">
+            You're just one step away from your order
+        </h3>
+        <hr />
+    }
     <div class="col-6">
         <div class="row g-2">
 

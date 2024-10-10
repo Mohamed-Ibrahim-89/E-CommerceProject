@@ -7,9 +7,11 @@ using NToastNotify;
 
 namespace E_CommerceProject.Controllers
 {
-    public class OrderController(IBaseRepository<Order> orderRepository, ICartRepository cartRepository, IToastNotification toastNotification) : Controller
+    public class OrderController(IBaseRepository<Order> orderRepository, ICartRepository cartRepository, IToastNotification toastNotification, IBaseRepository<OrderDetail> orderDetailRepository, IBaseRepository<CustomerInfo> customerInfoRepository) : Controller
     {
         private readonly IBaseRepository<Order> _orderRepository = orderRepository;
+        private readonly IBaseRepository<OrderDetail> _orderDetailRepository = orderDetailRepository;
+        private readonly IBaseRepository<CustomerInfo> _customerInfoRepository = customerInfoRepository;
         private readonly ICartRepository _cartRepository = cartRepository;
         private readonly IToastNotification _toastNotification = toastNotification;
 
@@ -35,7 +37,7 @@ namespace E_CommerceProject.Controllers
             var cartItems = await _cartRepository.GetCartItems();
             if (cartItems.Count == 0)
             {
-                _toastNotification.AddErrorToastMessage("Your cart is empty, add some pies first");
+                _toastNotification.AddErrorToastMessage("Your cart is empty, add some items first");
                 return RedirectToAction("Index", "Cart");
             }
             else
@@ -73,7 +75,7 @@ namespace E_CommerceProject.Controllers
                     _toastNotification.AddSuccessToastMessage("Thanks for your order. You'll get it soon");
                     return RedirectToAction("Index", "Home");
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     _toastNotification.AddErrorToastMessage(ex.Message);
                     return View("OrderForm");
@@ -113,12 +115,20 @@ namespace E_CommerceProject.Controllers
             return View("OrderForm", order);
         }
 
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             try
             {
+
+                var orderDetailId = await _orderDetailRepository.GetById(od => od.OrderId == id);
+                await _orderDetailRepository.DeleteItem(orderDetailId.OrderDetailId);
+
+                var order = await _orderRepository.GetById(c => c.OrderId == id);
                 await _orderRepository.DeleteItem(id);
+
+                await _customerInfoRepository.DeleteItem(order.CustomerInfoId);
+
                 return Ok();
             }
             catch (Exception ex)
