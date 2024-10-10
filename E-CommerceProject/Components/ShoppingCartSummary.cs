@@ -1,5 +1,5 @@
 ﻿using E_CommerceProject.Entities.ViewModels;
-using E_CommerceProject.Repositories.Implementations;
+using E_CommerceProject.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace E_CommerceProject.Components

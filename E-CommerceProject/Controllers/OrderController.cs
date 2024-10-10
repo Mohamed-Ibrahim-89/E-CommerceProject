@@ -1,19 +1,21 @@
 ﻿using E_CommerceProject.Entities.Models;
-using E_CommerceProject.Repositories.Implementations;
 using E_CommerceProject.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NToastNotify;
 
 namespace E_CommerceProject.Controllers
 {
-    public class OrderController(IBaseRepository<Order> orderRepository, ICartRepository cartRepository, IToastNotification toastNotification, IBaseRepository<OrderDetail> orderDetailRepository, IBaseRepository<CustomerInfo> customerInfoRepository) : Controller
+    public class OrderController(IBaseRepository<Order> orderRepository, ICartRepository cartRepository, IToastNotification toastNotification, IBaseRepository<OrderDetail> orderDetailRepository, IBaseRepository<CustomerInfo> customerInfoRepository, IHttpContextAccessor contextAccessor, UserManager<AppUser> userManager) : Controller
     {
         private readonly IBaseRepository<Order> _orderRepository = orderRepository;
         private readonly IBaseRepository<OrderDetail> _orderDetailRepository = orderDetailRepository;
         private readonly IBaseRepository<CustomerInfo> _customerInfoRepository = customerInfoRepository;
         private readonly ICartRepository _cartRepository = cartRepository;
         private readonly IToastNotification _toastNotification = toastNotification;
+        private readonly UserManager<AppUser> _userManager = userManager;
+        private readonly IHttpContextAccessor _contextAccessor = contextAccessor;
 
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> List()
