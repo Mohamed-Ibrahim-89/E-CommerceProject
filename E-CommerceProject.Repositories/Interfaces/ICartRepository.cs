@@ -1,6 +1,6 @@
 ﻿using E_CommerceProject.Entities.Models;
 
-namespace E_CommerceProject.Repositories.Implementations
+namespace E_CommerceProject.Repositories.Interfaces
 {
     public interface ICartRepository
     {

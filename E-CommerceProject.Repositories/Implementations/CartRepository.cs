@@ -1,11 +1,11 @@
 ﻿using E_CommerceProject.Entities.Models;
 using E_CommerceProject.Repositories.Data;
-using E_CommerceProject.Repositories.Implementations;
+using E_CommerceProject.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace E_CommerceProject.Repositories.Interfaces
+namespace E_CommerceProject.Repositories.Implementations
 {
     public class CartRepository(AppDbContext context) : ICartRepository
     {
@@ -71,7 +71,7 @@ namespace E_CommerceProject.Repositories.Interfaces
         public async Task<decimal> GetCartTotal()
         {
             var total = await _context.Carts.Where(c => c.ShoppingCartId == ShoppingCartId).Include(p => p.Product).ThenInclude(d => d.Discount)
-                .Select(c => (c.Product.Price - (c.Product.Price * c.Product.Discount.Percentage / 100)) * c.Amount).SumAsync();
+                .Select(c => (c.Product.Price - c.Product.Price * c.Product.Discount.Percentage / 100) * c.Amount).SumAsync();
 
             return total;
         }
