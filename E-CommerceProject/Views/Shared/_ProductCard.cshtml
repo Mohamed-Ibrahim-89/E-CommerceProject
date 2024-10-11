@@ -26,16 +26,28 @@
             {
                 <p class="last-price"><span>$@item.Price.ToString("f2")</span></p>
                 <p class="new-price"><span>$@(((item.Price) - (item.Price * (item.Discount.Percentage / 100))).ToString("f2"))</span>
-                <span class="badge badge-discount text-dark">@(item.Discount.Percentage.ToString("0"))% off</span>
+                <span class="badge badge-discount text-dark">@(item.Discount.Percentage.ToString("0"))% off
+                    <div class="float-end">
+                            <a asp-controller="WishList" asp-action="AddToWishList" asp-route-productId="@item.ProductId">
+                            <i class="bi bi-star"></i>
+                        </a>
+                    </div>
+                </span>
                 </p>
             }
             else
             {
-                <span class="text-light" style="font-size:40px">$@item.Price.ToString("0")</span>
+                <span class="text-light" style="font-size:40px">$@item.Price.ToString("0")
+                    <div class="float-end">
+                        <a asp-controller="WishList" asp-action="AddToWishList" asp-route-productId="@item.ProductId">
+                            <i class="bi bi-star" style="font-size:medium"></i>
+                        </a>
+                    </div>
+                </span>
             }
-
+            
         </div>
-
+        
         <h4 class="d-grid">
             <a class="card-button" asp-controller="Cart" asp-action="AddToCart" asp-route-productId="@item.ProductId">
                 + Add to card

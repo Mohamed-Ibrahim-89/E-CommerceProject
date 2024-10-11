@@ -44,6 +44,9 @@ builder.Services.AddScoped<ICartRepository, CartRepository>(sp => CartRepository
 builder.Services.AddSession();
 builder.Services.AddHttpContextAccessor();
 
+// Register for WishListRepository
+builder.Services.AddScoped<IWishListRepository, WishListRepository>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

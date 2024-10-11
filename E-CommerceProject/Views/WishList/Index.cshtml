@@ -1,0 +1,50 @@
+﻿@model WishListViewModel
+@{
+    ViewData["Title"] = "wishList";
+    Layout = "_CustomLayout";
+}
+
+<h2 class="text-center">Your Wish List</h2>
+@if (Model.WishListItem.Count == 0)
+{
+    <h4 class="text-center text-warning">No items in your wish list.</h4>
+}
+
+<div class="row gx-3 mt-5">
+    <div class="col-8">
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            @foreach (var item in Model.WishListItem)
+            {
+                <div class="col">
+                    <div class="card h-100">
+                        <img src="@item.Product.Cover" alt="@item.Product.Name" class="card-img-top" />
+                        <div class="card-body">
+                            <h2 class=" text-center">
+                                <a asp-controller="Product" asp-action="Details" asp-route-productId="@item.ProductId" class="product-link">@(item.Product.Name.Length > 15 ? $"{item.Product.Name.Substring(0, 15)}..." : item.Product.Name)</a>
+                            </h2>
+                            @if (item.Product.Discount!.Percentage > 0)
+                            {
+                                <p class="last-price"><span>$@item.Product.Price.ToString("f2")</span></p>
+                                <p class="new-price">
+                                    <span>$@(((item.Product.Price) - (item.Product.Price * (item.Product.Discount.Percentage / 100))).ToString("f2"))</span>
+                                    <span class="badge badge-discount text-dark">
+                                        @(item.Product.Discount.Percentage.ToString("0"))% off
+                                    </span>
+                                </p>
+                            }
+                            else
+                            {
+                                <span class="text-light" style="font-size:40px">
+                                    $@item.Product.Price.ToString("0")
+                                </span>
+                            }
+                        </div>
+                        <div class="card-footer">
+                            <a asp-action="RemoveFromWishList" asp-route-productId="@item.Product.ProductId" class="btn btn-outline-danger">Remove</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

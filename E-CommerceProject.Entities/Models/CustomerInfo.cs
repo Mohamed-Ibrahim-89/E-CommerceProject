@@ -38,5 +38,8 @@ namespace E_CommerceProject.Entities.Models
         [MaxLength(50)]
         public string? State { get; set; }
 
+
+        public string? AppUserId { get; set; }
+        public AppUser? AppUser { get; set; }
     }
 }

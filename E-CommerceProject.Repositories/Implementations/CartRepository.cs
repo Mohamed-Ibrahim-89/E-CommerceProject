@@ -43,7 +43,7 @@ namespace E_CommerceProject.Repositories.Implementations
                     ProductId = product.ProductId,
                     Amount = 1
                 };
-                _context.Carts.Add(CartItem);
+                await _context.Carts.AddAsync(CartItem);
             }
             else
             {

@@ -71,6 +71,13 @@ namespace E_CommerceProject.Controllers
                         });
                     }
 
+                    string Username = _contextAccessor.HttpContext.User.Identity.Name;
+                    if (Username != null)
+                    {
+                        var user = await _userManager.FindByNameAsync(Username);
+                        order.CustomerInfo.AppUserId = user.Id;
+                    }
+
                     await _orderRepository.AddItem(order);
                     await _cartRepository.ClearCart();
 
