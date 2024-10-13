@@ -7,9 +7,10 @@ using NToastNotify;
 
 namespace E_CommerceProject.Controllers
 {
-    public class OrderController(IBaseRepository<Order> orderRepository, ICartRepository cartRepository, IToastNotification toastNotification, IBaseRepository<OrderDetail> orderDetailRepository, IBaseRepository<CustomerInfo> customerInfoRepository, IHttpContextAccessor contextAccessor, UserManager<AppUser> userManager) : Controller
+    public class OrderController(IBaseRepository<Order> orderRepository, ICartRepository cartRepository, IToastNotification toastNotification, IBaseRepository<OrderDetail> orderDetailRepository, IBaseRepository<CustomerInfo> customerInfoRepository, IHttpContextAccessor contextAccessor, UserManager<AppUser> userManager , IBaseRepository<Shipment> shipmentRepository) : Controller
     {
         private readonly IBaseRepository<Order> _orderRepository = orderRepository;
+        private readonly IBaseRepository<Shipment> _shipmentRepository = shipmentRepository;
         private readonly IBaseRepository<OrderDetail> _orderDetailRepository = orderDetailRepository;
         private readonly IBaseRepository<CustomerInfo> _customerInfoRepository = customerInfoRepository;
         private readonly ICartRepository _cartRepository = cartRepository;
@@ -80,7 +81,16 @@ namespace E_CommerceProject.Controllers
 
                     await _orderRepository.AddItem(order);
                     await _cartRepository.ClearCart();
-
+                    var shipment = new Shipment
+                    {
+                        OrderId = order.OrderId,
+                        ShippingDate = DateTime.Now,
+                        EstimatedDeliveryDate = DateTime.Now.AddDays(new Random().Next(1, 5)),
+                        Carrieer = "Default Carrier",
+                        TrackingNumber = Guid.NewGuid().ToString().Substring(0, 8),
+                        ShippingCost = new Random().Next(40,100)
+                    };
+                    await _shipmentRepository.AddItem(shipment);
                     _toastNotification.AddSuccessToastMessage("Thanks for your order. You'll get it soon");
                     return RedirectToAction("Index", "Home");
                 }

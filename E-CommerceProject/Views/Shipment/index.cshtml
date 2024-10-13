@@ -1,16 +1,13 @@
 ﻿@model IEnumerable<Shipment>
 
 @{
-    ViewData["Title"] = "Shipment List";
+    ViewData["Title"] = "Your Orders";
     Layout = "_CustomLayout";
 }
 
-<h1 class="mt-3 mb-3">Shipment List</h1>
+<h1 class="mt-3 mb-3">Your Orders</h1>
 <hr />
 
-<p>
-    <a asp-action="Create" class="btn btn-success">New shipment</a>
-</p>
 <table class="table table-info">
     <thead>
         <tr>
@@ -30,7 +27,7 @@
                 @Html.DisplayNameFor(model => model.ShippingCost)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.OrderId)
+                @Html.DisplayNameFor(model => model.Order.Status)
             </th>
             <th>Actions</th>
         </tr>
@@ -54,21 +51,13 @@
                 @Html.DisplayFor(modelItem => item.ShippingCost)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.OrderId)
+                @Html.DisplayFor(modelItem => item.Order.Status)
             </td>
             <td>
                 <div class="btn-group">
-                    <a asp-action="Details" asp-route-shipmentId="@item.ShipmentId" class="btn btn-info">
+                        <a asp-controller="Order" asp-action="Details" asp-route-orderId="@item.OrderId" class="btn btn-info">
                         <i class="bi bi-info-circle"></i>
                         Details
-                    </a>
-                    <a asp-action="Edit" asp-route-shipmentId="@item.ShipmentId" class="btn btn-warning">
-                        <i class="bi bi-pencil"></i>
-                        Edit
-                    </a>
-                    <a href="javascript:;" class="btn btn-danger js-delete" data-id="@item.ShipmentId">
-                        <i class="bi bi-trash"></i>
-                        Delete
                     </a>
                 </div>
             </td>

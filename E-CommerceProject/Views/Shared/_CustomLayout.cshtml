@@ -45,6 +45,9 @@
                         <div class="cart-wishlist-container">
                             @await Component.InvokeAsync("ShoppingCartSummary")
                             <a class="btn btn-warning me-2" asp-controller="Wishlist" asp-action="Index"><i class="fa fa-heart"></i> Wishlist</a>
+                            @if (User.Identity!.IsAuthenticated){
+                                <a class="btn btn-success me-2" asp-controller="Shipment" asp-action="Index"><i class="fa fa-truck"></i> Orders</a>
+                            }
                         </div>
                     }
                     <div class="user-info-container">
