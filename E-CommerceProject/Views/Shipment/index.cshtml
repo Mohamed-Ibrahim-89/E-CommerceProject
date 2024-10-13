@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<Shipment>
 
 @{
-    ViewData["Title"] = "Your Orders";
+    ViewData["Title"] = "Orders";
     Layout = "_CustomLayout";
 }
 
@@ -27,7 +27,7 @@
                 @Html.DisplayNameFor(model => model.ShippingCost)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Order.Status)
+                @Html.DisplayNameFor(model => model.Order!.Status)
             </th>
             <th>Actions</th>
         </tr>
@@ -42,16 +42,16 @@
                 @Html.DisplayFor(modelItem => item.TrackingNumber)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ShippingDate)
+                @item.ShippingDate.ToShortDateString()
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.EstimatedDeliveryDate)
+                @item.EstimatedDeliveryDate.ToShortDateString()
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ShippingCost)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Order.Status)
+                @Html.DisplayFor(modelItem => item.Order!.Status)
             </td>
             <td>
                 <div class="btn-group">

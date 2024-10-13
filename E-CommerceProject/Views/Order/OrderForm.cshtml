@@ -13,7 +13,12 @@
 
 <form asp-action="@(Model.OrderId > 0 ? "Edit" : "Checkout")">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <input type="hidden" asp-for="OrderId" />
+    @if (Model.OrderId > 0)
+    {
+        <input type="hidden" asp-for="OrderId" />
+        <input type="hidden" asp-for="CustomerInfo.CustomerInfoId" />
+        <input type="hidden" asp-for="CustomerInfo.AppUserId" />
+    }
     @if (Model.OrderId == 0)
     {
         <h3 class="text-center mb-3">
@@ -24,11 +29,13 @@
     <div class="col-6">
         <div class="row g-2">
 
-            @if(Model.OrderId > 0){
+            @if(Model.OrderId > 0)
+            {
                 <div class="col-12">
                     <label asp-for="Status" class="form-label">Status:</label>
                     <select asp-for="Status" class="form-select">
                         <option value="Pending">Pending</option>
+                        <option value="Confirmed">Confirmed</option>
                         <option value="Shipped">Shipped</option>
                         <option value="Delivered">Delivered</option>
                     </select>

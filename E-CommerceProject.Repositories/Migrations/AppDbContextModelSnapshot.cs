@@ -97,9 +97,9 @@ namespace E_CommerceProject.Repositories.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@ADMIN.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAELh1zFcuxMYbSHX/6POkrgpwO4BOvL3/xTMblO9hruAEU+zWDGY+uXPxGm/xsdHk7A==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFO7a6EmCyZYzpCFZX+N+nZWpklsIGOWFx7g0zBiRx7NIGPK5b63QPAcRX4Ffrp/0g==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "4f2e4056-64b3-4b10-9f8f-a06d95673327",
+                            SecurityStamp = "faf537cf-4ae7-48ff-b5e4-f93b8a400651",
                             TwoFactorEnabled = false,
                             UserName = "Admin"
                         },
@@ -107,15 +107,15 @@ namespace E_CommerceProject.Repositories.Migrations
                         {
                             Id = "62fe5285-fd68-4711-ae93-673787f4a111",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "fdaea678-4212-4d30-8590-e63be205e5ef",
+                            ConcurrencyStamp = "a8843c18-ef90-483f-905a-326da015a563",
                             Email = "user@user.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "USER@USER.COM",
                             NormalizedUserName = "USER",
-                            PasswordHash = "AQAAAAIAAYagAAAAEARzODFIVidnk4dVJ7up6GOZTe68dhJiF2chUTHLVCiKbOB1zG/1wAY2p653xHLSGg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEMRoy/F7POGKRMyufLddv3SuSOK4hz+In6XjHpEowiA3dy4CifsQmgcW9Ey2YOQ46Q==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "f0659058-01f4-46de-9aa9-5bffe659683d",
+                            SecurityStamp = "c9ff6028-edd3-4e7b-9726-00c8951fc016",
                             TwoFactorEnabled = false,
                             UserName = "user"
                         });
@@ -625,6 +625,15 @@ namespace E_CommerceProject.Repositories.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("E_CommerceProject.Entities.Models.AppUser", b =>
+                {
+                    b.HasOne("E_CommerceProject.Entities.Models.CustomerInfo", "CustomerInfo")
+                        .WithMany()
+                        .HasForeignKey("CustomerInfoId");
+
+                    b.Navigation("CustomerInfo");
                 });
 
             modelBuilder.Entity("E_CommerceProject.Entities.Models.Cart", b =>

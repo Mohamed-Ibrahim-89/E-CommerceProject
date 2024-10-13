@@ -27,8 +27,9 @@ else
             <h5>Check out our most popular and recommended products</h5>
         </div>
 
-        <div class="col-md-3">
-            <input class="form-control me-2" type="search" id="liveSearchTag" value="@ViewBag.SearchQuery" placeholder="Search for products" aria-label="Search" style="background-color:lightsteelblue">
+        <div class="d-flex align-items-center">
+            <input class="form-control me-2" type="search" id="liveSearchTag" value="@ViewBag.SearchQuery" placeholder="Search for products" aria-label="Search" style="background-color:lightsteelblue; width:200px">
+            @await Component.InvokeAsync("CategoryMenu")
         </div>
 
             <div class="row mt-5" id="productCards">

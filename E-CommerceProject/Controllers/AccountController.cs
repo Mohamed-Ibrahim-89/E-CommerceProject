@@ -156,7 +156,7 @@ namespace E_CommerceProject.Controllers
                     if (user == null)
                     {
                         ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                        return View(model);
+                        return View("Index", model);
                     }
                 }
 

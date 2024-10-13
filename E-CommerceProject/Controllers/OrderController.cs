@@ -45,8 +45,18 @@ namespace E_CommerceProject.Controllers
             }
             else
             {
-                var order = new Order();
-                return View("OrderForm", order);
+                string userId = await GetSignedUserId();
+                if (userId != null)
+                {
+                    var customerInfo = await _customerInfoRepository.GetById(ci => ci.AppUserId == userId);
+                    var order = new Order
+                    {
+                        CustomerInfo = customerInfo,
+                    };
+                    return View("OrderForm", order);
+                }
+
+                return View("OrderForm", new Order());
             }
         }
 
@@ -72,25 +82,26 @@ namespace E_CommerceProject.Controllers
                         });
                     }
 
-                    string Username = _contextAccessor.HttpContext.User.Identity.Name;
-                    if (Username != null)
+                    string userId = await GetSignedUserId();
+                    if (userId != null)
                     {
-                        var user = await _userManager.FindByNameAsync(Username);
-                        order.CustomerInfo.AppUserId = user.Id;
+                        order.CustomerInfo!.AppUserId = userId;
                     }
 
                     await _orderRepository.AddItem(order);
                     await _cartRepository.ClearCart();
+
                     var shipment = new Shipment
                     {
                         OrderId = order.OrderId,
                         ShippingDate = DateTime.Now,
                         EstimatedDeliveryDate = DateTime.Now.AddDays(new Random().Next(1, 5)),
-                        Carrieer = "Default Carrier",
-                        TrackingNumber = Guid.NewGuid().ToString().Substring(0, 8),
+                        Carrieer = "Default",
+                        TrackingNumber = "01000050050",
                         ShippingCost = new Random().Next(40,100)
                     };
                     await _shipmentRepository.AddItem(shipment);
+
                     _toastNotification.AddSuccessToastMessage("Thanks for your order. You'll get it soon");
                     return RedirectToAction("Index", "Home");
                 }
@@ -105,7 +116,7 @@ namespace E_CommerceProject.Controllers
 
         public async Task<ActionResult> Edit(int orderId)
         {
-            var order = await _orderRepository.GetById(o => o.OrderId == orderId, ["CustomerInfo"]);
+            var order = await _orderRepository.GetById(o => o.OrderId == orderId, ["CustomerInfo", "CustomerInfo.AppUser"]);
             if (order == null)
             {
                 return NotFound();
@@ -157,6 +168,16 @@ namespace E_CommerceProject.Controllers
             }
         }
 
+        public async Task<string> GetSignedUserId()
+        {
+            var username = _contextAccessor!.HttpContext!.User.Identity!.Name;
+            if (string.IsNullOrEmpty(username))
+            {
+                return null!; 
+            }
+            var user = await _userManager.FindByNameAsync(username!);
 
+            return user!.Id;
+        }
     }
 }

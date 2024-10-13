@@ -1,0 +1,91 @@
+﻿@{
+    ViewData["Title"] = "About Us";
+    Layout = "_LoginLayout";
+}
+
+<div class="about-section">
+    <h1>About Us</h1>
+    <p>Some text about who we are and what we do.</p>
+    <p>Resize the browser window to see that this page is responsive by the way.</p>
+</div>
+<h2 style="text-align:center">Our Team</h2>
+<div class="team">
+    <div class="team-member">
+        @* <img src="team1.jpg" alt="Jane"> *@
+        <h2>Mohamed Ibrahim</h2>
+        <p class="title">.Net developer</p>
+        <p>m.ibrahim102001@gmail.com</p>
+    </div>
+    <div class="team-member">
+        @* <img src="team1.jpg" alt="Jane"> *@
+        <h2>Mostafa Hamed</h2>
+        <p class="title">.Net developer</p>
+        <p>example@gmail.com</p>
+    </div>
+    <div class="team-member">
+        @* <img src="team1.jpg" alt="Jane"> *@
+        <h2>Ahmed Ibrahim</h2>
+        <p class="title">.Net developer</p>
+        <p>example@gmail.com</p>
+    </div>
+    <div class="team-member">
+        @* <img src="team1.jpg" alt="Jane"> *@
+        <h2>Ibrahim Khalil</h2>
+        <p class="title">.Net developer</p>
+        <p>example@gmail.com</p>
+    </div>
+    <div class="team-member">
+        @* <img src="team1.jpg" alt="Jane"> *@
+        <h2>Ahmed Medhat</h2>
+        <p class="title">.Net developer</p>
+        <p>example@gmail.com</p>
+    </div>
+
+
+</div>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+    }
+
+    .about-section {
+        padding: 50px;
+        text-align: center;
+        background-color: #474e5d;
+        color: white;
+    }
+
+    .team {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .team-member {
+        background-color: antiquewhite;
+        margin: 10px;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 300px;
+        text-align: center;
+    }
+
+        .team-member img {
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+        }
+
+        .team-member h2 {
+            margin: 10px 0;
+        }
+
+        .team-member p {
+            color: #777;
+        }
+</style>

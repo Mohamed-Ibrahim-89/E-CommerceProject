@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_CommerceProject.Repositories.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241012145311_test")]
-    partial class test
+    [Migration("20241010200441_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -94,15 +94,15 @@ namespace E_CommerceProject.Repositories.Migrations
                         {
                             Id = "62fe5285-fd68-4711-ae93-673787f4ac66",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "37d56e12-0279-4893-b21c-105fc3e8be35",
+                            ConcurrencyStamp = "70063582-613b-466d-8ffe-4f193461af58",
                             Email = "admin@admin.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@ADMIN.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAELh1zFcuxMYbSHX/6POkrgpwO4BOvL3/xTMblO9hruAEU+zWDGY+uXPxGm/xsdHk7A==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEMTM1boPbo2X4mEvdUWWZe9DCs8XJrB4N3DBPj2bXQ/EX0uxzReN1YrHT8On2oi7zQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "4f2e4056-64b3-4b10-9f8f-a06d95673327",
+                            SecurityStamp = "c6648057-0fca-4b3e-9903-c7b9a3b6424a",
                             TwoFactorEnabled = false,
                             UserName = "Admin"
                         },
@@ -110,15 +110,15 @@ namespace E_CommerceProject.Repositories.Migrations
                         {
                             Id = "62fe5285-fd68-4711-ae93-673787f4a111",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "fdaea678-4212-4d30-8590-e63be205e5ef",
+                            ConcurrencyStamp = "4b42336b-a153-49e7-b9e3-f4fc41b80e87",
                             Email = "user@user.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "USER@USER.COM",
                             NormalizedUserName = "USER",
-                            PasswordHash = "AQAAAAIAAYagAAAAEARzODFIVidnk4dVJ7up6GOZTe68dhJiF2chUTHLVCiKbOB1zG/1wAY2p653xHLSGg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEGMnFAvFotKmIiu3fP6kpHZBGeGx2MmgyNhZtr/kmcDjcWFUmIlpWKa89irLOi0TvA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "f0659058-01f4-46de-9aa9-5bffe659683d",
+                            SecurityStamp = "3737a115-7185-4636-87d9-3a6f198e8ec4",
                             TwoFactorEnabled = false,
                             UserName = "user"
                         });

@@ -2,9 +2,9 @@
 
 @if (Model.CartItems.Count > 0)
 {
-    <a class="btn btn-primary me-2" asp-controller="Cart" asp-action="Index"><i class="fa fa-shopping-cart"></i> Cart (@Model.CartItems.Count)</a>
+    <a class="btn text-light me-2" asp-controller="Cart" asp-action="Index" style="background-color:indigo"><i class="fa fa-shopping-cart"></i> Cart @Model.CartItems.Count</a>
 }
 else
 {
-    <a class="btn btn-primary me-2" asp-controller="Cart" asp-action="Index"><i class="fa fa-shopping-cart"></i> Cart (0)</a>
+    <a class="btn text-light me-2" asp-controller="Cart" asp-action="Index" style="background-color:indigo"><i class="fa fa-shopping-cart"></i> Cart </a>
 }

@@ -196,8 +196,8 @@ body {
     animation: slider 10s linear infinite;
 }
 @keyframes slider{
-    0% {background-image: url(https://img.freepik.com/premium-photo/shopping-cart-with-shopping-cart-full-items_445983-9226.jpg);}
-    30% {background-image: url(https://phuongnamvina.com/img_data/images/e-commerce-la-gi-kien-thuc-can-biet-ve-ecommerce.jpeg)}
-    60% {background-image: url(https://gorevity.com/wp-content/uploads/2022/10/your-ultimate-ecommerce-industry-overview.jpg)}
-    100% {background-image: url(https://affine.ai/wp-content/uploads/2022/11/Cart-Abandonment-Analysis.jpg)}
+    0% {background-image: url(../Images/Site/e-commerce-la-gi-kien-thuc-can-biet-ve-ecommerce.jpeg);}
+    30% {background-image: url(../Images/Site/pngtree-digital-marketing-3d-rendering-of-mobile-application-for-online-shopping-image.png)}
+    60% {background-image: url(../Images/Site/ecommerce-seller.jpg)}
+    100% {background-image: url(../Images/Site/your-ultimate-ecommerce-industry-overview.jpg)}
 }
