@@ -35,49 +35,6 @@ namespace E_CommerceProject.Controllers
             return View(userViewModels);
         }
 
-        public async Task<IActionResult> RolesList()
-        {
-            var roles = await _roleManager.Roles.Select(r => new RoleViewModel
-            {
-                Id = r.Id,
-                RoleName = r.Name!
-            }).ToListAsync();
-
-            return View(roles);
-        }
-
-        public IActionResult CreateRole()
-        {
-            var roleViewModel = new RoleViewModel()
-            {
-                Id = Guid.NewGuid().ToString()
-            };
-            return View(roleViewModel);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreateRole(RoleViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var role = new IdentityRole
-                {
-                    Id = model.Id,
-                    Name = model.RoleName
-                };
-                var result = await _roleManager.CreateAsync(role);
-                if (result.Succeeded)
-                {
-                    return RedirectToAction("RolesList");
-                }
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
-            }
-            return View();
-        }
-
         public async Task<IActionResult> ManageRole(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
@@ -118,7 +75,8 @@ namespace E_CommerceProject.Controllers
             return RedirectToAction("UsersList");
         }
 
-
+        [AllowAnonymous]
+        [Authorize]
         public IActionResult ChangePassword()
         {
             return View();

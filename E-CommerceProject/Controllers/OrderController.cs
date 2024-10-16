@@ -27,7 +27,7 @@ namespace E_CommerceProject.Controllers
 
         public async Task<ActionResult> Details(int orderId)
         {
-            var order = await _orderRepository.GetById(o => o.OrderId == orderId, ["CustomerInfo", "OrderDetails", "OrderDetails.Product"]);
+            var order = await _orderRepository.GetById(o => o.OrderId == orderId, ["CustomerInfo", "OrderDetails", "OrderDetails.Product", "OrderDetails.Product.Discount"]);
             if (order == null)
             {
                 return NotFound();
@@ -70,7 +70,7 @@ namespace E_CommerceProject.Controllers
             {
                 try
                 {
-                    order.TotalPrice = cartItems.Sum(c => c.Product!.Price * c.Amount);
+                    order.TotalPrice = cartItems.Sum(c => (c.Product!.Price - (c.Product.Price *(c.Product.Discount!.Percentage / 100))) * c.Amount);
                     order.OrderDetails = [];
                     foreach (var item in cartItems)
                     {

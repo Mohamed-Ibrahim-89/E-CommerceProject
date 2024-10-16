@@ -10,17 +10,9 @@ namespace E_CommerceProject.Controllers
         private readonly UserManager<AppUser> _userManager = userManager;
         private readonly SignInManager<AppUser> _signInManager = signInManager;
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-        public IActionResult Register()
-        {
-            return View();
-        }
 
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        public async Task<IActionResult> Register(AccountViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -37,7 +29,7 @@ namespace E_CommerceProject.Controllers
                     await _userManager.AddToRoleAsync(user, "User");
                     await _signInManager.SignInAsync(user, isPersistent: false);
 
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Login", "Home");
                 }
 
                 foreach (var error in result.Errors)
@@ -46,18 +38,15 @@ namespace E_CommerceProject.Controllers
                 }
             }
 
-            return View(model);
-
+            return View("Login", model);
         }
 
-        public IActionResult Login(string? returnUrl = null)
+        public IActionResult Login()
         {
-            ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
-
         [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
+        public async Task<IActionResult> Login(AccountViewModel model, string? returnUrl = null)
         {
             if (ModelState.IsValid)
             {
@@ -68,7 +57,7 @@ namespace E_CommerceProject.Controllers
                     if (user == null)
                     {
                         ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                        return View(model);
+                        return View("Login", model);
                     }
                 }
 
@@ -99,7 +88,7 @@ namespace E_CommerceProject.Controllers
                 ModelState.AddModelError(string.Empty, "Invalid login attempt.");
             }
             ViewData["ReturnUrl"] = returnUrl;
-            return View(model);
+            return View("Login", model);
         }
 
         [HttpPost]
@@ -112,82 +101,6 @@ namespace E_CommerceProject.Controllers
         public IActionResult AccessDenied()
         {
             return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> R(AccountViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var user = new AppUser
-                {
-                    UserName = model.Username,
-                    Email = model.Email
-                };
-
-                var result = await _userManager.CreateAsync(user, model.Password);
-
-                if (result.Succeeded)
-                {
-                    await _userManager.AddToRoleAsync(user, "User");
-                    await _signInManager.SignInAsync(user, isPersistent: false);
-
-                    return RedirectToAction("Index", "Home");
-                }
-
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
-            }
-
-            return View("Index", model);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> L(AccountViewModel model, string? returnUrl = null)
-        {
-            if (ModelState.IsValid)
-            {
-                var user = await _userManager.FindByNameAsync(model.Username);
-                if (user == null)
-                {
-                    user = await _userManager.FindByEmailAsync(model.Username);
-                    if (user == null)
-                    {
-                        ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                        return View("Index", model);
-                    }
-                }
-
-                var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
-
-                if (result.Succeeded)
-                {
-                    var roles = await _userManager.GetRolesAsync(user);
-
-                    if (string.IsNullOrEmpty(returnUrl) && !Url.IsLocalUrl(returnUrl))
-                    {
-                        if (roles.Contains("Admin"))
-                        {
-                            return RedirectToAction("List", "Product");
-                        }
-                        return RedirectToAction("Index", "Home");
-                    }
-                    else
-                    {
-                        if (roles.Contains("Admin"))
-                        {
-                            return RedirectToAction("List", "Product");
-                        }
-                        return Redirect(returnUrl);
-                    }
-                }
-
-                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-            }
-            ViewData["ReturnUrl"] = returnUrl;
-            return View("Index", model);
         }
     }
 }

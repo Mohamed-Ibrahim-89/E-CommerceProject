@@ -1,49 +1,84 @@
-﻿@model LoginViewModel
-
+﻿@model AccountViewModel
 @{
-    ViewData["Title"] = "Login";
-    Layout = "_CustomLayout";
+    Layout = "_LoginLayout";
 }
 
-<div class="row">
-    <div class="col-md-8 mt-3 mx-auto">
-        <h2>Login to your account</h2>
-        <hr />
-        <form asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-warning"></div>
+<div class="wrapper">
+    <div class="form-wrapper sign-up">
+        <form asp-action="Register" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <div class="form-group mb-2">
-                <label asp-for="Username" class="control-label">
-                    <input asp-for="Username" class="form-control" placeholder="Enter username" autocomplete="off" />
-                </label>
+            <h2>Sign Up</h2>
+            <div class="input-group">
+                <input asp-for="Username" type="text" required>
+                <label asp-for="Username">Username</label>
                 <span asp-validation-for="Username" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Password" class="control-label">
-                    <input asp-for="Password" class="form-control" placeholder="Enter a password" />
-                </label>
+            <div class="input-group">
+                <input asp-for="Email" type="text" required>
+                <label asp-for="Email">Email</label>
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="input-group">
+                <input asp-for="Password" type="password" required>
+                <label asp-for="Password">Password</label>
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
-            <div class="form-group form-check">
+            <button type="submit" class="btn">Sign Up</button>
+            <div class="sign-link">
+                <p>Already have an account? <a href="#" class="signIn-link">Sign In</a></p>
+            </div>
+        </form>
+    </div>
+
+    <div class="form-wrapper sign-in">
+        <form asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input asp-for="Email" value="test@test.com" hidden />
+
+            <h2>Login</h2>
+            <div class="input-group">
+                <input asp-for="Username" type="text" required>
+                <label asp-for="Username">Username</label>
+                <span asp-validation-for="Username" class="text-danger"></span>
+            </div>
+            <div class="input-group">
+                <input asp-for="Password" type="password" required>
+                <label asp-for="Password">Password</label>
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-check">
                 <label class="form-check-label">
                     <input class="form-check-input" asp-for="RememberMe" /> @Html.DisplayNameFor(model => model.RememberMe)
                 </label>
             </div>
-
-            <div class="form-group mt-3">
-                <input type="submit" value="Login" class="btn btn-primary" />
+            <button type="submit" class="btn">Login</button>
+            <div class="sign-link">
+                <p>Don't have an account? <a href="#" class="signUp-link">Sign Up</a></p>
             </div>
         </form>
-
-        <div>
-            <a asp-action="Register" style="color:darkred; font-size:large">Don't have an account?</a>
-        </div>
-
     </div>
 </div>
 
-@section Scripts {
+@section Scripts
+{
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        const wrapper = document.querySelector('.wrapper');
+        const signUpLink = document.querySelector('.signUp-link');
+        const signInLink = document.querySelector('.signIn-link');
+
+        signUpLink.addEventListener('click', () => {
+            wrapper.classList.add('animate-signIn');
+            wrapper.classList.remove('animate-signUp');
+        });
+
+        signInLink.addEventListener('click', () => {
+            wrapper.classList.add('animate-signUp');
+            wrapper.classList.remove('animate-signIn');
+        });
+    </script>
 }

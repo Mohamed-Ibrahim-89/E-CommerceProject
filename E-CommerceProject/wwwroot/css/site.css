@@ -201,3 +201,23 @@ body {
     60% {background-image: url(../Images/Site/ecommerce-seller.jpg)}
     100% {background-image: url(../Images/Site/your-ultimate-ecommerce-industry-overview.jpg)}
 }
+
+.customer-info {
+    background-color: darkcyan;
+    color: white;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+    .customer-info dl {
+        font-size: 16px;
+    }
+
+    .customer-info dt {
+        font-weight: bold;
+    }
+
+    .customer-info dd {
+        margin-bottom: 10px;
+    }

@@ -17,20 +17,12 @@ namespace E_CommerceProject.Repositories.Data
         public DbSet<Discount> Discounts { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderIDetails { get; set; }
-        public DbSet<Payment> Payments { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Shipment> Shipments { get; set; }
         public DbSet<Wishlist> Wishlists { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Entity<Payment>()
-                .HasOne(c => c.Order)
-                .WithMany()
-                .HasForeignKey(i => i.OrderId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-
 
             //Seeding a  'Administrator' role to AspNetRoles table
             modelBuilder.Entity<IdentityRole>().HasData(

@@ -16,8 +16,10 @@
     @if (Model.OrderId > 0)
     {
         <input type="hidden" asp-for="OrderId" />
-        <input type="hidden" asp-for="CustomerInfo.CustomerInfoId" />
-        <input type="hidden" asp-for="CustomerInfo.AppUserId" />
+        <input type="hidden" asp-for="CustomerInfo!.CustomerInfoId" />
+        <input type="hidden" asp-for="CustomerInfo!.AppUserId" />
+        <input type="hidden" asp-for="TotalPrice" />
+        <input type="hidden" asp-for="OrderDate" />
     }
     @if (Model.OrderId == 0)
     {

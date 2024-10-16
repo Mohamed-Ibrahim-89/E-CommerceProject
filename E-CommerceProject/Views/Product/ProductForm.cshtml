@@ -35,7 +35,7 @@
             <div class="form-group">
                 <label asp-for="Product.Cover" class="control-label"></label>
                 <div class="custom-file">
-                    <input asp-for="File" class="form-control" value="@(string.IsNullOrEmpty(Model.Product.Cover) ? "Choose file" : Model.Product.Cover)" onchange="loadFile(event)" />
+                    <input asp-for="File" class="form-control" value="@(string.IsNullOrEmpty(Model.Product.Cover) ? "Choose file" : Model.Product.Cover)" onchange="loadFile(event)" accept=".jpg; png; jpeg"/>
                 </div>
                 <span asp-validation-for="File" class="text-danger"></span>
             </div>

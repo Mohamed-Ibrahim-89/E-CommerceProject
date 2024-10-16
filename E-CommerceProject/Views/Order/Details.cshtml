@@ -97,7 +97,7 @@
                                         <tr>
                                             <td>@item.Product!.Name</td>
                                             <td>@item.Quantity</td>
-                                            <td>@item.Price</td>
+                                            <td>@(item.Price - ((item.Price * item.Product.Discount.Percentage) / 100))</td>
                                         </tr>
                                     }
                                 </tbody>
