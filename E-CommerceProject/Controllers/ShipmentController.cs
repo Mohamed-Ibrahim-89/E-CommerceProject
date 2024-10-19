@@ -18,6 +18,11 @@ namespace E_CommerceProject.Controllers
             return View(shipments);
         }
 
+        public async Task<IActionResult> List()
+        {
+            var shipments = await _shipmentRepository.GetAll(null, new[] { "Order" });
+            return View(shipments);
+        }
         public async Task<IActionResult> Details(int shipmentId)
         {
             var shipment = await _shipmentRepository.GetById(s => (s.ShipmentId == shipmentId));
@@ -37,6 +42,57 @@ namespace E_CommerceProject.Controllers
             catch (Exception ex)
             {
                 ViewBag.Error = ex.Message;
+            }
+        }
+
+        public async Task<IActionResult> Edit(int shipmentId)
+        {
+            var shipment = await _shipmentRepository.GetById(s => s.ShipmentId == shipmentId);
+            if (shipment == null)
+            {
+                return NotFound();
+            }
+
+            return View("Edit", shipment);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(Shipment shipment)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    await _shipmentRepository.UpdateItem(shipment);
+                    return RedirectToAction("List");
+                }
+                return View("Edit", shipment);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = ex.Message;
+                return View("Edit", shipment);
+            }
+        }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                var shipment = await _shipmentRepository.GetById(s => s.ShipmentId == id);
+
+                if (shipment == null)
+                {
+                    return NotFound();
+                }
+
+                await _shipmentRepository.DeleteItem(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = ex.Message;
+                return View();
             }
         }
         public async Task<string> GetSignedUserId()

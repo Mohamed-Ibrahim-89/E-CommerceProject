@@ -1,0 +1,124 @@
+﻿@model IEnumerable<E_CommerceProject.Entities.Models.Shipment>
+
+@{
+    ViewData["Title"] = "List";
+    Layout = "_CustomLayout";
+}
+
+<h1>Shipment List</h1>
+
+<table class ="table table-info">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ShipmentId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Carrieer)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TrackingNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ShippingDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EstimatedDeliveryDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ShippingCost)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderId)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr class="data">
+            <td>
+                @Html.DisplayFor(modelItem => item.ShipmentId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Carrieer)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TrackingNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ShippingDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EstimatedDeliveryDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ShippingCost)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderId)
+            </td>
+            <td>
+                <div class="btn-group">
+                        <a asp-controller="Shipment" asp-action="Details" asp-route-ShipmentId="@item.ShipmentId" class="btn btn-info">
+                        <i class="bi bi-info-circle"></i>
+                        Details
+                    </a>
+                        <a asp-controller="Shipment" asp-action="Edit" asp-route-ShipmentId="@item.ShipmentId" class="btn btn-warning">
+                        <i class="bi bi-pencil"></i>
+                        Edit
+                    </a>
+                    <a href="javascript:;" class="btn btn-danger js-delete" data-id="@item.ShipmentId">
+                        <i class="bi bi-trash"></i>
+                        Delete
+                    </a>
+                </div>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('.js-delete').on('click', function () {
+                var btn = $(this);
+                var shipmentId = btn.data('id');
+
+                bootbox.confirm({
+                    message: "Are you sure that you need to delete this item?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-danger'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-outline-secondary'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            $.ajax({
+                                url: '/Shipment/Delete/' + shipmentId,
+                                success: function () {
+                                    btn.parents('.data').fadeOut();
+
+                                    toastr.success('Item deleted successfully');
+                                },
+                                error: function () {
+                                    toastr.error('Something went wrong!');
+                                }
+                            });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+    }
