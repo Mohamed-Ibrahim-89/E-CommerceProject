@@ -1,60 +1,184 @@
-﻿@model E_CommerceProject.Entities.Models.Shipment
+﻿@model Shipment
 
 @{
     ViewData["Title"] = "Details";
     Layout = "_CustomLayout";
 }
 
-<h1>Details</h1>
+<h4>Details of Shipment</h4>
+<hr />
 
-<div>
-    <h4>Shipment</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ShipmentId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ShipmentId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Carrieer)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Carrieer)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TrackingNumber)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TrackingNumber)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ShippingDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ShippingDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EstimatedDeliveryDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EstimatedDeliveryDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ShippingCost)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ShippingCost)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OrderId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OrderId)
-        </dd>
-    </dl>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="card" style="width:590px!important">
+                        <div class="card-header">
+                            Shipment Information
+                        </div>
+                        <div class="card-body">
+                            <dl class="row">
+                                <dt class="col-sm-4">
+                                    @Html.DisplayNameFor(model => model.Carrieer)
+                                </dt>
+                                <dd class="col-sm-8">
+                                    @Html.DisplayFor(model => model.Carrieer)
+                                </dd>
+                                <dt class="col-sm-4">
+                                    @Html.DisplayNameFor(model => model.TrackingNumber)
+                                </dt>
+                                <dd class="col-sm-8">
+                                    @Html.DisplayFor(model => model.TrackingNumber)
+                                </dd>
+                                <dt class="col-sm-4">
+                                    @Html.DisplayNameFor(model => model.ShippingDate)
+                                </dt>
+                                <dd class="col-sm-8">
+                                    @Model.ShippingDate.ToShortDateString()
+                                </dd>
+                                <dt class="col-sm-4">
+                                    @Html.DisplayNameFor(model => model.EstimatedDeliveryDate)
+                                </dt>
+                                <dd class="col-sm-8">
+                                    @Model.EstimatedDeliveryDate.ToShortDateString()
+                                </dd>
+                                <dt class="col-sm-4">
+                                    @Html.DisplayNameFor(model => model.ShippingCost)
+                                </dt>
+                                <dd class="col-sm-8">
+                                    @Html.DisplayFor(model => model.ShippingCost)
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card" style="width:400px!important; height:275px">
+                        <div class="card-header">
+                            Order Information
+                        </div>
+                        <div class="card-body">
+                            <dl class="row">
+                                <dt class="col-sm-4">
+                                    @Html.DisplayNameFor(model => model.Order.Status)
+                                </dt>
+                                <dd class="col-sm-8">
+                                    @Html.DisplayFor(model => model.Order.Status)
+                                </dd>
+                                <dt class="col-sm-4">
+                                    @Html.DisplayNameFor(model => model.Order.OrderDate)
+                                </dt>
+                                <dd class="col-sm-8">
+                                    @Model.Order.OrderDate.ToShortDateString()
+                                </dd>
+                                <dt class="col-sm-4">
+                                    @Html.DisplayNameFor(model => model.Order.TotalPrice)
+                                </dt>
+                                <dd class="col-sm-8">
+                                    @Html.DisplayFor(model => model.Order.TotalPrice)
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card" style="width:590px!important">
+                        <div class="card-header">
+                            Customer Information
+                        </div>
+                        <div class="card-body">
+                            <dl class="row">
+                                <dt class="col-sm-4">
+                                    @Html.DisplayNameFor(model => model.Order.CustomerInfo!.FirstName)
+                                </dt>
+                                <dd class="col-sm-8">
+                                    @Html.DisplayFor(model => model.Order.CustomerInfo!.FirstName)
+                                </dd>
+                                <dt class="col-sm-4">
+                                    @Html.DisplayNameFor(model => model.Order.CustomerInfo!.LastName)
+                                </dt>
+                                <dd class="col-sm-8">
+                                    @Html.DisplayFor(model => model.Order.CustomerInfo!.LastName)
+                                </dd>
+                                <dt class="col-sm-4">
+                                    @Html.DisplayNameFor(model => model.Order.CustomerInfo!.PhoneNumber)
+                                </dt>
+                                <dd class="col-sm-8">
+                                    @Html.DisplayFor(model => model.Order.CustomerInfo!.PhoneNumber)
+                                </dd>
+                                <dt class="col-sm-4">
+                                    @Html.DisplayNameFor(model => model.Order.CustomerInfo!.AddressLine1)
+                                </dt>
+                                <dd class="col-sm-8">
+                                    @Html.DisplayFor(model => model.Order.CustomerInfo!.AddressLine1)
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card" style="width: 400px !important">
+                        <div class="card-header">
+                            Order Details
+                        </div>
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Quantity</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.Order.OrderDetails!)
+                                    {
+                                        <tr>
+                                            <td>@item.Product!.Name</td>
+                                            <td>@item.Quantity</td>
+                                            <td>@(item.Price - ((item.Price * item.Product.Discount.Percentage) / 100))</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+            </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-md-12">
+                    <a asp-action="List" class="btn btn-secondary">Back to Order</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="List">Back to List</a>
-</div>
+
+<style>
+    .card {
+        background-color: #343a40;
+        color: #fff;
+    }
+
+    .card-header {
+        background-color: #5cb85c;
+        color: #fff;
+    }
+
+    .card-body {
+        padding: 1.25rem 2rem;
+    }
+
+    .table {
+        color: #fff;
+    }
+
+        .table th,
+        .table td {
+            border-top-color: #555;
+            color: aliceblue;
+        }
+</style>

@@ -13,6 +13,7 @@ namespace E_CommerceProject.Controllers
         private readonly IBaseRepository<Order> _orderRepository = orderRepository;
         private readonly UserManager<AppUser> _userManager = userManager;
         private readonly IHttpContextAccessor _contextAccessor = contextAccessor;
+
         public async Task<IActionResult> Index()
         {
             var userId = await GetSignedUserId();
@@ -22,12 +23,14 @@ namespace E_CommerceProject.Controllers
 
         public async Task<IActionResult> List()
         {
-            var shipments = await _shipmentRepository.GetAll(null, new[] { "Order" });
+            var shipments = await _shipmentRepository.GetAll(null, ["Order"]);
             return View(shipments);
         }
+
         public async Task<IActionResult> Details(int shipmentId)
         {
-            var shipment = await _shipmentRepository.GetById(s => (s.ShipmentId == shipmentId));
+            var shipment = await _shipmentRepository.GetById(s => (s.ShipmentId == shipmentId), ["Order", "Order.CustomerInfo", "Order.OrderDetails", "Order.OrderDetails.Product", "Order.OrderDetails.Product.Discount"]);
+
             if (shipment == null)
             {
                 return NotFound();
@@ -97,6 +100,7 @@ namespace E_CommerceProject.Controllers
                 return View();
             }
         }
+
         public async Task<string> GetSignedUserId()
         {
             var username = _contextAccessor!.HttpContext!.User.Identity!.Name;

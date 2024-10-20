@@ -6,6 +6,7 @@
 }
 
 <h1>Shipment List</h1>
+<hr>
 
 <table class ="table table-info">
     <thead>
@@ -28,10 +29,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.ShippingCost)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OrderId)
-            </th>
-            <th></th>
+            <th style="text-align:center">Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -47,18 +45,15 @@
                 @Html.DisplayFor(modelItem => item.TrackingNumber)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ShippingDate)
+                @item.ShippingDate.ToShortDateString()
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.EstimatedDeliveryDate)
+                    @item.EstimatedDeliveryDate.ToShortDateString()
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ShippingCost)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OrderId)
-            </td>
-            <td>
+            <td style="text-align:right">
                 <div class="btn-group">
                         <a asp-controller="Shipment" asp-action="Details" asp-route-ShipmentId="@item.ShipmentId" class="btn btn-info">
                         <i class="bi bi-info-circle"></i>

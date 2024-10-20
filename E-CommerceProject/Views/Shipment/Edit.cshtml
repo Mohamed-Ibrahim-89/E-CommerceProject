@@ -1,23 +1,18 @@
-﻿@model E_CommerceProject.Entities.Models.Shipment
+﻿@model Shipment
 
 @{
     ViewData["Title"] = "Edit";
-    Layout = "_CustomLayout";
+    Layout = "_AdminLayout";
 }
 
-<h1>Edit</h1>
-
-<h4>Shipment</h4>
+<h4>Edit a Shipment</h4>
 <hr />
+
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="ShipmentId" class="control-label"></label>
-                <input asp-for="ShipmentId" class="form-control" />
-                <span asp-validation-for="ShipmentId" class="text-danger"></span>
-            </div>
+
             <div class="form-group">
                 <label asp-for="Carrieer" class="control-label"></label>
                 <input asp-for="Carrieer" class="form-control" />
@@ -48,15 +43,18 @@
                 <input asp-for="OrderId" class="form-control" />
                 <span asp-validation-for="OrderId" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
+
+            <button type="submit" class="btn btn-primary mt-4">
+                <i class="bi bi-check"></i>
+                Save
+            </button>
+            <a class="btn btn-secondary mt-4" asp-controller="Product" asp-action="List">
+                <i class="bi bi-x"></i>
+                Cancel
+            </a>
+
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="List">Back to List</a>
 </div>
 
 @section Scripts {
