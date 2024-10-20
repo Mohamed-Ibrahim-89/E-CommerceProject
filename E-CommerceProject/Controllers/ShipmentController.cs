@@ -20,7 +20,7 @@ namespace E_CommerceProject.Controllers
             var shipments = await _shipmentRepository.GetAll(s => s.Order!.CustomerInfo!.AppUserId == userId , ["Order"]);
             return View(shipments);
         }
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> List()
         {
             var shipments = await _shipmentRepository.GetAll(null, ["Order"]);
@@ -38,6 +38,7 @@ namespace E_CommerceProject.Controllers
             return View(shipment);
         }
 
+        [Authorize(Roles = "Admin")]
         public async void Create(Shipment shipment)
         {
             try
@@ -50,6 +51,7 @@ namespace E_CommerceProject.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int shipmentId)
         {
             var shipment = await _shipmentRepository.GetById(s => s.ShipmentId == shipmentId);
@@ -61,6 +63,7 @@ namespace E_CommerceProject.Controllers
             return View("Edit", shipment);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Edit(Shipment shipment)
         {
@@ -80,6 +83,7 @@ namespace E_CommerceProject.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             try
