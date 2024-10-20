@@ -149,8 +149,15 @@
 
             <div class="row mt-3">
                 <div class="col-md-12">
-                    <a asp-action="List" class="btn btn-secondary">Back to Order</a>
-                </div>
+                    @if (User.Identity!.IsAuthenticated && User.IsInRole("Admin"))
+                    {
+                        <a asp-action="List" class="btn btn-secondary">Back to Order</a>
+                    }
+                    else
+                    {
+                        <a asp-action="Index" class="btn btn-secondary">Back to Order</a>
+                    }
+                    </div>
             </div>
 
         </div>
