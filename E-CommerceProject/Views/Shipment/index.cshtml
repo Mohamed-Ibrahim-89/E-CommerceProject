@@ -66,46 +66,4 @@
     </tbody>
 </table>
 
-@section Scripts {
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-    <script>
-        $(document).ready(function () {
-            $('.js-delete').on('click', function () {
-                var btn = $(this);
-                var shipmentId = btn.data('id');
-
-                bootbox.confirm({
-                    message: "Are you sure that you need to delete this item?",
-                    buttons: {
-                        confirm: {
-                            label: 'Yes',
-                            className: 'btn-danger'
-                        },
-                        cancel: {
-                            label: 'No',
-                            className: 'btn-outline-secondary'
-                        }
-                    },
-                    callback: function (result) {
-                        if (result) {
-                            $.ajax({
-                                url: '/Shipment/Delete/' + shipmentId,
-                                success: function () {
-                                    btn.parents('.data').fadeOut();
-
-                                    toastr.success('Item deleted successfully');
-                                },
-                                error: function () {
-                                    toastr.error('Something went wrong!');
-                                }
-                            });
-                        }
-                    }
-                });
-            });
-        });
-    </script>
-}
