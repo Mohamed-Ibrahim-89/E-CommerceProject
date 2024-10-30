@@ -29,7 +29,7 @@ namespace E_CommerceProject.Controllers
                     await _userManager.AddToRoleAsync(user, "User");
                     await _signInManager.SignInAsync(user, isPersistent: false);
 
-                    return RedirectToAction("Login", "Home");
+                    return RedirectToAction("Index", "Home");
                 }
 
                 foreach (var error in result.Errors)
