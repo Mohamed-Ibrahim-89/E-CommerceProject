@@ -1,12 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿namespace E_CommerceProject.Controllers;
 
-namespace E_CommerceProject.Controllers
+public class InfoController : Controller
 {
-    public class InfoController : Controller
+    public IActionResult AboutUs()
     {
-        public IActionResult AboutUs()
-        {
-            return View();
-        }
+        return View();
     }
 }

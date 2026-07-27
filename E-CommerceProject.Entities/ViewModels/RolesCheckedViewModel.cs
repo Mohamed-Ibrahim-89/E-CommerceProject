@@ -1,8 +1,7 @@
-﻿namespace E_CommerceProject.Entities.ViewModels
+﻿namespace E_CommerceProject.Entities.ViewModels;
+
+public class RolesCheckedViewModel
 {
-    public class RolesCheckedViewModel
-    {
-        public string RoleName { get; set; } = string.Empty;
-        public bool IsSelected { get; set; }
-    }
+    public string RoleName { get; set; } = string.Empty;
+    public bool IsSelected { get; set; }
 }

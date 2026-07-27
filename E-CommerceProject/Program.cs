@@ -1,16 +1,12 @@
-using E_CommerceProject.Entities.Models;
-using E_CommerceProject.Repositories.Data;
-using E_CommerceProject.Repositories.Implementations;
-using E_CommerceProject.Repositories.Interfaces;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using NToastNotify;
+using E_CommerceProject.Repositories.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IUploadFile, UploadFile>();
 
 // Add Connection Strings
@@ -29,12 +25,12 @@ builder.Services.AddMvc().AddNToastNotifyToastr(new NToastNotify.ToastrOptions
 // Add configuration for identity
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
-    options.Password.RequiredLength = 4;
-    options.Password.RequiredUniqueChars = 0;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequireUppercase = false;
-    options.Password.RequireLowercase = false;
-    options.Password.RequireDigit = false;
+    options.Password.RequiredLength = 8;
+    //options.Password.RequiredUniqueChars = 0;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireDigit = true;
 
 }).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 
@@ -46,6 +42,9 @@ builder.Services.AddHttpContextAccessor();
 
 // Register for WishListRepository
 builder.Services.AddScoped<IWishListRepository, WishListRepository>();
+
+// Register for CacheService
+builder.Services.AddCacheService();
 
 var app = builder.Build();
 
@@ -60,6 +59,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
 

@@ -1,9 +1,6 @@
-using Microsoft.AspNetCore.Http;
+namespace E_CommerceProject.Repositories.Interfaces;
 
-namespace E_CommerceProject.Repositories.Interfaces
+public interface IUploadFile
 {
-    public interface IUploadFile
-    {
-        Task<string> UploadFileAsync(string filePath, IFormFile file);
-    }
+    Task<string> UploadFileAsync(string filePath, IFormFile file);
 }

@@ -1,10 +1,12 @@
-﻿@model IEnumerable<Category>
+@model IEnumerable<Category>
 
-<div class="dropdown">
-    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
-        Category</button>
+<div class="dropdown shop-category-dropdown">
+    <button class="btn shop-category-toggle dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-funnel-fill"></i>
+        <span>Categories</span>
+    </button>
 
-    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
+    <ul class="dropdown-menu shop-category-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
         @foreach (var category in Model)
         {
             <li>
@@ -21,26 +23,3 @@
         </li>
     </ul>
 </div>
-
-
-<style>
-    /* Custom dropdown menu styles */
-    .dropdown-menu {
-        background-color: transparent;
-        border-color: transparent;
-    }
-
-        .dropdown-menu .dropdown-item {
-            color: #212529;
-        }
-
-            .dropdown-menu .dropdown-item:hover {
-                background-color: #e9ecef;
-                color: #212529;
-            }
-
-            .dropdown-menu .dropdown-item.active {
-                background-color: #dee2e6;
-                color: #212529;
-            }
-</style>

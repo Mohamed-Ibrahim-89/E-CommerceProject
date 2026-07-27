@@ -1,0 +1,11 @@
+﻿global using E_CommerceProject.Entities.Data;
+global using E_CommerceProject.Repositories.Interfaces;
+global using Microsoft.EntityFrameworkCore;
+global using System.Linq.Expressions;
+global using E_CommerceProject.Entities.Models;
+global using Microsoft.AspNetCore.Http;
+global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.AspNetCore.Hosting;
+global using E_CommerceProject.Entities.ViewModels.DataTable;
+global using E_CommerceProject.Entities.ViewModels;
+global using E_CommerceProject.Repositories.Services;

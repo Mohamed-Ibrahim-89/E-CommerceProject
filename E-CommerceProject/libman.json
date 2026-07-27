@@ -8,6 +8,10 @@
       "files": [
         "js/bootstrap-datepicker.min.js"
       ]
+    },
+    {
+      "library": "datatable@2.0.2",
+      "destination": "wwwroot/datatable/"
     }
   ]
 }

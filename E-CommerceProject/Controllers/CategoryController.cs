@@ -1,89 +1,115 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using E_CommerceProject.Entities.Models;
-using E_CommerceProject.Repositories.Interfaces;
-using Microsoft.AspNetCore.Authorization;
-using NToastNotify;
+﻿namespace E_CommerceProject.Controllers;
 
-namespace SunPiontOfSaleFinalProject.App.Controllers
+[Authorize(Roles = Constants.Roles.Admin)]
+public class CategoryController(IBaseRepository<Category> categoryRepository
+                                ,ICategoryRepository  repository
+                                ,IToastNotification toastNotification
+                                ): BaseController
 {
-    [Authorize(Roles = "Admin")]
-    public class CategoryController(IBaseRepository<Category> categoryRepository, IToastNotification toastNotification) : Controller
+    private readonly IBaseRepository<Category> _categoryRepository = categoryRepository;
+    private readonly ICategoryRepository _repository = repository;
+    private readonly IToastNotification _toastNotification = toastNotification;
+
+    public async Task<ActionResult> List()
     {
-        private readonly IBaseRepository<Category> _categoryRepository = categoryRepository;
-        private readonly IToastNotification _toastNotification = toastNotification;
+        var categories = await _categoryRepository.GetAll();
+        return View(categories);
+    }
 
-        public async Task<ActionResult> List()
+    public async Task<IActionResult> Index()
+    {
+        try
         {
-            var categories = await _categoryRepository.GetAll();
-            return View(categories);
+            return View();
         }
-        public ActionResult Create()
+        catch (Exception ex)
         {
-            var categories = new Category();
-            return View("CategoryForm", categories);
+            _toastNotification.AddErrorToastMessage(ex.Message);
+            return View("Error");
         }
+    }
 
-        [HttpPost]
-        public async Task<ActionResult> Create(Category item)
+    public async Task<string> GetCategoriesList()
+    {
+        try
         {
-            try
-            {
-                var categoryTest = _categoryRepository.GetAll().Result.Any
-                    (c => c.Name == item.Name);
-                if (categoryTest)
-                {
-                    ViewBag.ExistsError = "Category Name already exists";
-                    return View("CategoryForm", item);
-                }
-                await _categoryRepository.AddItem(item);
+            var dtParams = GetDatatableParamsFromRequest();
+            var jsonData = await _repository.GetCategoriesList(dtParams);
+            return JsonConvert.SerializeObject(jsonData);
+        }
+        catch (Exception ex)
+        {
+            _toastNotification.AddErrorToastMessage(ex.Message);
+            return JsonConvert.SerializeObject(new { error = ex.Message });
+        }
+    }
 
-                _toastNotification.AddSuccessToastMessage("Category added successfully");
-                return RedirectToAction(nameof(List));
-            }
-            catch
+    public ActionResult Create()
+    {
+        var categories = new Category();
+        return View("CategoryForm", categories);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult> Create(Category item)
+    {
+        try
+        {
+            var categoryTest = _categoryRepository.GetAll().Result.Any
+                (c => c.Name == item.Name);
+            if (categoryTest)
             {
+                ViewBag.ExistsError = "Category Name already exists";
                 return View("CategoryForm", item);
             }
+            await _categoryRepository.AddItem(item);
+
+            _toastNotification.AddSuccessToastMessage("Category added successfully");
+            return RedirectToAction(nameof(List));
         }
-
-        public async Task<ActionResult> Edit(int categoryId)
+        catch
         {
-            var category = await _categoryRepository.GetById(c => c.CategoryId == categoryId);
-            if (category == null)
-            {
-                return RedirectToAction(nameof(List));
-            }
-            return View("CategoryForm", category);
+            return View("CategoryForm", item);
         }
+    }
 
-        [HttpPost]
-        public async Task<ActionResult> Edit(Category Item)
+    public async Task<ActionResult> Edit(int categoryId)
+    {
+        var category = await _categoryRepository.GetById(c => c.CategoryId == categoryId);
+        if (category == null)
         {
-            try
-            {
-                await _categoryRepository.UpdateItem(Item);
-
-                _toastNotification.AddSuccessToastMessage("Category updated successfully");
-                return RedirectToAction(nameof(List));
-            }
-            catch
-            {
-                return View("CategoryForm");
-            }
+            return RedirectToAction(nameof(List));
         }
+        return View("CategoryForm", category);
+    }
 
-        public async Task<IActionResult> Delete(int id)
+    [HttpPost]
+    public async Task<ActionResult> Edit(Category Item)
+    {
+        try
         {
-            try
-            {
-                await _categoryRepository.DeleteItem(id);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                ViewBag.Error = ex.Message;
-                return View();
-            }
+            await _categoryRepository.UpdateItem(Item);
+
+            _toastNotification.AddSuccessToastMessage("Category updated successfully");
+            return RedirectToAction(nameof(List));
+        }
+        catch
+        {
+            return View("CategoryForm");
+        }
+    }
+
+    public async Task<IActionResult> Delete(int id)
+    {
+        try
+        {
+            await _categoryRepository.DeleteItem(id);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            ViewBag.Error = ex.Message;
+            return View();
         }
     }
 }

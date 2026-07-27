@@ -1,0 +1,254 @@
+﻿@{
+    ViewData["Title"] = "Products";
+    Layout = "_AdminLayout";
+}
+
+<link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css" rel="stylesheet" />
+
+<style>
+    .dt-img {
+        width: 56px;
+        height: 56px;
+        object-fit: cover;
+        border-radius: 6px;
+        display: block;
+        margin: 0 auto;
+    }
+
+    .dt-desc {
+        max-width: 300px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    #ProductsTbl td {
+        vertical-align: middle;
+    }
+</style>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+}
+
+<div class ="mt-5" style="background-color:beige">
+
+    <div class="card-header d-flex justify-content-between align-items-center py-3">
+        <h6 class="mb-0 fw-bold ms-2" style="font-size:x-large; color:brown;">@ViewData["Title"]</h6>
+        <a asp-action="Create" class="btn btn-primary btn-sm me-2">
+            <i class="fal fa-plus me-1"></i> Add Product
+        </a>
+    </div>
+
+    <div class="card-body mt-4">
+        <div style="overflow-x: auto;">
+            <table id="ProductsTbl" class="table dt table-hover table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Created At</th>
+                        <th>Category</th>
+                        <th>Discount</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+
+    <script>
+        const urls = {
+        list:    '@Url.Action("GetProductsList", "Product")',
+        details: '@Url.Action("Details", "Product")',
+        edit:    '@Url.Action("Edit", "Product")',
+        delete:  '@Url.Action("Delete", "Product")'
+        };
+
+        const csrfToken = $('input[name="__RequestVerificationToken"]').val();
+
+        function esc(value) {
+        return $('<div>').text(value ?? '').html();
+        }
+
+        $(function () {
+            const table = $('#ProductsTbl').DataTable({
+                processing: true,
+                serverSide: true,
+                destroy:    true,
+                responsive: false,   // ← all columns always visible
+                scrollX:    true,    // ← horizontal scroll instead of collapsing
+                stateSave:  true,
+                order:      [[0, 'desc']],
+                lengthMenu: [[10, 25, 50, 100, 500], [10, 25, 50, 100, 500]],
+                language: {
+                emptyTable:  'No products found.',
+                zeroRecords: 'No matching products found.',
+                processing:  '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Loading…'
+                },
+                ajax: {
+                    url:   urls.list,
+                    type:  'GET',
+                    error: function () {
+                        alert('Could not load products. Please refresh the page.');
+                    }
+                },
+                columns: [
+                // ── ID ───────────────────────────────────────────────────
+                { data: 'ProductId', width: '60px' },
+
+                // ── Name ─────────────────────────────────────────────────
+                { data: 'Name', width: '150px' },
+
+                // ── Description ──────────────────────────────────────────
+                {
+                    data:  'Description',
+                    width: '220px',
+                    render: function (data, type) {
+                    if (!data) return '—';
+                    const safe = esc(data);
+                    return type === 'display' ? `<div class="dt-desc" title="${safe}">${safe}</div>` : data;
+                    }
+                },
+
+                // ── Price ────────────────────────────────────────────────
+                {
+                    data:  'Price',
+                    width: '80px',
+                    render: function (data, type) {
+                    if (data == null) return '—';
+                    return type === 'display' ? `$${parseFloat(data).toFixed(2)}` : data;
+                    }
+                },
+
+                // ── Stock ────────────────────────────────────────────────
+                { data: 'QuantityInStock', width: '70px' },
+
+                // ── Created At ───────────────────────────────────────────
+                {
+                    data:  'CreatedAt',
+                    width: '110px',
+                    render: function (data, type) {
+                        if (!data) return '—';
+                        const d = new Date(data);
+                        if (isNaN(d)) return data;
+                        return type === 'display' || type === 'filter' ? d.toLocaleDateString() : d.getTime();
+                    }
+                },
+
+                // ── Category ─────────────────────────────────────────────
+                {
+                    data:  'Category',
+                    width: '110px',
+                    render: function (data) {
+                        if (!data) return '—';
+                        return esc((data.Name ?? data).toString());
+                    }
+                },
+
+                // ── Discount ─────────────────────────────────────────────
+                {
+                    data:  'Discount',
+                    width: '90px',
+                    render: function (data) {
+                        if (!data)
+                            return '<span class="badge bg-secondary">None</span>';
+                        if (data.Percentage != null)
+                            return `<span class="badge bg-success">${esc(String(data.Percentage))}%</span>`;
+                        return '<span class="badge bg-info text-dark">Active</span>';
+                    }
+                },
+
+                // ── Actions ──────────────────────────────────────────────
+                {
+                    data:       null,
+                    orderable:  false,
+                    searchable: false,
+                    width:      '110px',
+                    className:  'text-center',
+                    render: function (data, type, row) {
+                        const id   = esc(String(row.ProductId));
+                        const name = esc(row.Name ?? '');
+                        return `
+                            <div class="btn-group btn-group-sm" role="group" aria-label="Product actions">
+                            <a href="${urls.details}?ProductId=${id}" class="btn btn-info" title="Details">
+                            <i class="bi bi-eye"></i></a>
+
+                            <a href="${urls.edit}?ProductId=${id}" class="btn btn-warning" title="Edit">
+                            <i class="bi bi-pencil"></i></a>
+
+                            <button type="button"
+                            class="btn btn-danger js-dt-delete" data-id="${id}" data-name="${name}" title="Delete">
+                            <i class="bi bi-trash"></i>
+                            </button>
+                            </div>`;
+                    }
+                }
+                ],
+
+                dom:'<"d-flex justify-content-between align-items-center mb-3"B<"ms-auto"f>>rt<"d-flex justify-content-between align-items-center mt-3"lip>',
+                buttons: [
+                    {
+                        extend:    'excelHtml5',
+                        text:      '<i class="bi bi-file-earmark-spreadsheet me-2"></i>Export to Excel',
+                        title:     '@ViewData["Title"]',
+                        className: 'btn btn-outline-success px-3 py-2 shadow-sm',
+                        exportOptions: {
+                            modifier: {
+                                page: 'current'
+                            }
+                        }
+                    },
+                    {
+                        text: '<i class="bi bi-arrow-clockwise me-2"></i>Reset Table',
+                        className: 'btn btn-outline-secondary px-3 py-2 shadow-sm',
+                        action: function (e, dt) {
+                            dt.state.clear();
+                            window.location.reload();
+                        }
+                    }
+                ], 
+
+                initComplete: function () {
+                    $('#ProductsTbl tbody').on('click', '.js-dt-delete', function () {
+                        const $btn = $(this);
+                        const id   = $btn.data('id');
+                        const name = $btn.data('name');
+
+                        if (!confirm(`Delete "${name}"?\nThis action cannot be undone.`)) return;
+
+                        $btn.prop('disabled', true);
+
+                        $.ajax({
+                            url:  `${urls.delete}/${id}`,
+                            type: 'POST',
+                            data: { __RequestVerificationToken: csrfToken },
+                                success: function () {
+                                table.ajax.reload(null, false);
+                            },
+                            error: function (xhr) {
+                                const msg = xhr.responseJSON?.message
+                                ?? 'Failed to delete product. Please try again.';
+                                alert(msg);
+                                $btn.prop('disabled', false);
+                            }
+                        });
+                    });
+                }
+            });
+        });
+    </script>
+}

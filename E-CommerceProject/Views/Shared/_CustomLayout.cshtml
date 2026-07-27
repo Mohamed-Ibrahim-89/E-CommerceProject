@@ -17,26 +17,47 @@
         <nav class="navbar" data-bs-theme="light">
             <div class="container-fluid">
                 <div>
-                    <div class="d-flex align-items-center">
+                    <div class="d-flex align-items-center mb-4">
                         <a class="navbar-brand text-dark me-3 fw-bold" asp-controller="Home" asp-action="Index">E-Commerce</a>
+                        @if (User.Identity!.IsAuthenticated && User.IsInRole("Admin"))
+                        {
+                            <div class="d-inline-block fw-bold" style="font-size:large">
+                                <ul class="nav d-flex flex-row">
+                                    <li class="nav-item mx-2">
+                                        <a class="nav-link" asp-controller="Product" asp-action="Index">Products</a>
+                                    </li>
+                                    <li class="nav-item mx-2">
+                                        <a class="nav-link" asp-controller="Category" asp-action="Index">Categories</a>
+                                    </li>
+                                    <li class="nav-item mx-2">
+                                        <a class="nav-link" asp-controller="Discount" asp-action="List">Discounts</a>
+                                    </li>
+                                    <li class="nav-item mx-2">
+                                        <a class="nav-link" asp-controller="Order" asp-action="List">Orders</a>
+                                    </li>
+                                    <li class="nav-item mx-2">
+                                        <a class="nav-link" asp-controller="Shipment" asp-action="List">Shipments</a>
+                                    </li>
+                                    <li class="nav-item mx-2">
+                                        <a class="nav-link" asp-controller="User" asp-action="UsersList">Users</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
+                        @if (!User.IsInRole("Admin"))
+                        {
+                            <div class="d-inline-block fw-bold" style="font-size:large">
+                                <ul class="nav d-flex flex-row">
+                                    <li class="nav-item mx-2">
+                                        <a class="nav-link active" asp-controller="Home" asp-action="Index">Home</a>
+                                    </li>
+                                    <li class="nav-item mx-2">
+                                        <a class="nav-link" asp-controller="Info" asp-action="AboutUs">About Us</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
                     </div>
-
-                    @if (User.Identity!.IsAuthenticated && User.IsInRole("Admin"))
-                    {
-                        <div class="dropdown d-inline-block">
-                            <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                Actions List
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a class="nav-link" asp-controller="Product" asp-action="List">Product List</a></li>
-                                <li><a class="nav-link" asp-controller="Category" asp-action="List">Category List</a></li>
-                                <li><a class="nav-link" asp-controller="Discount" asp-action="List">Discounts List</a></li>
-                                <li><a class="nav-link" asp-controller="Order" asp-action="List">Order List</a></li>
-                                <li><a class="nav-link" asp-controller="Shipment" asp-action="List">Shipment List</a></li>
-                                <li><a class="nav-link" asp-controller="User" asp-action="UsersList">Users List</a></li>
-                            </ul>
-                        </div>
-                    }
                 </div>
                 <div class="d-flex justify-content-between align-items-center">
                     @if (!User.IsInRole("Admin"))
@@ -53,25 +74,6 @@
                 </div>
 
                 </div>
-        
-                @if (!User.IsInRole("Admin"))
-                {
-                    <div class="container-fluid">
-                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
-                        <div class="collapse navbar-collapse" id="navbarNav">
-                            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                            <li class="nav-item">
-                                <a class="nav-link active" asp-controller="Home" asp-action="Index">Home</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Info" asp-action="AboutUs">About Us</a>
-                            </li>
-                            </ul>
-                        </div>
-                    </div>
-                }
         </nav>
     </header>
 

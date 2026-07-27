@@ -1,0 +1,15 @@
+﻿global using E_CommerceProject.Entities.Models;
+global using E_CommerceProject.Repositories.Interfaces;
+global using Microsoft.AspNetCore.Mvc;
+global using E_CommerceProject.Entities.ViewModels;
+global using E_CommerceProject.Entities.ViewModels.DataTable;
+global using E_CommerceProject.Entities.Data;
+global using E_CommerceProject.Repositories.Implementations;
+global using E_CommerceProject.Repositories.Repositories;
+global using Microsoft.AspNetCore.Identity;
+global using Microsoft.EntityFrameworkCore;
+global using NToastNotify;
+global using E_CommerceProject.Repositories;
+global using Microsoft.AspNetCore.Authorization;
+global using System.Security.Claims;
+global using Newtonsoft.Json;

@@ -1,57 +1,68 @@
-﻿@model IEnumerable<Product>
+@model IEnumerable<Product>
 
-@foreach(var item in Model)
+@foreach (var item in Model)
 {
-    <div class="card col-md-4 mb-4">
+    var name = string.IsNullOrWhiteSpace(item.Name) ? "Product" : item.Name;
+    var description = string.IsNullOrWhiteSpace(item.Description) ? "No description available." : item.Description;
+    var hasDiscount = item.Discount?.Percentage > 0;
+    var discountedPrice = hasDiscount
+        ? item.Price - (item.Price * (item.Discount!.Percentage / 100m))
+        : item.Price;
+    var imageUrl = string.IsNullOrWhiteSpace(item.Cover)
+        ? "https://cdn4.iconfinder.com/data/icons/picture-sharing-sites/32/No_Image-1024.png"
+        : item.Cover;
 
-        <div class="card-body">
-            @if (item.Cover == null || item.Cover == "")
-            {
-                <img src="https://cdn4.iconfinder.com/data/icons/picture-sharing-sites/32/No_Image-1024.png" width="150" height="150" alt="No Image"/>
-            }
-            else
-            {
-                <img class="card-img" src="@item.Cover" width="400" height="200" alt="@item.Name" />
-            }
-
-            <p class="card-text">@(item.Description.Length > 30? $"{item.Description.Substring(0, 30)}..." : item.Description)</p>
-
-        </div>
-
-        <div >
-            <h2 class=" text-center">
-                <a asp-controller="Product" asp-action="Details" asp-route-productId="@item.ProductId" class="product-link">@(item.Name.Length > 15 ? $"{item.Name.Substring(0, 15)}..." : item.Name)</a>
-            </h2>
-            @if (item.Discount!.Percentage > 0)
-            {
-                <p class="last-price"><span>$@item.Price.ToString("f2")</span></p>
-                <p class="new-price"><span>$@(((item.Price) - (item.Price * (item.Discount.Percentage / 100))).ToString("f2"))</span>
-                <span class="badge badge-discount text-dark">@(item.Discount.Percentage.ToString("0"))% off
-                    <div class="float-end">
-                            <a asp-controller="WishList" asp-action="AddToWishList" asp-route-productId="@item.ProductId">
-                            <i class="bi bi-star"></i>
-                        </a>
-                    </div>
-                </span>
-                </p>
-            }
-            else
-            {
-                <span class="text-light" style="font-size:40px">$@item.Price.ToString("0")
-                    <div class="float-end">
-                        <a asp-controller="WishList" asp-action="AddToWishList" asp-route-productId="@item.ProductId">
-                            <i class="bi bi-star" style="font-size:medium"></i>
-                        </a>
-                    </div>
-                </span>
-            }
-            
-        </div>
-        
-        <h4 class="d-grid">
-            <a class="card-button" asp-controller="Cart" asp-action="AddToCart" asp-route-productId="@item.ProductId">
-                + Add to card
+    <div class="col-md-4 mb-4 d-flex">
+        <div class="card product-card h-100 w-100">
+            <a asp-controller="Product" asp-action="Details" asp-route-productId="@item.ProductId" class="product-card__image-link">
+                <div class="product-card__image-wrap">
+                    <img class="product-card__image" src="@imageUrl" alt="@name" />
+                    @if (hasDiscount)
+                    {
+                        <span class="product-card__badge">-@(item.Discount!.Percentage.ToString("0"))%</span>
+                    }
+                </div>
             </a>
-        </h4>
+
+            <div class="card-body product-card__body d-flex flex-column">
+                <div class="d-flex align-items-start justify-content-between gap-2 mb-2">
+                    <h3 class="product-card__title mb-0">
+                        <a asp-controller="Product" asp-action="Details" asp-route-productId="@item.ProductId" class="product-link">
+                            @(name.Length > 24 ? $"{name.Substring(0, 24)}..." : name)
+                        </a>
+                    </h3>
+
+                    <a class="product-card__wish" asp-controller="WishList" asp-action="AddToWishList" asp-route-productId="@item.ProductId" aria-label="Add to wishlist">
+                        <i class="bi bi-star"></i>
+                    </a>
+                </div>
+
+                <p class="product-card__description mb-3">
+                    @(description.Length > 70 ? $"{description.Substring(0, 70)}..." : description)
+                </p>
+
+                <div class="product-card__footer mt-auto">
+                    <div class="product-card__price-row">
+                        @if (hasDiscount)
+                        {
+                            <span class="last-price"><span>$@item.Price.ToString("0.00")</span></span>
+                        }
+
+                        <span class="new-price">
+                            <span>$@discountedPrice.ToString("0.00")</span>
+                        </span>
+                    </div>
+
+                    @if (hasDiscount)
+                    {
+                        <span class="product-card__discount-note">@(item.Discount!.Percentage.ToString("0"))% off</span>
+                    }
+
+                    <a class="card-button product-card__button" asp-controller="Cart" asp-action="AddToCart" asp-route-productId="@item.ProductId">
+                        Add to cart
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 }

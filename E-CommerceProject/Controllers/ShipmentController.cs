@@ -1,116 +1,109 @@
-﻿using E_CommerceProject.Entities.Models;
-using E_CommerceProject.Repositories.Interfaces;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿namespace E_CommerceProject.Controllers;
 
-namespace E_CommerceProject.Controllers
+[Authorize]
+public class ShipmentController(IBaseRepository<Shipment> shipmentRepository , IBaseRepository<Order> orderRepository , IHttpContextAccessor contextAccessor , UserManager<AppUser> userManager) : Controller
 {
-    [Authorize]
-    public class ShipmentController(IBaseRepository<Shipment> shipmentRepository , IBaseRepository<Order> orderRepository , IHttpContextAccessor contextAccessor , UserManager<AppUser> userManager) : Controller
+    private readonly IBaseRepository<Shipment> _shipmentRepository = shipmentRepository;
+    private readonly IBaseRepository<Order> _orderRepository = orderRepository;
+    private readonly UserManager<AppUser> _userManager = userManager;
+    private readonly IHttpContextAccessor _contextAccessor = contextAccessor;
+
+    public async Task<IActionResult> Index()
     {
-        private readonly IBaseRepository<Shipment> _shipmentRepository = shipmentRepository;
-        private readonly IBaseRepository<Order> _orderRepository = orderRepository;
-        private readonly UserManager<AppUser> _userManager = userManager;
-        private readonly IHttpContextAccessor _contextAccessor = contextAccessor;
+        var userId = await GetSignedUserId();
+        var shipments = await _shipmentRepository.GetAll(s => s.Order!.CustomerInfo!.AppUserId == userId , ["Order"]);
+        return View(shipments);
+    }
+    [Authorize(Roles = Constants.Roles.Admin)]
+    public async Task<IActionResult> List()
+    {
+        var shipments = await _shipmentRepository.GetAll(null, ["Order"]);
+        return View(shipments);
+    }
 
-        public async Task<IActionResult> Index()
+    public async Task<IActionResult> Details(int shipmentId)
+    {
+        var shipment = await _shipmentRepository.GetById(s => (s.ShipmentId == shipmentId), ["Order", "Order.CustomerInfo", "Order.OrderDetails", "Order.OrderDetails.Product", "Order.OrderDetails.Product.Discount"]);
+
+        if (shipment == null)
         {
-            var userId = await GetSignedUserId();
-            var shipments = await _shipmentRepository.GetAll(s => s.Order!.CustomerInfo!.AppUserId == userId , ["Order"]);
-            return View(shipments);
+            return NotFound();
         }
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> List()
+        return View(shipment);
+    }
+
+    [Authorize(Roles = Constants.Roles.Admin)]
+    public async void Create(Shipment shipment)
+    {
+        try
         {
-            var shipments = await _shipmentRepository.GetAll(null, ["Order"]);
-            return View(shipments);
+            await _shipmentRepository.AddItem(shipment);
+        }
+        catch (Exception ex)
+        {
+            ViewBag.Error = ex.Message;
+        }
+    }
+
+    [Authorize(Roles = Constants.Roles.Admin)]
+    public async Task<IActionResult> Edit(int shipmentId)
+    {
+        var shipment = await _shipmentRepository.GetById(s => s.ShipmentId == shipmentId);
+        if (shipment == null)
+        {
+            return NotFound();
         }
 
-        public async Task<IActionResult> Details(int shipmentId)
-        {
-            var shipment = await _shipmentRepository.GetById(s => (s.ShipmentId == shipmentId), ["Order", "Order.CustomerInfo", "Order.OrderDetails", "Order.OrderDetails.Product", "Order.OrderDetails.Product.Discount"]);
+        return View(shipment);
+    }
 
-            if (shipment == null)
+    [Authorize(Roles = Constants.Roles.Admin)]
+    [HttpPost]
+    public async Task<IActionResult> Edit(Shipment shipment)
+    {
+        try
+        {
+            if (ModelState.IsValid)
             {
-                return NotFound();
+                await _shipmentRepository.UpdateItem(shipment);
+                return RedirectToAction(nameof(List));
             }
             return View(shipment);
         }
-
-        [Authorize(Roles = "Admin")]
-        public async void Create(Shipment shipment)
+        catch (Exception ex)
         {
-            try
-            {
-                await _shipmentRepository.AddItem(shipment);
-            }
-            catch (Exception ex)
-            {
-                ViewBag.Error = ex.Message;
-            }
+            ViewBag.Error = ex.Message;
+            return View(shipment);
         }
+    }
 
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(int shipmentId)
+    [Authorize(Roles = Constants.Roles.Admin)]
+    public async Task<IActionResult> Delete(int id)
+    {
+        try
         {
-            var shipment = await _shipmentRepository.GetById(s => s.ShipmentId == shipmentId);
+            var shipment = await _shipmentRepository.GetById(s => s.ShipmentId == id);
+
             if (shipment == null)
             {
                 return NotFound();
             }
 
-            return View("Edit", shipment);
+            await _shipmentRepository.DeleteItem(id);
+            return Ok();
         }
-
-        [Authorize(Roles = "Admin")]
-        [HttpPost]
-        public async Task<IActionResult> Edit(Shipment shipment)
+        catch (Exception ex)
         {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    await _shipmentRepository.UpdateItem(shipment);
-                    return RedirectToAction("List");
-                }
-                return View("Edit", shipment);
-            }
-            catch (Exception ex)
-            {
-                ViewBag.Error = ex.Message;
-                return View("Edit", shipment);
-            }
+            ViewBag.Error = ex.Message;
+            return View();
         }
+    }
 
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            try
-            {
-                var shipment = await _shipmentRepository.GetById(s => s.ShipmentId == id);
+    public async Task<string> GetSignedUserId()
+    {
+        var username = _contextAccessor!.HttpContext!.User.Identity!.Name;
+        var user = await _userManager.FindByNameAsync(username!);
 
-                if (shipment == null)
-                {
-                    return NotFound();
-                }
-
-                await _shipmentRepository.DeleteItem(id);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                ViewBag.Error = ex.Message;
-                return View();
-            }
-        }
-
-        public async Task<string> GetSignedUserId()
-        {
-            var username = _contextAccessor!.HttpContext!.User.Identity!.Name;
-            var user = await _userManager.FindByNameAsync(username!);
-
-            return user!.Id;
-        }
+        return user!.Id;
     }
 }
