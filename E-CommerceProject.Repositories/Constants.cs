@@ -24,4 +24,12 @@ public class Constants
         public const string Admin = "Admin";
         public const string User = "User";
     }
+
+    public static class CacheKeys
+    {
+        public const string Products = "products";
+        public const string Categories = "categories";
+        public const string Discounts = "discounts";
+        public const string Orders = "orders";
+    }
 }

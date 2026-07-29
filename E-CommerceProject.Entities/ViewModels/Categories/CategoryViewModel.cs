@@ -1,10 +1,9 @@
-﻿namespace E_CommerceProject.Entities.ViewModels;
+﻿namespace E_CommerceProject.Entities.ViewModels.Categories;
 
 public class CategoryViewModel
 {
     public int CategoryId { get; set; }
 
-    [MaxLength(50)]
     public string Name { get; set; } = string.Empty;
 
     [Display(Name = "Created At")]

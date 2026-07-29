@@ -1,23 +1,16 @@
 ﻿namespace E_CommerceProject.Controllers;
 
 [Authorize(Roles = Constants.Roles.Admin)]
-public class ProductController(IProductRepository productRepository ,IBaseRepository<Product> repository, IUploadFile uploadFile, IBaseRepository<Category> categoryRepository, IToastNotification toastNotification, IWebHostEnvironment webHostingEnvironment, IBaseRepository<Discount> discountRepository) : BaseController
+public class ProductController(IProductRepository productRepository
+    , ICategoryRepository categoryRepository
+    , IDiscountRepository discountRepository
+    , IToastNotification toastNotification
+    ) : BaseController
 {
-    private readonly IProductRepository _productRepository = productRepository;
-    private readonly IBaseRepository<Product> _repository = repository;
-    private readonly IBaseRepository<Category> _categoryRepository = categoryRepository;
-    private readonly IBaseRepository<Discount> _discountRepository = discountRepository;
-    private readonly IUploadFile _uploadFile = uploadFile;
-    private readonly IToastNotification _toastNotification = toastNotification;
-    private readonly IWebHostEnvironment _webHostingEnvironment = webHostingEnvironment;
-
-
-    public async Task<IActionResult> List()
-    {
-        var products = await _repository.GetAll(null, ["Category", "Discount"]);
-
-        return View(products);
-    }
+    private readonly IProductRepository  _repository         = productRepository;
+    private readonly ICategoryRepository _categoryRepository = categoryRepository;
+    private readonly IDiscountRepository _discountRepository = discountRepository;
+    private readonly IToastNotification  _toastNotification  = toastNotification;
 
     public async Task<IActionResult> Index()
     {
@@ -36,7 +29,7 @@ public class ProductController(IProductRepository productRepository ,IBaseReposi
         try
         {
             var dtParams = GetDatatableParamsFromRequest();
-            var jsonData = await _productRepository.GetProductsList(dtParams, token);
+            var jsonData = await _repository.GetListAsync(dtParams, token);
             return JsonConvert.SerializeObject(jsonData);
 
         }
@@ -48,16 +41,16 @@ public class ProductController(IProductRepository productRepository ,IBaseReposi
     }
 
     [AllowAnonymous]
-    public async Task<IActionResult> Details(int productId)
+    public async Task<IActionResult> Details(int productId, CancellationToken token)
     {
         try
         {
-            var product = await _repository.GetById(p => p.ProductId == productId, ["Category", "Discount"]);
-            if (product == null)
-            {
+            var viewModel = await _repository.GetByIdAsync(productId, token);
+
+            if (viewModel == null)
                 return NotFound();
-            }
-            return View(product);
+
+            return View(viewModel);
         }
         catch (InvalidOperationException ex)
         {
@@ -69,162 +62,109 @@ public class ProductController(IProductRepository productRepository ,IBaseReposi
 
     public async Task<IActionResult> Create()
     {
-        var categories = await _categoryRepository.GetAll();
-        var discounts = await _discountRepository.GetAll();
-
-        var productViewModel = new ProductViewModel
+        try
         {
-            Product = new Product(),
-            Categories = categories,
-            Discounts = discounts
-        };
-
-        return View("ProductForm", productViewModel);
+            await LoadViewBags();
+            return View();
+        }
+        catch (Exception ex)
+        {
+            _toastNotification.AddErrorToastMessage(ex.Message);
+            return RedirectToAction(nameof(Index));
+        }
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(ProductViewModel model)
+    public async Task<IActionResult> Create(CreateProductViewModel model, CancellationToken token)
     {
         try
         {
-            if (model.File != null)
-            {
-                string filePath = await _uploadFile.UploadFileAsync("\\Images\\Product\\", model.File);
-                model.Product.Cover = filePath;
-            }
             if (ModelState.IsValid)
             {
-                var product = new Product
-                {
-                    ProductId = model.Product.ProductId,
-                    Name = model.Product.Name,
-                    Description = model.Product.Description,
-                    Price = model.Product.Price,
-                    Cover = model.Product.Cover,
-                    QuantityInStock = model.Product.QuantityInStock,
-                    CategoryId = model.Product.CategoryId,
-                    DiscountId = model.Product.DiscountId
-                };
-
-                await _repository.AddItem(product);
-
+                await _repository.AddAsync(model, token);
                 _toastNotification.AddSuccessToastMessage("Item added successfully");
                 return RedirectToAction(nameof(Index));
             }
 
-            return View("ProductForm");
+            return View(model);
         }
         catch (Exception ex)
         {
             ViewBag.Error = ex.Message;
-            return View("ProductForm");
+            _toastNotification.AddErrorToastMessage(ex.Message);
+            return View(model);
         }
     }
 
 
     public async Task<IActionResult> Edit(int productId)
     {
-        var product = await _repository.GetById(p => p.ProductId == productId, ["Category", "Discount"]);
-        if (product == null)
+        try
         {
-            return NotFound();
+            var viewModel = await _repository.GetEntity(productId);
+            if (viewModel == null)
+                return NotFound();
+
+            await LoadViewBags();
+
+            return View(new EditProductViewModel
+            {
+                ProductId = viewModel.ProductId,
+                Name = viewModel.Name,
+                Description = viewModel.Description,
+                Price = viewModel.Price,
+                Cover = viewModel.Cover,
+                QuantityInStock = viewModel.QuantityInStock,
+                CategoryId = viewModel.CategoryId,
+                DiscountId = viewModel.DiscountId,
+            });
         }
-        var categories = await _categoryRepository.GetAll();
-        var discounts = await _discountRepository.GetAll();
-        var productViewModel = new ProductViewModel
+        catch (Exception ex)
         {
-            Product = product,
-            Categories = categories,
-            Discounts = discounts
-        };
-        return View("ProductForm", productViewModel);
+            _toastNotification.AddErrorToastMessage(ex.Message);
+            return RedirectToAction(nameof(Index));
+        }
     }
 
     [HttpPost]
-    public async Task<IActionResult> Edit(ProductViewModel model)
+    public async Task<IActionResult> Edit(EditProductViewModel model, CancellationToken token)
     {
         try
         {
-            if (model.File != null)
-            {
-                string filePath = await _uploadFile.UploadFileAsync("\\Images\\Product\\", model.File);
-                model.Product.Cover = filePath;
-            }
             if (ModelState.IsValid)
             {
-                var product = new Product
-                {
-                    ProductId = model.Product.ProductId,
-                    Name = model.Product.Name,
-                    Description = model.Product.Description,
-                    Price = model.Product.Price,
-                    Cover = model.Product.Cover,
-                    QuantityInStock = model.Product.QuantityInStock,
-                    CategoryId = model.Product.CategoryId,
-                    DiscountId = model.Product.DiscountId
-                };
-                await _repository.UpdateItem(product);
+                await _repository.UpdateAsync(model, token);
                 _toastNotification.AddSuccessToastMessage("Item updated successfully");
                 return RedirectToAction(nameof(Index));
             }
-            return View("ProductForm", model);
+            return View(model);
         }
         catch (Exception ex)
         {
             ViewBag.Error = ex.Message;
-            return View("ProductForm");
+            _toastNotification.AddErrorToastMessage(ex.Message);
+            return View(model);
         }
     }
 
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(int id, CancellationToken token)
     {
         try
         {
-            var product = await _repository.GetById(p => p.ProductId == id);
-
-            if (product == null)
-            {
-                return NotFound();
-            }
-            string imagePath = product.Cover;
-
-            if (!string.IsNullOrEmpty(imagePath))
-            {
-                string fullPath = _webHostingEnvironment.WebRootPath + imagePath;
-
-                if (System.IO.File.Exists(fullPath))
-                {
-                    System.IO.File.Delete(fullPath);
-                }
-            }
-
-            await _repository.DeleteItem(id);
-            _toastNotification.AddSuccessToastMessage("Item deleted successfully");
-
+            await _repository.DeleteAsync(id, token);
             return RedirectToAction(nameof(Index));
         }
         catch (Exception ex)
         {
             ViewBag.Error = ex.Message;
+            _toastNotification.AddErrorToastMessage(ex.Message);
             return View();
         }
     }
 
-    [AllowAnonymous]
-    public async Task<IActionResult> Search(string searchQuery)
+    public async Task LoadViewBags()
     {
-        IEnumerable<Product> products;
-
-        if (searchQuery != null)
-        {
-            ViewBag.SearchQuery = searchQuery;
-            products = await _repository.GetAll(p => p.Name.Contains(searchQuery), ["Category", "Discount"]);
-        }
-        else
-        {
-            products = await _repository.GetAll(null, ["Category", "Discount"]);
-        }
-
-        return PartialView("_ProductCard", products);
+        ViewBag.Categories = new SelectList(await _categoryRepository.GetCategoryAsDropDown(), "Id", "Name");
+        ViewBag.Discounts = new SelectList(await _discountRepository.GetDiscountsAsDropDown(), "Id", "Name");
     }
 }

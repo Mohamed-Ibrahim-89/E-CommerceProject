@@ -17,4 +17,22 @@ public class HomeController(IBaseRepository<Product> productRepository) : Contro
 
         return View(products);
     }
+
+    [AllowAnonymous]
+    public async Task<IActionResult> Search(string searchQuery)
+    {
+        IEnumerable<Product> products;
+
+        if (searchQuery != null)
+        {
+            ViewBag.SearchQuery = searchQuery;
+            products = await _productRepository.GetAll(p => p.Name.Contains(searchQuery), ["Category", "Discount"]);
+        }
+        else
+        {
+            products = await _productRepository.GetAll(null, ["Category", "Discount"]);
+        }
+
+        return PartialView("_ProductCard", products);
+    }
 }

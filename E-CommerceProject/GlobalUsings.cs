@@ -13,3 +13,6 @@ global using E_CommerceProject.Repositories;
 global using Microsoft.AspNetCore.Authorization;
 global using System.Security.Claims;
 global using Newtonsoft.Json;
+global using E_CommerceProject.Entities.ViewModels.Products;
+global using E_CommerceProject.Entities.ViewModels.Categories;
+global using Microsoft.AspNetCore.Mvc.Rendering;

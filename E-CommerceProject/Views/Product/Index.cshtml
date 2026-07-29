@@ -3,28 +3,42 @@
     Layout = "_AdminLayout";
 }
 
-<link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
-<link href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css" rel="stylesheet" />
+<!-- DataTables & Custom Styles -->
+<link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap5.min.css" rel="stylesheet" />
 
 <style>
-    .dt-img {
-        width: 56px;
-        height: 56px;
-        object-fit: cover;
-        border-radius: 6px;
-        display: block;
-        margin: 0 auto;
+    /* DataTables Custom Polish */
+    .table > :not(caption) > * > * {
+        padding: 0.85rem 1rem;
+        vertical-align: middle;
+    }
+    
+    .dataTables_wrapper .dataTables_filter input {
+        border-radius: 0.5rem;
+        padding: 0.375rem 0.75rem;
+        border: 1px solid #dee2e6;
+    }
+    
+    .dataTables_wrapper .dataTables_length select {
+        border-radius: 0.5rem;
+        padding: 0.375rem 2rem 0.375rem 0.75rem;
+        border: 1px solid #dee2e6;
     }
 
     .dt-desc {
-        max-width: 300px;
+        max-width: 250px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
-    #ProductsTbl td {
-        vertical-align: middle;
+    .btn-hover-lift {
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .btn-hover-lift:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
     }
 </style>
 
@@ -33,55 +47,72 @@
     @Html.AntiForgeryToken()
 }
 
-<div class ="mt-5" style="background-color:beige">
-
-    <div class="card-header d-flex justify-content-between align-items-center py-3">
-        <h6 class="mb-0 fw-bold ms-2" style="font-size:x-large; color:brown;">@ViewData["Title"]</h6>
-        <a asp-action="Create" class="btn btn-primary btn-sm me-2">
-            <i class="fal fa-plus me-1"></i> Add Product
-        </a>
+<div class="container-fluid px-4 py-4">
+    
+    <!-- Header Section -->
+    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between pb-3 mb-4 border-bottom">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1 small text-muted">
+                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Home" class="text-decoration-none">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Products</li>
+                </ol>
+            </nav>
+            <h1 class="h3 fw-bold text-dark mb-0">Product Catalog</h1>
+            <p class="text-muted small mb-0">Manage stock, prices, discounts, and product listings.</p>
+        </div>
+        <div class="mt-3 mt-md-0">
+            <a asp-action="Create" class="btn btn-primary btn-hover-lift px-4 py-2 rounded-3 fw-semibold">
+                <span class="bi bi-plus-lg me-1" aria-hidden="true"></span> Add New Product
+            </a>
+        </div>
     </div>
 
-    <div class="card-body mt-4">
-        <div style="overflow-x: auto;">
-            <table id="ProductsTbl" class="table dt table-hover table-bordered table-striped">
-                <thead class="table-dark">
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Price</th>
-                        <th>Stock</th>
-                        <th>Created At</th>
-                        <th>Category</th>
-                        <th>Discount</th>
-                        <th class="text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+    <!-- Main Data Table Container -->
+    <div class="border-0 shadow-sm rounded-4 overflow-hidden" style="background-color:beige">
+        <div class="card-body p-4">
+            <div class="table-responsive">
+                <table id="ProductsTbl" class="table table-hover align-middle w-100 border-top-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th class="fw-semibold text-secondary">ID</th>
+                            <th class="fw-semibold text-secondary">Name</th>
+                            <th class="fw-semibold text-secondary">Description</th>
+                            <th class="fw-semibold text-secondary">Price</th>
+                            <th class="fw-semibold text-secondary">Stock</th>
+                            <th class="fw-semibold text-secondary">Category</th>
+                            <th class="fw-semibold text-secondary">Discount</th>
+                            <th class="fw-semibold text-secondary">Created</th>
+                            <th class="fw-semibold text-secondary text-center" style="width: 130px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
 
     <script>
         const urls = {
-        list:    '@Url.Action("GetProductsList", "Product")',
-        details: '@Url.Action("Details", "Product")',
-        edit:    '@Url.Action("Edit", "Product")',
-        delete:  '@Url.Action("Delete", "Product")'
+            list:    '@Url.Action("GetProductsList", "Product")',
+            details: '@Url.Action("Details", "Product")',
+            edit:    '@Url.Action("Edit", "Product")',
+            delete:  '@Url.Action("Delete", "Product")'
         };
 
         const csrfToken = $('input[name="__RequestVerificationToken"]').val();
 
         function esc(value) {
-        return $('<div>').text(value ?? '').html();
+            return $('<div>').text(value ?? '').html();
         }
 
         $(function () {
@@ -89,138 +120,165 @@
                 processing: true,
                 serverSide: true,
                 destroy:    true,
-                responsive: false,   // ← all columns always visible
-                scrollX:    true,    // ← horizontal scroll instead of collapsing
+                responsive: false,
+                scrollX:    true,
                 stateSave:  true,
                 order:      [[0, 'desc']],
-                lengthMenu: [[10, 25, 50, 100, 500], [10, 25, 50, 100, 500]],
+                lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
                 language: {
-                emptyTable:  'No products found.',
-                zeroRecords: 'No matching products found.',
-                processing:  '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Loading…'
+                    emptyTable:  'No products available.',
+                    zeroRecords: 'No matching products found.',
+                    processing:  '<span class="spinner-border spinner-border-sm text-primary me-2" role="status"></span>Loading products...',
+                    search:      "_INPUT_",
+                    searchPlaceholder: "Search products..."
                 },
                 ajax: {
                     url:   urls.list,
                     type:  'GET',
                     error: function () {
-                        alert('Could not load products. Please refresh the page.');
+                        toastr.error('Could not load products. Please refresh the page.');
                     }
                 },
                 columns: [
-                // ── ID ───────────────────────────────────────────────────
-                { data: 'ProductId', width: '60px' },
+                    // ID
+                    { 
+                        data: 'ProductId', 
+                        width: '70px',
+                        render: function(data) {
+                            return `<span class="badge bg-light text-dark border font-monospace">#${esc(String(data))}</span>`;
+                        }
+                    },
 
-                // ── Name ─────────────────────────────────────────────────
-                { data: 'Name', width: '150px' },
+                    // Name
+                    { 
+                        data: 'Name',
+                        width: '160px',
+                        render: function(data) {
+                            return `<span class="fw-semibold text-dark">${esc(data ?? '')}</span>`;
+                        }
+                    },
 
-                // ── Description ──────────────────────────────────────────
-                {
-                    data:  'Description',
-                    width: '220px',
-                    render: function (data, type) {
-                    if (!data) return '—';
-                    const safe = esc(data);
-                    return type === 'display' ? `<div class="dt-desc" title="${safe}">${safe}</div>` : data;
+                    // Description
+                    {
+                        data:  'Description',
+                        width: '220px',
+                        render: function (data, type) {
+                            if (!data) return '<span class="text-muted">—</span>';
+                            const safe = esc(data);
+                            return type === 'display' 
+                                ? `<div class="dt-desc text-muted" title="${safe}">${safe}</div>` 
+                                : data;
+                        }
+                    },
+
+                    // Price
+                    {
+                        data:  'Price',
+                        width: '90px',
+                        render: function (data, type) {
+                            if (data == null) return '<span class="text-muted">—</span>';
+                            return type === 'display' 
+                                ? `<span class="fw-bold text-success">$${parseFloat(data).toFixed(2)}</span>` 
+                                : data;
+                        }
+                    },
+
+                    // Stock Quantity
+                    { 
+                        data: 'QuantityInStock', 
+                        width: '80px',
+                        render: function(data) {
+                            if (data == null) return '<span class="text-muted">—</span>';
+                            const count = parseInt(data, 10);
+                            if (count <= 0) {
+                                return `<span class="badge bg-danger-subtle text-danger border border-danger-subtle">Out of Stock</span>`;
+                            } else if (count < 10) {
+                                return `<span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">${count} left</span>`;
+                            }
+                            return `<span class="fw-medium text-secondary">${count}</span>`;
+                        }
+                    },
+
+                    // Category
+                    {
+                        data:  'Category',
+                        width: '130px',
+                        render: function (data) {
+                            if (!data) return '<span class="text-muted">—</span>';
+                            const catName = esc((data.Name ?? data).toString());
+                            return `<span class="badge bg-light text-primary border border-primary-subtle">${catName}</span>`;
+                        }
+                    },
+
+                    // Discount
+                    {
+                        data:  'Discount',
+                        width: '90px',
+                        render: function (data) {
+                            if (!data || data === 0)
+                                return '<span class="badge bg-light text-secondary border">None</span>';
+                            return `<span class="badge bg-success-subtle text-success border border-success-subtle">${esc(String(data))}% OFF</span>`;
+                        }
+                    },
+
+                    // Created At
+                    {
+                        data:  'CreatedAt',
+                        width: '130px',
+                        render: function (data, type) {
+                            if (!data) return '<span class="text-muted">—</span>';
+                            const d = new Date(data);
+                            if (isNaN(d)) return data;
+                            return type === 'display' || type === 'filter' 
+                                ? `<span class="text-secondary small"><span class="bi bi-calendar3 me-1" aria-hidden="true"></span>${d.toLocaleDateString()}</span>` 
+                                : d.getTime();
+                        }
+                    },
+
+                    // Actions
+                    {
+                        data:       null,
+                        orderable:  false,
+                        searchable: false,
+                        width:      '130px',
+                        className:  'text-center',
+                        render: function (data, type, row) {
+                            const id   = esc(String(row.ProductId));
+                            const name = esc(row.Name ?? '');
+                            return `
+                                <div class="btn-group btn-group-sm" role="group" aria-label="Product Actions">
+                                    <a href="${urls.details}?ProductId=${id}" class="btn btn-outline-info" title="View Details">
+                                        <span class="bi bi-eye" aria-hidden="true"></span>
+                                    </a>
+                                    <a href="${urls.edit}?ProductId=${id}" class="btn btn-outline-primary" title="Edit Product">
+                                        <span class="bi bi-pencil" aria-hidden="true"></span>
+                                    </a>
+                                    <button type="button" class="btn btn-outline-danger js-dt-delete" data-id="${id}" data-name="${name}" title="Delete Product">
+                                        <span class="bi bi-trash" aria-hidden="true"></span>
+                                    </button>
+                                </div>`;
+                        }
                     }
-                },
-
-                // ── Price ────────────────────────────────────────────────
-                {
-                    data:  'Price',
-                    width: '80px',
-                    render: function (data, type) {
-                    if (data == null) return '—';
-                    return type === 'display' ? `$${parseFloat(data).toFixed(2)}` : data;
-                    }
-                },
-
-                // ── Stock ────────────────────────────────────────────────
-                { data: 'QuantityInStock', width: '70px' },
-
-                // ── Created At ───────────────────────────────────────────
-                {
-                    data:  'CreatedAt',
-                    width: '110px',
-                    render: function (data, type) {
-                        if (!data) return '—';
-                        const d = new Date(data);
-                        if (isNaN(d)) return data;
-                        return type === 'display' || type === 'filter' ? d.toLocaleDateString() : d.getTime();
-                    }
-                },
-
-                // ── Category ─────────────────────────────────────────────
-                {
-                    data:  'Category',
-                    width: '110px',
-                    render: function (data) {
-                        if (!data) return '—';
-                        return esc((data.Name ?? data).toString());
-                    }
-                },
-
-                // ── Discount ─────────────────────────────────────────────
-                {
-                    data:  'Discount',
-                    width: '90px',
-                    render: function (data) {
-                        if (!data)
-                            return '<span class="badge bg-secondary">None</span>';
-                        if (data.Percentage != null)
-                            return `<span class="badge bg-success">${esc(String(data.Percentage))}%</span>`;
-                        return '<span class="badge bg-info text-dark">Active</span>';
-                    }
-                },
-
-                // ── Actions ──────────────────────────────────────────────
-                {
-                    data:       null,
-                    orderable:  false,
-                    searchable: false,
-                    width:      '110px',
-                    className:  'text-center',
-                    render: function (data, type, row) {
-                        const id   = esc(String(row.ProductId));
-                        const name = esc(row.Name ?? '');
-                        return `
-                            <div class="btn-group btn-group-sm" role="group" aria-label="Product actions">
-                            <a href="${urls.details}?ProductId=${id}" class="btn btn-info" title="Details">
-                            <i class="bi bi-eye"></i></a>
-
-                            <a href="${urls.edit}?ProductId=${id}" class="btn btn-warning" title="Edit">
-                            <i class="bi bi-pencil"></i></a>
-
-                            <button type="button"
-                            class="btn btn-danger js-dt-delete" data-id="${id}" data-name="${name}" title="Delete">
-                            <i class="bi bi-trash"></i>
-                            </button>
-                            </div>`;
-                    }
-                }
                 ],
 
-                dom:'<"d-flex justify-content-between align-items-center mb-3"B<"ms-auto"f>>rt<"d-flex justify-content-between align-items-center mt-3"lip>',
+                dom: '<"d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-3"B<"ms-auto"f>>rt<"d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mt-3"lip>',
                 buttons: [
                     {
                         extend:    'excelHtml5',
-                        text:      '<i class="bi bi-file-earmark-spreadsheet me-2"></i>Export to Excel',
+                        text:      '<span class="bi bi-file-earmark-spreadsheet me-2" aria-hidden="true"></span>Export Excel',
                         title:     '@ViewData["Title"]',
-                        className: 'btn btn-outline-success px-3 py-2 shadow-sm',
-                        exportOptions: {
-                            modifier: {
-                                page: 'current'
-                            }
-                        }
+                        className: 'btn btn-success btn-sm rounded-3 shadow-sm px-3',
+                        exportOptions: { modifier: { page: 'current' } }
                     },
                     {
-                        text: '<i class="bi bi-arrow-clockwise me-2"></i>Reset Table',
-                        className: 'btn btn-outline-secondary px-3 py-2 shadow-sm',
+                        text: '<span class="bi bi-arrow-clockwise me-2" aria-hidden="true"></span>Reset Table',
+                        className: 'btn btn-secondary btn-sm rounded-3 shadow-sm px-3 ms-2',
                         action: function (e, dt) {
                             dt.state.clear();
                             window.location.reload();
                         }
                     }
-                ], 
+                ],
 
                 initComplete: function () {
                     $('#ProductsTbl tbody').on('click', '.js-dt-delete', function () {
@@ -228,7 +286,7 @@
                         const id   = $btn.data('id');
                         const name = $btn.data('name');
 
-                        if (!confirm(`Delete "${name}"?\nThis action cannot be undone.`)) return;
+                        if (!confirm(`Delete product "${name}"?\nThis action cannot be undone.`)) return;
 
                         $btn.prop('disabled', true);
 
@@ -236,13 +294,13 @@
                             url:  `${urls.delete}/${id}`,
                             type: 'POST',
                             data: { __RequestVerificationToken: csrfToken },
-                                success: function () {
+                            success: function () {
                                 table.ajax.reload(null, false);
+                                toastr.success('Product deleted successfully.');
                             },
                             error: function (xhr) {
-                                const msg = xhr.responseJSON?.message
-                                ?? 'Failed to delete product. Please try again.';
-                                alert(msg);
+                                const msg = xhr.responseJSON?.message ?? 'Failed to delete product. Please try again.';
+                                toastr.error(msg);
                                 $btn.prop('disabled', false);
                             }
                         });

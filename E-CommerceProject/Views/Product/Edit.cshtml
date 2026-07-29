@@ -1,0 +1,108 @@
+﻿@model EditProductViewModel
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "_AdminLayout";
+}
+
+<h1>Edit Product</h1>
+<hr />
+
+<div class="row justify-content-between">
+    <div class="col-md-4">
+        <form asp-action="Edit" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ProductId" />
+            <input type="hidden" asp-for="Cover" />
+
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Price" class="control-label"></label>
+                <input asp-for="Price" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="Cover" class="control-label"></label>
+                <div class="custom-file">
+                    <input asp-for="File" class="form-control" onchange="loadFile(event)" accept=".jpg; png; jpeg"/>
+                </div>
+                <span asp-validation-for="File" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="QuantityInStock" class="control-label"></label>
+                <input asp-for="QuantityInStock" class="form-control" />
+                <span asp-validation-for="QuantityInStock" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="CategoryId" class="control-label"></label>
+                <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.Categories" required>
+                    <option value="">--Select a category--</option>
+                </select>
+                <span asp-validation-for="CategoryId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="DiscountId" class="control-label"></label>
+                <select asp-for="DiscountId" class="form-control" asp-items="ViewBag.Discounts" required>
+                    <option value="">--Select a discount--</option>
+                </select>
+                <span asp-validation-for="DiscountId" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-4" >
+                <i class="bi bi-check"></i>
+                Save
+            </button>
+            <a class="btn btn-secondary mt-4" asp-controller="Product" asp-action="Index">
+                <i class="bi bi-x"></i>
+                Cancel
+            </a>
+
+        </form>
+    </div>
+
+    <div class="col-md-4">
+        @{
+            var cover = Model?.Cover;
+            var name = Model?.Name ?? "";
+        }
+        @if (!string.IsNullOrWhiteSpace(cover))
+        {
+            <img src="@Url.Content(cover)" id="displayedImage" alt="@name" width="400" height="300" />
+        }
+        else
+        {
+            <img id="displayedImage" width="400" height="300" alt="@name" />
+        }
+    </div>
+
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        var loadFile = function (event) {
+            var output = document.getElementById('displayedImage');
+            output.src = URL.createObjectURL(event.target.files[0]);
+            output.onload = function () {
+                URL.revokeObjectURL(output.src)
+            }
+        };
+    </script>
+}

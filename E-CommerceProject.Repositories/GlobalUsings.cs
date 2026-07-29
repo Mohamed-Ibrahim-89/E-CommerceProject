@@ -9,3 +9,4 @@ global using Microsoft.AspNetCore.Hosting;
 global using E_CommerceProject.Entities.ViewModels.DataTable;
 global using E_CommerceProject.Entities.ViewModels;
 global using E_CommerceProject.Repositories.Services;
+global using E_CommerceProject.Entities.ViewModels.Products;

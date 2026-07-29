@@ -27,7 +27,7 @@ public class Product
     public Category? Category { get; set; }
 
     [Display(Name = "Discount")]
-    public int? DiscountId { get; set; }
+    public int DiscountId { get; set; }
     public Discount? Discount { get; set; }
 
 }
