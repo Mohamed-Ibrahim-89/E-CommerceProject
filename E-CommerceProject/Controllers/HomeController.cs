@@ -1,38 +1,40 @@
 namespace E_CommerceProject.Controllers;
 
-public class HomeController(IBaseRepository<Product> productRepository) : Controller
+public class HomeController(IProductRepository repository
+    ,ICategoryRepository categoryRepository
+    ,IToastNotification toastNotification) : BaseController
 {
-    private readonly IBaseRepository<Product> _productRepository = productRepository;
+    private readonly IProductRepository _repository = repository;
+    private readonly ICategoryRepository _categoryRepository = categoryRepository;
+    private readonly IToastNotification _toastNotification = toastNotification;
 
-    public async Task<IActionResult> Index(string? categoryName)
+    public async Task<IActionResult> Index()
     {
-        if (categoryName != null)
+        try
         {
-            var SelectedProducts = await _productRepository.GetAll(c => c.Category!.Name.Contains(categoryName), ["Category", "Discount"]);
-
-            return View(SelectedProducts);
+            ViewBag.Categories = new SelectList(await _categoryRepository.GetCategoryAsDropDown(), "Id", "Name");
+            return View();
         }
-
-        var products = await _productRepository.GetAll(null, ["Category", "Discount"]);
-
-        return View(products);
+        catch (Exception ex)
+        {
+            _toastNotification.AddErrorToastMessage(ex.Message);
+            return View("Error");
+        }
     }
 
-    [AllowAnonymous]
-    public async Task<IActionResult> Search(string searchQuery)
+    public async Task<string> GetList(CancellationToken token)
     {
-        IEnumerable<Product> products;
-
-        if (searchQuery != null)
+        try
         {
-            ViewBag.SearchQuery = searchQuery;
-            products = await _productRepository.GetAll(p => p.Name.Contains(searchQuery), ["Category", "Discount"]);
-        }
-        else
-        {
-            products = await _productRepository.GetAll(null, ["Category", "Discount"]);
-        }
+            var dtParams = GetDatatableParamsFromRequest();
+            var jsonData = await _repository.GetListForHomePageAsync(dtParams, token);
+            return JsonConvert.SerializeObject(jsonData);
 
-        return PartialView("_ProductCard", products);
+        }
+        catch (Exception ex)
+        {
+            _toastNotification.AddErrorToastMessage(ex.Message);
+            return JsonConvert.SerializeObject(new { error = ex.Message });
+        }
     }
 }

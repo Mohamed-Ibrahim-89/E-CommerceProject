@@ -1,4 +1,6 @@
-﻿namespace E_CommerceProject.Repositories.Repositories;
+﻿using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+
+namespace E_CommerceProject.Repositories.Repositories;
 
 public interface IProductRepository
 {
@@ -9,6 +11,14 @@ public interface IProductRepository
     /// <param name="token"></param>
     /// <returns></returns>
     Task<DatatableResult> GetListAsync(DataTableParamsViewModel dataTableParams, CancellationToken token);
+
+    /// <summary>
+    /// Get the list of products with pagination and searching capabilities.
+    /// </summary>
+    /// <param name="dataTableParams"></param>
+    /// <param name="token"></param>
+    /// <returns></returns>
+    Task<DatatableResult> GetListForHomePageAsync(DataTableParamsViewModel dataTableParams, CancellationToken token);
 
     /// <summary>
     /// Get a product by its ID.
@@ -123,10 +133,63 @@ public class ProductRepository(AppDbContext context
         {
             draw = dataTableParams.Draw
         };
+
         foreach (var item in data)
-        {
             oResult.data.Add(item);
+
+        oResult.recordsTotal = count;
+        oResult.recordsFiltered = count;
+        return oResult;
+    }
+
+    public async Task<DatatableResult> GetListForHomePageAsync(DataTableParamsViewModel dataTableParams, CancellationToken token)
+    {
+        var lst = _context.Products
+            .Include(a => a.Category)
+            .Include(a => a.Discount)
+            .AsNoTracking()
+            .AsQueryable();
+
+        if (!string.IsNullOrEmpty(dataTableParams.SearchValue))
+        {
+            lst = lst.Where(m => m.Name.Contains(dataTableParams.SearchValue)
+                || m.Description.Contains(dataTableParams.SearchValue)
+                || m.Price.ToString().Contains(dataTableParams.SearchValue)
+                || m.QuantityInStock.ToString().Contains(dataTableParams.SearchValue)
+                || m.Category!.Name.Contains(dataTableParams.SearchValue)
+                || m.Discount!.Name.Contains(dataTableParams.SearchValue)
+            );
         }
+
+        if (int.TryParse(dataTableParams.CategoryId, out int id) && id > 0)
+            lst = lst.Where(p => p.CategoryId == id);
+
+        var count = await lst.CountAsync();
+
+        var data = await lst
+            .Select(a => new ProductDetailsViewModel
+            {
+                ProductId = a.ProductId,
+                Name = a.Name,
+                Description = a.Description,
+                Price = a.Price,
+                Cover = a.Cover,
+                QuantityInStock = a.QuantityInStock,
+                Category = a.Category!.Name,
+                Discount = a.Discount!.Percentage
+            })
+            .Skip(dataTableParams.Skip)
+            .Take(dataTableParams.PageSize)
+            .ToListAsync(token);
+
+        var oResult = new DatatableResult
+        { 
+            draw = dataTableParams.Draw
+        };
+
+        foreach (var item in data)
+            oResult.data.Add(item);
+
         oResult.recordsTotal = count;
         oResult.recordsFiltered = count;
         return oResult;

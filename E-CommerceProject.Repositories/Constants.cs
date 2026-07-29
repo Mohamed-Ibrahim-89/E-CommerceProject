@@ -17,6 +17,9 @@ public class Constants
         public const string OrderDir = "order[0][dir]";
 
         public const string ExtraSearch = "ExtraSearch";
+
+        // Extra
+        public const string CategoryId = "categoryId";
     }
 
     public static class Roles

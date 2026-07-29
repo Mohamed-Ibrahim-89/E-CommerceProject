@@ -38,5 +38,7 @@ public class DataTableParamsViewModel
     /// </summary>
     public int Skip { get { return Start != null ? Convert.ToInt32(Start) : 0; } }
 
+    // Extra Filters
+    public string CategoryId { get; set; }
 }
 

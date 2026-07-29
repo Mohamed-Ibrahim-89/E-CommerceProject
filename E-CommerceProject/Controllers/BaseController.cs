@@ -12,6 +12,7 @@ public class BaseController : Controller
             Length = HttpContext.Request.Query[Constants.DataTableParams.Length]!,
             SortColumn = HttpContext.Request.Query[Constants.DataTableParams.Order]!,
             SortColumnDirection = HttpContext.Request.Query[Constants.DataTableParams.OrderDir]!,
+            CategoryId = HttpContext.Request.Query[Constants.DataTableParams.CategoryId]!,
         };
     }
 }
