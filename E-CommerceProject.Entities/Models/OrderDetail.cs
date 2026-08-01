@@ -1,8 +1,7 @@
 ﻿namespace E_CommerceProject.Entities.Models;
 
-public class OrderDetail
+public class OrderDetail : BaseEntity
 {
-    public int OrderDetailId { get; set; }
     public int Quantity { get; set; }
 
     [Column(TypeName = "decimal(10, 2)")]

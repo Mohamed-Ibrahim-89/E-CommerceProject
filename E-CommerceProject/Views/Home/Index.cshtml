@@ -126,6 +126,19 @@
         border: 1px solid #dee2e6;
         box-shadow: 0 2px 6px rgba(0,0,0,0.02);
     }
+    /* Micro Badges */
+    .badge-soft-success {
+        background-color: #d1e7dd;
+        color: #0f5132;
+    }
+    .badge-soft-danger {
+        background-color: #f8d7da;
+        color: #842029;
+    }
+    .badge-soft-warning {
+        background-color: #fff3cd;
+        color: #664d03;
+    }
 </style>
 
 @using (Html.BeginForm())
@@ -231,6 +244,7 @@
                             
                             const price = parseFloat(row.Price ?? 0);
                             const quantityInStock = parseInt(row.QuantityInStock ?? 0);
+                            const inStock = quantityInStock > 0;
                             const discountPct = row.Discount ?? 0;
                             const hasDiscount = discountPct > 0;
                             const discountedPrice = hasDiscount ? (price - (price * (discountPct / 100))) : price;
@@ -277,7 +291,17 @@
                                                     <span class="fs-6 fw-bold text-dark">$${price.toFixed(2)}</span>
                                                 `}
                                             </div>
-
+                                            <div>
+                                            ${inStock ? `
+                                                ${quantityInStock < 10 ? `
+                                                    <small class="badge badge-soft-warning rounded-pill px-3 py-1-5 fw-bold">Low stock</small>
+                                                ` : `
+                                                    <small class="badge badge-soft-success rounded-pill px-3 py-1-5 fw-bold">In stock</small>
+                                                `}
+                                                ` : `
+                                                <small class="badge badge-soft-danger rounded-pill px-3 py-1-5 fw-bold">Out of stock</small>
+                                            `}
+                                            </div>
                                             <a href="${urls.addToCart}?productId=${id}" class="btn btn-primary rounded-pill px-3 py-1-5 btn-sm fw-semibold d-inline-flex align-items-center gap-1 shadow-sm">
                                                 <span class="bi bi-cart-plus" aria-hidden="true"></span> Add
                                             </a>

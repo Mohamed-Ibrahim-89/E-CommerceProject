@@ -1,4 +1,13 @@
-﻿namespace E_CommerceProject.Repositories.Implementations;
+﻿namespace E_CommerceProject.Repositories.Repositories;
+
+public interface IBaseRepository<T> where T : class
+{
+    public Task<IEnumerable<T>> GetAll(Expression<Func<T, bool>>? criteria = null, string[]? includes = null);
+    Task<T> GetById(Expression<Func<T, bool>> caretiria, string[]? Includes = null);
+    public Task<T> AddItem(T item);
+    public Task<T> UpdateItem(T item);
+    public Task DeleteItem(int id);
+}
 
 public class BaseRepository<T> : IBaseRepository<T> where T : class
 {

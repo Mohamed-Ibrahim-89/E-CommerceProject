@@ -1,17 +1,17 @@
 ﻿namespace E_CommerceProject.Controllers;
 
 [Authorize]
-public class ShipmentController(IBaseRepository<Shipment> shipmentRepository , IBaseRepository<Order> orderRepository , IHttpContextAccessor contextAccessor , UserManager<AppUser> userManager) : Controller
+public class ShipmentController(IBaseRepository<Shipment> shipmentRepository , IBaseRepository<Order> orderRepository , IHttpContextAccessor contextAccessor , UserManager<User> userManager) : Controller
 {
     private readonly IBaseRepository<Shipment> _shipmentRepository = shipmentRepository;
     private readonly IBaseRepository<Order> _orderRepository = orderRepository;
-    private readonly UserManager<AppUser> _userManager = userManager;
+    private readonly UserManager<User> _userManager = userManager;
     private readonly IHttpContextAccessor _contextAccessor = contextAccessor;
 
     public async Task<IActionResult> Index()
     {
         var userId = await GetSignedUserId();
-        var shipments = await _shipmentRepository.GetAll(s => s.Order!.CustomerInfo!.AppUserId == userId , ["Order"]);
+        var shipments = await _shipmentRepository.GetAll(s => s.Order!.CustomerInfo!.UserId == userId , ["Order"]);
         return View(shipments);
     }
     [Authorize(Roles = Constants.Roles.Admin)]
@@ -23,7 +23,7 @@ public class ShipmentController(IBaseRepository<Shipment> shipmentRepository , I
 
     public async Task<IActionResult> Details(int shipmentId)
     {
-        var shipment = await _shipmentRepository.GetById(s => (s.ShipmentId == shipmentId), ["Order", "Order.CustomerInfo", "Order.OrderDetails", "Order.OrderDetails.Product", "Order.OrderDetails.Product.Discount"]);
+        var shipment = await _shipmentRepository.GetById(s => (s.Id == shipmentId), ["Order", "Order.CustomerInfo", "Order.OrderDetails", "Order.OrderDetails.Product", "Order.OrderDetails.Product.Discount"]);
 
         if (shipment == null)
         {
@@ -48,7 +48,7 @@ public class ShipmentController(IBaseRepository<Shipment> shipmentRepository , I
     [Authorize(Roles = Constants.Roles.Admin)]
     public async Task<IActionResult> Edit(int shipmentId)
     {
-        var shipment = await _shipmentRepository.GetById(s => s.ShipmentId == shipmentId);
+        var shipment = await _shipmentRepository.GetById(s => s.Id == shipmentId);
         if (shipment == null)
         {
             return NotFound();
@@ -82,7 +82,7 @@ public class ShipmentController(IBaseRepository<Shipment> shipmentRepository , I
     {
         try
         {
-            var shipment = await _shipmentRepository.GetById(s => s.ShipmentId == id);
+            var shipment = await _shipmentRepository.GetById(s => s.Id == id);
 
             if (shipment == null)
             {

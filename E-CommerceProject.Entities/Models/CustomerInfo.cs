@@ -1,9 +1,7 @@
 ﻿namespace E_CommerceProject.Entities.Models;
 
-public class CustomerInfo
+public class CustomerInfo : BaseEntity
 {
-    public int CustomerInfoId { get; set; }
-
     [MaxLength(40)]
     public string FirstName { get; set; } = string.Empty;
 
@@ -37,6 +35,6 @@ public class CustomerInfo
     public string? State { get; set; }
 
 
-    public string? AppUserId { get; set; }
-    public AppUser? AppUser { get; set; }
+    public string? UserId { get; set; }
+    public User? User { get; set; }
 }

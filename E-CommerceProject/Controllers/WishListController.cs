@@ -1,38 +1,29 @@
 ﻿namespace E_CommerceProject.Controllers;
 
 [Authorize]
-public class WishListController(IHttpContextAccessor contextAccessor, IWishListRepository wishListRepository, UserManager<AppUser> userManager, IToastNotification toastNotification, IBaseRepository<Product> productRepository) : Controller
+public class WishListController(IHttpContextAccessor contextAccessor
+    ,IWishListRepository wishListRepository
+    ,IToastNotification toastNotification
+    ,IBaseRepository<Product> productRepository) : BaseController(contextAccessor)
 {
-    private readonly IWishListRepository _wishListRepository = wishListRepository;
+    private readonly IWishListRepository _repository = wishListRepository;
     private readonly IBaseRepository<Product> _productRepository = productRepository;
-    private readonly UserManager<AppUser> _userManager = userManager;
-    private readonly IHttpContextAccessor _contextAccessor = contextAccessor;
     private readonly IToastNotification _toastNotification = toastNotification;
 
-
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(CancellationToken token)
     {
         var userId = await GetSignedUserId();
-        var wishList = await _wishListRepository.GetWishListItems(userId);
+        var viewModel = await _repository.GetWishListItems(userId, token);
 
-        var wishListViewModel = new WishListViewModel(wishList);
-
-
-        return View(wishListViewModel);
+        return View(viewModel);
     }
 
-    public async Task<IActionResult> AddToWishList(int productId)
+    public async Task<IActionResult> AddToWishList(int productId, CancellationToken token)
     {
-        var product = await _productRepository.GetById(p => p.ProductId == productId, ["Discount"]);
+        try { 
+            var userId = await GetSignedUserId();
+            await _repository.AddToWishList(productId, userId, token);
 
-        try
-        {
-            if (product != null)
-            {
-                var userId = await GetSignedUserId();
-
-                await _wishListRepository.AddToWishList(product, userId);
-            }
             _toastNotification.AddSuccessToastMessage("Product added to wishlist successfully!");
             return RedirectToAction(nameof(Index));
         }
@@ -43,22 +34,35 @@ public class WishListController(IHttpContextAccessor contextAccessor, IWishListR
         }
     }
 
-    public async Task<IActionResult> RemoveFromWishList(int productId)
+    public async Task<IActionResult> RemoveFromWishList(int productId, CancellationToken token)
     {
-        var product = await _productRepository.GetById(p => p.ProductId == productId);
-
-        if (product != null)
+        try
         {
             var userId = await GetSignedUserId();
-
-            await _wishListRepository.RemoveFromWishList(product, userId);
+            await _repository.RemoveFromWishList(productId, userId, token);
         }
-        return RedirectToAction("Index");
+        catch (Exception ex)
+        {
+            _toastNotification.AddWarningToastMessage(ex.Message);
+            return RedirectToAction(nameof(Index));
+        }
+
+        return RedirectToAction(nameof(Index));
     }
 
-    public async Task<string> GetSignedUserId()
+    public async Task<IActionResult> RemoveAllWishList(CancellationToken token)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        return userId ?? string.Empty;
+        try
+        {
+            var userId = await GetSignedUserId();
+            await _repository.ClearWishList(userId, token);
+        }
+        catch (Exception ex)
+        {
+            _toastNotification.AddWarningToastMessage(ex.Message);
+            return RedirectToAction(nameof(Index));
+        }
+
+        return RedirectToAction(nameof(Index));
     }
 }

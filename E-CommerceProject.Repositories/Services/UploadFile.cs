@@ -1,4 +1,9 @@
-﻿namespace E_CommerceProject.Repositories.Implementations;
+namespace E_CommerceProject.Repositories.Services;
+
+public interface IUploadFile
+{
+    Task<string> UploadFileAsync(string filePath, IFormFile file);
+}
 
 public class UploadFile(IHostingEnvironment hostingEnvironment) : IUploadFile
 {

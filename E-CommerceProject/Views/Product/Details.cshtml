@@ -1,80 +1,230 @@
 ﻿@model ProductDetailsViewModel
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = Model.Name ?? "Product Details";
     Layout = "_CustomLayout";
+
+    // Dynamic price calculation
+    var hasDiscount = Model.Discount > 0;
+    var discountedPrice = hasDiscount ? (Model.Price - (Model.Price * (Model.Discount / 100M))) : Model.Price;
+    var fallbackImg = "https://cdn4.iconfinder.com/data/icons/picture-sharing-sites/32/No_Image-1024.png";
+    var coverUrl = string.IsNullOrWhiteSpace(Model.Cover) ? fallbackImg : Model.Cover;
 }
 
-<h2 class="mb-3">About this item: </h2>
+<style>
+    /* Modern Gallery & Aspect Ratio */
+    .product-media-card {
+        background: #ffffff;
+        border: 1px solid #edf2f7;
+        border-radius: 1.25rem;
+        padding: 1.5rem;
+        position: relative;
+    }
 
-<div class="product-container row">
+    .product-main-img-wrapper {
+        position: relative;
+        width: 100%;
+        padding-top: 85%; /* Responsive aspect ratio */
+        overflow: hidden;
+        border-radius: 0.75rem;
+        background-color: #f8f9fa;
+    }
 
-    <div class="col-md-4">
-        <div class="product-image">
-            @if (Model.Cover == null || Model.Cover == "")
+    .product-main-img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        transition: transform 0.3s ease;
+    }
+
+    .product-main-img-wrapper:hover .product-main-img {
+        transform: scale(1.03);
+    }
+
+    /* Modern Card Layouts */
+    .detail-card {
+        background: #ffffff;
+        border: 1px solid #edf2f7;
+        border-radius: 1.25rem;
+        padding: 1.75rem;
+    }
+
+    /* Price Section Typography */
+    .price-tag-container {
+        background: #f8f9fa;
+        border-radius: 1rem;
+        padding: 1.25rem;
+        border: 1px solid #e9ecef;
+    }
+
+    .current-price {
+        font-size: 2.25rem;
+        font-weight: 800;
+        line-height: 1;
+    }
+
+    .old-price {
+        font-size: 1.1rem;
+        text-decoration: line-through;
+        color: #6c757d;
+    }
+
+    /* Micro Badges */
+    .badge-soft-success {
+        background-color: #d1e7dd;
+        color: #0f5132;
+    }
+    .badge-soft-danger {
+        background-color: #f8d7da;
+        color: #842029;
+    }
+    .badge-soft-warning {
+        background-color: #fff3cd;
+        color: #664d03;
+    }
+
+    .meta-list-item {
+        padding: 0.85rem 0;
+        border-bottom: 1px border-dashed #e9ecef;
+    }
+    .meta-list-item:last-child {
+        border-bottom: none;
+    }
+</style>
+
+<div class="container py-4">
+
+    <!-- Breadcrumb Navigation -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-decoration-none">Home</a></li>
+            @if (!string.IsNullOrEmpty(Model.Category))
             {
-                <img src="https://cdn4.iconfinder.com/data/icons/picture-sharing-sites/32/No_Image-1024.png" width="150" height="150" alt="@Model.Name" />
+                <li class="breadcrumb-item active" aria-current="page">@Model.Category</li>
             }
-            else
-            {
-                <img src="@Model.Cover" width="350" alt="@Model.Name" />
-            }
-        </div>
-        <div class="product-details">
-            <h1 class="product-name">@Model.Name</h1>
-        </div>
-        <div>
-            <a class="btn btn-primary" style="font-size: xx-large" asp-controller="Cart" asp-action="AddToCart" asp-route-productId="@Model.ProductId">
-                Add to Cart
-                <svg xmlns="http://www.w3.org/2000/svg" width="50" height="30" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
-                    <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
-                </svg>
-            </a>
-        </div>
-    </div>
-    <div class="product-details col-md-4">
-        <p class="product-description">
-            @Model.Description
-        </p>
-    </div>
+            <li class="breadcrumb-item active text-truncate" style="max-width: 250px;" aria-current="page">@Model.Name</li>
+        </ol>
+    </nav>
 
-    <div class="product-info col-md-4">
-        <div class="info-item">
+    <div class="row g-4">
+        
+        <!-- Left Column: Product Image Gallery -->
+        <div class="col-lg-5 col-md-6">
+            <div class="product-media-card shadow-sm h-100 d-flex flex-column justify-content-center">
+                <div class="product-main-img-wrapper">
+                    <img src="@coverUrl" 
+                         alt="@Model.Name" 
+                         class="product-main-img" 
+                         onerror="this.src='@fallbackImg'" />
+                </div>
+
+                @if (hasDiscount)
+                {
+                    <span class="badge bg-danger rounded-pill position-absolute top-0 start-0 m-4 px-3 py-2 fs-6 shadow-sm">
+                        -@(Model.Discount.ToString("0"))% OFF
+                    </span>
+                }
+            </div>
+        </div>
+
+        <!-- Right Column: Product Overview & Purchase Sidebar -->
+        <div class="col-lg-7 col-md-6 d-flex flex-column gap-4">
             
-            @if(Model.Discount > 0)
-            {
-                <div class="info-label">
-                    <p class="last-price">Old Price: <span>@Model.Price</span></p>
-                    <p class="new-price">New Price: <span>@((Model.Price) - (Model.Price * 0.05M))</span>
-                    <span class="badge badge-discount text-dark">@(Model.Discount.ToString("0"))% off</span>
-                </div>
-            }
-            else
-            {
-                <div class="info-label">
-                    <div class="info-label">Price:</div>
-                    <span class="text-dark" style="font-size:40px">$@(Model.Price.ToString("0"))</span>
-                </div>
-            }
-        </div>
-        <div class="info-item">
-            <div class="info-label">Quantity in Stock:</div>
-            <div class="info-value">@Model.QuantityInStock</div>
-            @if (Model.QuantityInStock <= 5)
-            {
-                <span class="badge badge-stock">Low Stock</span>
-            }
-            else
-            {
-                <span class="badge" style="background-color:green">Heigh Stock</span>
-            }
-        </div>
-        <div class="info-item">
-            <div class="info-label">Category:</div>
-            <div class="info-value">@Model.Category</div>
-        </div>
-    </div>
+            <div class="detail-card shadow-sm d-flex flex-column h-100">
+                
+                <!-- Category Badge -->
+                @if (!string.IsNullOrEmpty(Model.Category))
+                {
+                    <div>
+                        <span class="badge bg-light text-primary border border-primary-subtle rounded-pill px-3 py-2 fw-semibold mb-2">
+                            <i class="bi bi-tag-fill me-1"></i>@Model.Category
+                        </span>
+                    </div>
+                }
 
-    
+                <!-- Product Name -->
+                <h1 class="display-6 fw-bold text-dark mb-3">@Model.Name</h1>
+
+                <!-- Price Section -->
+                <div class="price-tag-container mb-4">
+                    <span class="text-muted small fw-semibold text-uppercase d-block mb-1">Total Price</span>
+                    <div class="d-flex align-items-baseline gap-3">
+                        @if (hasDiscount)
+                        {
+                            <span class="current-price text-success">$@discountedPrice.ToString("F2")</span>
+                            <span class="old-price">$@Model.Price.ToString("F2")</span>
+                        }
+                        else
+                        {
+                            <span class="current-price text-dark">$@Model.Price.ToString("F2")</span>
+                        }
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="mb-4">
+                    <h2 class="h6 fw-bold text-dark text-uppercase tracking-wider text-muted mb-2">Description</h2>
+                    <p class="text-secondary leading-relaxed fs-6 mb-0">
+                        @(string.IsNullOrWhiteSpace(Model.Description) ? "No detailed description provided for this product." : Model.Description)
+                    </p>
+                </div>
+
+                <!-- Product Meta Information -->
+                <div class="border-top pt-3 mb-4">
+                    <div class="d-flex justify-content-between align-items-center meta-list-item">
+                        <span class="text-muted fw-medium"><i class="bi bi-boxes me-2"></i>Availability</span>
+                        <div>
+                            @if (Model.QuantityInStock <= 0)
+                            {
+                                <span class="badge badge-soft-danger rounded-pill px-3 py-1-5 fw-bold">Out of Stock</span>
+                            }
+                            else if (Model.QuantityInStock <= 5)
+                            {
+                                <span class="badge badge-soft-warning rounded-pill px-3 py-1-5 fw-bold">
+                                    Low Stock (@Model.QuantityInStock left)
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-soft-success rounded-pill px-3 py-1-5 fw-bold">
+                                    In Stock (@Model.QuantityInStock available)
+                                </span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center meta-list-item">
+                        <span class="text-muted fw-medium"><i class="bi bi-shield-check me-2"></i>Guarantee</span>
+                        <span class="text-dark fw-semibold small">100% Authentic Product</span>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mt-auto pt-2 d-flex flex-column flex-sm-row gap-3">
+                    <a class="btn btn-primary btn-lg rounded-pill px-4 py-3 fw-bold d-inline-flex align-items-center justify-content-center gap-2 flex-grow-1 shadow-sm"
+                       asp-controller="Cart" 
+                       asp-action="AddToCart" 
+                       asp-route-productId="@Model.ProductId">
+                        <i class="bi bi-cart-plus-fill fs-5"></i>
+                        <span>Add to Cart</span>
+                    </a>
+
+                    <a class="btn btn-outline-secondary btn-lg rounded-pill px-4 py-3 fw-bold d-inline-flex align-items-center justify-content-center gap-2"
+                       asp-controller="WishList" 
+                       asp-action="AddToWishList" 
+                       asp-route-productId="@Model.ProductId">
+                        <i class="bi bi-heart fs-5"></i>
+                        <span class="d-none d-sm-inline">Wishlist</span>
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </div>

@@ -1,4 +1,5 @@
 using E_CommerceProject.Repositories.Extensions;
+using E_CommerceProject.Repositories.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,7 +8,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<IDiscountRepository, DiscountRepository>();
+builder.Services.AddScoped<IWishListRepository, WishListRepository>();
 builder.Services.AddScoped<IUploadFile, UploadFile>();
 
 // Add Connection Strings
@@ -24,7 +27,7 @@ builder.Services.AddMvc().AddNToastNotifyToastr(new NToastNotify.ToastrOptions
 });
 
 // Add configuration for identity
-builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
+builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
     options.Password.RequiredLength = 8;
     //options.Password.RequiredUniqueChars = 0;
@@ -34,15 +37,6 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
     options.Password.RequireDigit = true;
 
 }).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
-
-
-// Session for cart
-builder.Services.AddScoped<ICartRepository, CartRepository>(sp => CartRepository.GetCart(sp));
-builder.Services.AddSession();
-builder.Services.AddHttpContextAccessor();
-
-// Register for WishListRepository
-builder.Services.AddScoped<IWishListRepository, WishListRepository>();
 
 // Register for CacheService
 builder.Services.AddCacheService();
@@ -62,7 +56,6 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseSession();
 
 app.MapControllerRoute(
     name: "default",

@@ -2,7 +2,8 @@ namespace E_CommerceProject.Controllers;
 
 public class HomeController(IProductRepository repository
     ,ICategoryRepository categoryRepository
-    ,IToastNotification toastNotification) : BaseController
+    ,IToastNotification toastNotification
+    ,IHttpContextAccessor contextAccessor) : BaseController(contextAccessor)
 {
     private readonly IProductRepository _repository = repository;
     private readonly ICategoryRepository _categoryRepository = categoryRepository;

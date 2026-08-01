@@ -1,9 +1,9 @@
 ﻿namespace E_CommerceProject.Controllers;
 
 [Authorize(Roles = Constants.Roles.Admin)]
-public class UserController(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, IHttpContextAccessor contextAccessor) : Controller
+public class UserController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IHttpContextAccessor contextAccessor) : Controller
 {
-    private readonly UserManager<AppUser> _userManager = userManager;
+    private readonly UserManager<User> _userManager = userManager;
     private readonly RoleManager<IdentityRole> _roleManager = roleManager;
     private readonly IHttpContextAccessor _contextAccessor = contextAccessor;
 

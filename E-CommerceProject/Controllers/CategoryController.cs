@@ -3,7 +3,8 @@
 [Authorize(Roles = Constants.Roles.Admin)]
 public class CategoryController(ICategoryRepository  repository
                                 ,IToastNotification toastNotification
-                                ): BaseController
+                                ,IHttpContextAccessor contextAccessor
+                                ): BaseController(contextAccessor)
 {
     private readonly ICategoryRepository _repository = repository;
     private readonly IToastNotification _toastNotification = toastNotification;

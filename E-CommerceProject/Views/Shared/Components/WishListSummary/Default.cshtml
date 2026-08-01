@@ -1,0 +1,10 @@
+﻿@model TotalCountViewModel
+
+@if(Model.TotalCount > 0)
+{
+    <a class="btn btn-warning me-2" asp-controller="Wishlist" asp-action="Index"><i class="fa fa-heart"></i> Wishlist @Model.TotalCount </a>
+}
+else
+{
+    <a class ="btn btn-warning me-2" asp-controller="Wishlist" asp-action="Index"><i class="fa fa-heart"></i> Wishlist</a>
+}

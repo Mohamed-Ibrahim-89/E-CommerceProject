@@ -1,15 +1,15 @@
 ﻿namespace E_CommerceProject.Controllers;
 
-public class CustomerInfoController(IBaseRepository<CustomerInfo> customerInfoRepository, UserManager<AppUser> userManager, IHttpContextAccessor contextAccessor) : Controller
+public class CustomerInfoController(IBaseRepository<CustomerInfo> customerInfoRepository, UserManager<User> userManager, IHttpContextAccessor contextAccessor) : Controller
 {
     private readonly IBaseRepository<CustomerInfo> _customerInfoRepository = customerInfoRepository;
-    private readonly UserManager<AppUser> _userManager = userManager;
+    private readonly UserManager<User> _userManager = userManager;
     private readonly IHttpContextAccessor _contextAccessor = contextAccessor;
 
     public async Task<IActionResult> Index()
     {
         var appUserId = await GetSignedUserId();
-        var customerInfo = await _customerInfoRepository.GetById(ci => ci.AppUserId == appUserId);
+        var customerInfo = await _customerInfoRepository.GetById(ci => ci.UserId == appUserId);
 
         if(customerInfo == null)
         {
@@ -31,7 +31,7 @@ public class CustomerInfoController(IBaseRepository<CustomerInfo> customerInfoRe
         if (ModelState.IsValid)
         {
             var appUser = await _userManager.GetUserAsync(User);
-            model.AppUserId = appUser.Id;
+            model.UserId = appUser.Id;
 
             await _customerInfoRepository.AddItem(model);
             return RedirectToAction(nameof(Index));
@@ -42,7 +42,7 @@ public class CustomerInfoController(IBaseRepository<CustomerInfo> customerInfoRe
     public async Task<IActionResult> Edit()
     {
         var appUserId = await GetSignedUserId();
-        var customerInfo = await _customerInfoRepository.GetById(ci => ci.AppUserId == appUserId);
+        var customerInfo = await _customerInfoRepository.GetById(ci => ci.UserId == appUserId);
 
         if (customerInfo == null)
         {

@@ -1,8 +1,18 @@
 ﻿namespace E_CommerceProject.Entities.ViewModels;
 
-public class CartViewModel(List<Cart> cartItems, decimal cartTotal)
+public class CartViewModel
 {
-    public List<Cart> CartItems { get; } = cartItems;
-    public decimal CartTotal { get; } = cartTotal;
+    public int ProductId { get; set; }
+    public string ProductName { get; set; } = string.Empty;
+
+    public string ProductCover { get; set; } = string.Empty;
+
+    public decimal ProductPrice { get; set; }
+
+    public decimal ProductDiscount { get; set; }
+
+    public int Amount { get; set; }
+
+    public decimal CartTotal { get; set; }
 
 }

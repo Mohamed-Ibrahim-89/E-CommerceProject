@@ -15,7 +15,7 @@ public class DiscountRepository(AppDbContext context) : IDiscountRepository
             .OrderBy(d => d.Percentage)
             .Select(d => new IdNameViewModel
             {
-                Id = d.DiscountId,
+                Id = d.Id,
                 Name = $"{d.Percentage}%"
             })
             .ToListAsync();

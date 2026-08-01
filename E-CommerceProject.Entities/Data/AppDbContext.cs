@@ -1,6 +1,6 @@
 ﻿namespace E_CommerceProject.Entities.Data;
 
-public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbContext<AppUser>(options)
+public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbContext<User>(options)
 {
     public DbSet<Cart> Carts { get; set; }
     public DbSet<Category> Categories { get; set; }
@@ -31,11 +31,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
             });
 
         //a hasher to hash the password before seeding the user to the db
-        var hasher = new PasswordHasher<AppUser>();
+        var hasher = new PasswordHasher<User>();
 
         //Seeding the User to AspNetUsers table
-        _ = modelBuilder.Entity<AppUser>().HasData(
-            new AppUser
+        _ = modelBuilder.Entity<User>().HasData(
+            new User
             {
                 Id = "62fe5285-fd68-4711-ae93-673787f4ac66", // primary key
                 UserName = "Admin",
@@ -45,7 +45,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
                 PasswordHash = hasher.HashPassword(null!, "Admin@123"),
                 EmailConfirmed = true
             },
-            new AppUser
+            new User
             { // primary key
                 Id = "62fe5285-fd68-4711-ae93-673787f4a111",
                 UserName = "user",

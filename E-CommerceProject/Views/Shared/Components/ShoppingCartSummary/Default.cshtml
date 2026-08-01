@@ -1,8 +1,8 @@
-﻿@model CartViewModel
+﻿@model TotalCountViewModel
 
-@if (Model.CartItems.Count > 0)
+@if (Model.TotalCount > 0)
 {
-    <a class="btn text-light me-2" asp-controller="Cart" asp-action="Index" style="background-color:indigo"><i class="fa fa-shopping-cart"></i> Cart @Model.CartItems.Count</a>
+    <a class="btn text-light me-2" asp-controller="Cart" asp-action="Index" style="background-color:indigo"><i class="fa fa-shopping-cart"></i> Cart @Model.TotalCount</a>
 }
 else
 {

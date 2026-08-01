@@ -1,9 +1,9 @@
 ﻿namespace E_CommerceProject.Controllers;
 
-public class AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager) : Controller
+public class AccountController(UserManager<User> userManager, SignInManager<User> signInManager) : Controller
 {
-    private readonly UserManager<AppUser> _userManager = userManager;
-    private readonly SignInManager<AppUser> _signInManager = signInManager;
+    private readonly UserManager<User> _userManager = userManager;
+    private readonly SignInManager<User> _signInManager = signInManager;
 
 
     [HttpPost]
@@ -11,7 +11,7 @@ public class AccountController(UserManager<AppUser> userManager, SignInManager<A
     {
         if (ModelState.IsValid)
         {
-            var user = new AppUser
+            var user = new User
             {
                 UserName = model.Username,
                 Email = model.Email

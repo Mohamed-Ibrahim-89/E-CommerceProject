@@ -1,9 +1,7 @@
 ﻿namespace E_CommerceProject.Entities.Models;
 
-public class Order
+public class Order : BaseEntity
 {
-    public int OrderId { get; set; }
-
     [MaxLength(50)]
     public string Status { get; set; } = "Pending";
 
@@ -14,6 +12,7 @@ public class Order
     public decimal TotalPrice { get; set; }
 
     public int CustomerInfoId { get; set; }
+
     public CustomerInfo? CustomerInfo { get; set; }
 
     public List<OrderDetail>? OrderDetails { get; set; }

@@ -64,7 +64,7 @@
                     {
                         <div class="cart-wishlist-container">
                             @await Component.InvokeAsync("ShoppingCartSummary")
-                            <a class="btn btn-warning me-2" asp-controller="Wishlist" asp-action="Index"><i class="fa fa-heart"></i> Wishlist</a>
+                            @await Component.InvokeAsync("WishListSummary")
                             <a class="btn text-light me-2" asp-controller="Shipment" asp-action="Index" style="background-color:blueviolet"><i class="fa fa-truck"></i> Orders</a>
                         </div>
                     }

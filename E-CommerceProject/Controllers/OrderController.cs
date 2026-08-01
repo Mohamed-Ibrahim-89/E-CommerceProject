@@ -1,14 +1,15 @@
 ﻿namespace E_CommerceProject.Controllers;
 
-public class OrderController(IBaseRepository<Order> orderRepository, ICartRepository cartRepository, IToastNotification toastNotification, IBaseRepository<OrderDetail> orderDetailRepository, IBaseRepository<CustomerInfo> customerInfoRepository, IHttpContextAccessor contextAccessor, UserManager<AppUser> userManager , IBaseRepository<Shipment> shipmentRepository) : Controller
+[Authorize]
+public class OrderController(IBaseRepository<Order> orderRepository, CartRepository cartRepository, IToastNotification toastNotification, IBaseRepository<OrderDetail> orderDetailRepository, IBaseRepository<CustomerInfo> customerInfoRepository, IHttpContextAccessor contextAccessor, UserManager<User> userManager , IBaseRepository<Shipment> shipmentRepository) : BaseController(contextAccessor)
 {
     private readonly IBaseRepository<Order> _orderRepository = orderRepository;
     private readonly IBaseRepository<Shipment> _shipmentRepository = shipmentRepository;
     private readonly IBaseRepository<OrderDetail> _orderDetailRepository = orderDetailRepository;
     private readonly IBaseRepository<CustomerInfo> _customerInfoRepository = customerInfoRepository;
-    private readonly ICartRepository _cartRepository = cartRepository;
+    private readonly CartRepository _cartRepository = cartRepository;
     private readonly IToastNotification _toastNotification = toastNotification;
-    private readonly UserManager<AppUser> _userManager = userManager;
+    private readonly UserManager<User> _userManager = userManager;
     private readonly IHttpContextAccessor _contextAccessor = contextAccessor;
 
     [Authorize(Roles = "Admin")]
@@ -20,7 +21,7 @@ public class OrderController(IBaseRepository<Order> orderRepository, ICartReposi
 
     public async Task<ActionResult> Details(int orderId)
     {
-        var order = await _orderRepository.GetById(o => o.OrderId == orderId, ["CustomerInfo", "OrderDetails", "OrderDetails.Product", "OrderDetails.Product.Discount"]);
+        var order = await _orderRepository.GetById(o => o.Id == orderId, ["CustomerInfo", "OrderDetails", "OrderDetails.Product", "OrderDetails.Product.Discount"]);
         if (order == null)
         {
             return NotFound();
@@ -28,9 +29,10 @@ public class OrderController(IBaseRepository<Order> orderRepository, ICartReposi
         return View(order);
     }
 
-    public async Task<ActionResult> Checkout()
+    public async Task<ActionResult> Checkout(CancellationToken token)
     {
-        var cartItems = await _cartRepository.GetCartItems();
+        var userId = await GetSignedUserId();
+        var cartItems = await _cartRepository.GetCartItems(userId, token);
         if (cartItems.Count == 0)
         {
             _toastNotification.AddErrorToastMessage("Your cart is empty, add some items first");
@@ -38,10 +40,9 @@ public class OrderController(IBaseRepository<Order> orderRepository, ICartReposi
         }
         else
         {
-            string userId = await GetSignedUserId();
             if (userId != null)
             {
-                var customerInfo = await _customerInfoRepository.GetById(ci => ci.AppUserId == userId);
+                var customerInfo = await _customerInfoRepository.GetById(ci => ci.UserId == userId);
                 var order = new Order
                 {
                     CustomerInfo = customerInfo,
@@ -55,15 +56,16 @@ public class OrderController(IBaseRepository<Order> orderRepository, ICartReposi
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<ActionResult> Checkout(Order order)
+    public async Task<ActionResult> Checkout(Order order, CancellationToken token)
     {
-        var cartItems = await _cartRepository.GetCartItems();
+        var userId = await GetSignedUserId();
+        var cartItems = await _cartRepository.GetCartItems(userId, token);
 
         if (ModelState.IsValid)
         {
             try
             {
-                order.TotalPrice = cartItems.Sum(c => (c.Product!.Price - (c.Product.Price *(c.Product.Discount!.Percentage / 100))) * c.Amount);
+                order.TotalPrice = cartItems.Sum(c => (c.ProductPrice - (c.ProductPrice *(c.ProductDiscount / 100))) * c.Amount);
                 order.OrderDetails = [];
                 foreach (var item in cartItems)
                 {
@@ -71,22 +73,21 @@ public class OrderController(IBaseRepository<Order> orderRepository, ICartReposi
                     {
                         ProductId = item.ProductId,
                         Quantity = item.Amount,
-                        Price = item.Product!.Price
+                        Price = item.ProductPrice
                     });
                 }
 
-                string userId = await GetSignedUserId();
                 if (userId != null)
                 {
-                    order.CustomerInfo!.AppUserId = userId;
-                }
+                    order.CustomerInfo!.UserId = userId;
 
-                await _orderRepository.AddItem(order);
-                await _cartRepository.ClearCart();
+                    await _orderRepository.AddItem(order);
+                    await _cartRepository.ClearCart(userId, token);
+                }
 
                 var shipment = new Shipment
                 {
-                    OrderId = order.OrderId,
+                    OrderId = order.Id,
                     ShippingDate = DateTime.Now,
                     EstimatedDeliveryDate = DateTime.Now.AddDays(new Random().Next(1, 5)),
                     Carrieer = "Default",
@@ -109,7 +110,7 @@ public class OrderController(IBaseRepository<Order> orderRepository, ICartReposi
 
     public async Task<ActionResult> Edit(int orderId)
     {
-        var order = await _orderRepository.GetById(o => o.OrderId == orderId, ["CustomerInfo", "CustomerInfo.AppUser"]);
+        var order = await _orderRepository.GetById(o => o.Id == orderId, ["CustomerInfo", "CustomerInfo.AppUser"]);
         if (order == null)
         {
             return NotFound();
@@ -145,9 +146,9 @@ public class OrderController(IBaseRepository<Order> orderRepository, ICartReposi
         {
 
             var orderDetailId = await _orderDetailRepository.GetById(od => od.OrderId == id);
-            await _orderDetailRepository.DeleteItem(orderDetailId.OrderDetailId);
+            await _orderDetailRepository.DeleteItem(orderDetailId.Id);
 
-            var order = await _orderRepository.GetById(c => c.OrderId == id);
+            var order = await _orderRepository.GetById(c => c.Id == id);
             await _orderRepository.DeleteItem(id);
 
             await _customerInfoRepository.DeleteItem(order.CustomerInfoId);
@@ -161,15 +162,4 @@ public class OrderController(IBaseRepository<Order> orderRepository, ICartReposi
         }
     }
 
-    public async Task<string> GetSignedUserId()
-    {
-        var username = _contextAccessor!.HttpContext!.User.Identity!.Name;
-        if (string.IsNullOrEmpty(username))
-        {
-            return null!; 
-        }
-        var user = await _userManager.FindByNameAsync(username!);
-
-        return user!.Id;
-    }
 }

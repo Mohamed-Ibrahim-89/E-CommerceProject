@@ -1,18 +1,14 @@
 ﻿namespace E_CommerceProject.Components;
 
-public class ShoppingCartSummary(ICartRepository shoppingCart
-    ,IHttpContextAccessor contextAccessor
-    ) : ViewComponent
+public class WishListSummary(IWishListRepository wishListRepository, IHttpContextAccessor contextAccessor) : ViewComponent
 {
-    private readonly ICartRepository _shoppingCart = shoppingCart;
+    private readonly IWishListRepository _wishListRepository = wishListRepository;
     private readonly IHttpContextAccessor _contextAccessor = contextAccessor;
 
     public async Task<IViewComponentResult> InvokeAsync()
     {
         var userId = await GetSignedUserId();
-        
-        var totalCount = await _shoppingCart.GetTotalCount(userId, CancellationToken.None);
-
+        var totalCount = await _wishListRepository.GetTotalCount(userId, CancellationToken.None);
         return View(totalCount);
     }
 

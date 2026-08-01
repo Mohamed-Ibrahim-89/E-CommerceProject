@@ -1,43 +1,38 @@
 ﻿namespace E_CommerceProject.Controllers;
 
 [Authorize]
-public class CartController(IBaseRepository<Product> productRepository, ICartRepository cartRepository) : Controller
+public class CartController(ICartRepository repository, IHttpContextAccessor contextAccessor) : BaseController(contextAccessor)
 {
-    private readonly ICartRepository _cartRepository = cartRepository;
-    private readonly IBaseRepository<Product> _productRepository = productRepository;
+    private readonly ICartRepository _repository = repository;
 
-
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(CancellationToken token)
     {
-        var cartItem = await _cartRepository.GetCartItems();
-        var cartTotal = await _cartRepository.GetCartTotal();
+        var userId = await GetSignedUserId();
+        var viewModels = await _repository.GetCartItems(userId, token);
 
-        var cartViewModel = new CartViewModel(cartItem, cartTotal);
-
-        return View(cartViewModel);
+        return View(viewModels);
     }
 
-    public async Task<IActionResult> AddToCart(int productId)
+    public async Task<IActionResult> AddToCart(int productId, CancellationToken token)
     {
-        var product = await _productRepository.GetById(p => p.ProductId == productId, ["Discount"]);
+        var userId = await GetSignedUserId();
+        await _repository.AddToCart(productId, userId, token);
 
-        if (product != null)
-        {
-            await _cartRepository.AddToCart(product);
-        }
-
-        return RedirectToAction("Index");
+        return RedirectToAction(nameof(Index));
     }
 
-    public async Task<IActionResult> RemoveFromCart(int productId)
+    public async Task<IActionResult> RemoveFromCart(int productId, CancellationToken token)
     {
-        var product = await _productRepository.GetById(p => p.ProductId == productId);
+        var userId = await GetSignedUserId();
+        await _repository.RemoveFromCart(userId, productId, token);
 
-        if (product != null)
-        {
-            await _cartRepository.RemoveFromCart(product);
-        }
+        return RedirectToAction(nameof(Index));
+    }
 
-        return RedirectToAction("Index");
+    public async Task<IActionResult> ClearCart(CancellationToken token)
+    {
+        var userId = await GetSignedUserId();
+        await _repository.ClearCart(userId, token);
+        return RedirectToAction(nameof(Index));
     }
 }

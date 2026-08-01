@@ -12,7 +12,7 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.ShipmentId)
+                @Html.DisplayNameFor(model => model.Id)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Carrieer)
@@ -36,7 +36,7 @@
 @foreach (var item in Model) {
         <tr class="data">
             <td>
-                @Html.DisplayFor(modelItem => item.ShipmentId)
+                @Html.DisplayFor(modelItem => item.Id)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Carrieer)
@@ -55,15 +55,15 @@
             </td>
             <td style="text-align:right">
                 <div class="btn-group">
-                        <a asp-controller="Shipment" asp-action="Details" asp-route-ShipmentId="@item.ShipmentId" class="btn btn-info">
+                        <a asp-controller="Shipment" asp-action="Details" asp-route-ShipmentId="@item.Id" class="btn btn-info">
                         <i class="bi bi-info-circle"></i>
                         Details
                     </a>
-                        <a asp-controller="Shipment" asp-action="Edit" asp-route-ShipmentId="@item.ShipmentId" class="btn btn-warning">
+                        <a asp-controller="Shipment" asp-action="Edit" asp-route-ShipmentId="@item.Id" class="btn btn-warning">
                         <i class="bi bi-pencil"></i>
                         Edit
                     </a>
-                    <a href="javascript:;" class="btn btn-danger js-delete" data-id="@item.ShipmentId">
+                    <a href="javascript:;" class="btn btn-danger js-delete" data-id="@item.Id">
                         <i class="bi bi-trash"></i>
                         Delete
                     </a>

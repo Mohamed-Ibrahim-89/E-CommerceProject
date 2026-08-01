@@ -14,7 +14,7 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.DiscountId)
+                @Html.DisplayNameFor(model => model.Id)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Name)
@@ -38,7 +38,7 @@
 @foreach (var item in Model) {
         <tr class="data">
             <td>
-                @Html.DisplayFor(modelItem => item.DiscountId)
+                @Html.DisplayFor(modelItem => item.Id)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
@@ -57,11 +57,11 @@
             </td>
                 <td style="text-align:right;">
                 <div class="btn-group">
-                    <a asp-action="Edit" asp-route-discountId="@item.DiscountId" class="btn btn-warning">
+                    <a asp-action="Edit" asp-route-discountId="@item.Id" class="btn btn-warning">
                         <i class="bi bi-pencil"></i>
                         Edit
                     </a>
-                    <a href="javascript:;" class="btn btn-danger js-delete" data-id="@item.DiscountId">
+                    <a href="javascript:;" class="btn btn-danger js-delete" data-id="@item.Id">
                         <i class="bi bi-trash"></i>
                         Delete
                     </a>

@@ -14,7 +14,7 @@
 
     <div class="col-md-4 mb-4 d-flex">
         <div class="card product-card h-100 w-100">
-            <a asp-controller="Product" asp-action="Details" asp-route-productId="@item.ProductId" class="product-card__image-link">
+            <a asp-controller="Product" asp-action="Details" asp-route-productId="@item.Id" class="product-card__image-link">
                 <div class="product-card__image-wrap">
                     <img class="product-card__image" src="@imageUrl" alt="@name" />
                     @if (hasDiscount)
@@ -27,12 +27,12 @@
             <div class="card-body product-card__body d-flex flex-column">
                 <div class="d-flex align-items-start justify-content-between gap-2 mb-2">
                     <h3 class="product-card__title mb-0">
-                        <a asp-controller="Product" asp-action="Details" asp-route-productId="@item.ProductId" class="product-link">
+                        <a asp-controller="Product" asp-action="Details" asp-route-productId="@item.Id" class="product-link">
                             @(name.Length > 24 ? $"{name.Substring(0, 24)}..." : name)
                         </a>
                     </h3>
 
-                    <a class="product-card__wish" asp-controller="WishList" asp-action="AddToWishList" asp-route-productId="@item.ProductId" aria-label="Add to wishlist">
+                    <a class="product-card__wish" asp-controller="WishList" asp-action="AddToWishList" asp-route-productId="@item.Id" aria-label="Add to wishlist">
                         <i class="bi bi-star"></i>
                     </a>
                 </div>
@@ -58,7 +58,7 @@
                         <span class="product-card__discount-note">@(item.Discount!.Percentage.ToString("0"))% off</span>
                     }
 
-                    <a class="card-button product-card__button" asp-controller="Cart" asp-action="AddToCart" asp-route-productId="@item.ProductId">
+                    <a class="card-button product-card__button" asp-controller="Cart" asp-action="AddToCart" asp-route-productId="@item.Id">
                         Add to cart
                     </a>
                 </div>

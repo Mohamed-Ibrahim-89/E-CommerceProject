@@ -1,9 +1,11 @@
 ﻿namespace E_CommerceProject.Entities.Models;
 
-public class Product
+[Index(nameof(Name))]
+[Index(nameof(Description))]
+[Index(nameof(Price))]
+[Index(nameof(QuantityInStock))]
+public class Product : BaseEntity
 {
-    public int ProductId { get; set; }
-
     [MaxLength(50)]
     public string Name { get; set; } = string.Empty;
 
@@ -18,9 +20,6 @@ public class Product
 
     [Display(Name = "Quantity"), Range(1, 10000, ErrorMessage = "Price must be greater than 0")]
     public int QuantityInStock { get; set; }
-
-    [Display(Name = "Created At")]
-    public DateTime CreatedAt { get; set; } = DateTime.Now;
 
     [Display(Name = "Category")]
     public int CategoryId { get; set; }

@@ -1,8 +1,7 @@
 ﻿namespace E_CommerceProject.Entities.Models;
 
-public class Shipment
+public class Shipment : BaseEntity
 {
-    public int ShipmentId { get; set; }
     [MaxLength(50)]
     public string Carrieer { get; set; } = string.Empty;
     [MaxLength(50), Display(Name = "Tracking Number")]

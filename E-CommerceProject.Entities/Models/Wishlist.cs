@@ -1,11 +1,9 @@
 ﻿namespace E_CommerceProject.Entities.Models;
 
-public class Wishlist
+public class Wishlist : BaseEntity
 {
-
-    public int WishlistId { get; set; }
-    public string AppUserId { get; set; } = string.Empty;
-    public AppUser? AppUser { get; set; }
+    public string UserId { get; set; } = string.Empty;
+    public User? User { get; set; }
 
     public int ProductId { get; set; }
     public Product? Product { get; set; }

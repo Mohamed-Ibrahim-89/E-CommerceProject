@@ -1,7 +1,9 @@
 ﻿namespace E_CommerceProject.Controllers;
 
-public class BaseController : Controller
+public class BaseController(IHttpContextAccessor contextAccessor) : Controller
 {
+    private readonly IHttpContextAccessor _contextAccessor = contextAccessor;
+
     protected DataTableParamsViewModel GetDatatableParamsFromRequest()
     {
         return new DataTableParamsViewModel
@@ -14,5 +16,12 @@ public class BaseController : Controller
             SortColumnDirection = HttpContext.Request.Query[Constants.DataTableParams.OrderDir]!,
             CategoryId = HttpContext.Request.Query[Constants.DataTableParams.CategoryId]!,
         };
+    }
+    protected async Task<string> GetSignedUserId()
+    {
+        var userId = _contextAccessor!.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                     ?? throw new UnauthorizedAccessException("User not exist");
+
+        return userId!;
     }
 }

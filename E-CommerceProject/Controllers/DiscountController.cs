@@ -41,7 +41,7 @@ public class DiscountController(IBaseRepository<Discount> discount, IToastNotifi
 
     public async Task<IActionResult> Edit(int discountId)
     {
-        var discount = await _discountRepository.GetById(d => d.DiscountId == discountId);
+        var discount = await _discountRepository.GetById(d => d.Id == discountId);
 
         if (discount == null)
             return NotFound();

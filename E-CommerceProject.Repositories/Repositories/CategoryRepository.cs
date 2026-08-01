@@ -58,7 +58,7 @@ public class CategoryRepository(AppDbContext context) : ICategoryRepository
     {
         var cols = new Dictionary<string, Expression<Func<Category, object>>>
         {
-            { nameof(CategoryViewModel.CategoryId), model => model.CategoryId},
+            { nameof(CategoryViewModel.CategoryId), model => model.Id},
             { nameof(CategoryViewModel.Name), model => model.Name },
             { nameof(CategoryViewModel.CreatedAt), model => model.CreatedAt }
         };
@@ -73,7 +73,7 @@ public class CategoryRepository(AppDbContext context) : ICategoryRepository
         }
         else
         {
-            lst = lst.OrderByDescending(a => a.CategoryId);
+            lst = lst.OrderByDescending(a => a.Id);
         }
 
         if (!string.IsNullOrEmpty(dataTableParams.SearchValue))
@@ -86,7 +86,7 @@ public class CategoryRepository(AppDbContext context) : ICategoryRepository
                             .Take(dataTableParams.PageSize)
                             .Select(a => new CategoryViewModel
                             {
-                                CategoryId = a.CategoryId,
+                                CategoryId = a.Id,
                                 Name = a.Name,
                                 CreatedAt = a.CreatedAt
                             })
@@ -110,11 +110,11 @@ public class CategoryRepository(AppDbContext context) : ICategoryRepository
     {
         var category =  await _context.Categories
             .AsNoTracking()
-            .FirstOrDefaultAsync(p => p.CategoryId == categoryId, token);
+            .FirstOrDefaultAsync(p => p.Id == categoryId, token);
 
         return category == null ? throw new InvalidOperationException($"Category with ID {categoryId} not found.") : new CategoryViewModel
         {
-            CategoryId = category.CategoryId,
+            CategoryId = category.Id,
             Name = category.Name,
             CreatedAt = category.CreatedAt
         };
@@ -137,7 +137,7 @@ public class CategoryRepository(AppDbContext context) : ICategoryRepository
 
     public async Task UpdateAsync(EditCategoryViewModel model, CancellationToken token)
     {
-        var category = await _context.Categories.FirstOrDefaultAsync(c => c.CategoryId  == model.CategoryId) ?? throw new InvalidOperationException("Category does not exsit!");
+        var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id  == model.CategoryId) ?? throw new InvalidOperationException("Category does not exsit!");
 
         if (await _context.Categories.AnyAsync(c => c.Name == model.Name))
             throw new InvalidOperationException($"Category with name {model.Name} already exists.");
@@ -153,7 +153,7 @@ public class CategoryRepository(AppDbContext context) : ICategoryRepository
 
         var category = new Category()
         {
-            CategoryId = viewModel.CategoryId,
+            Id = viewModel.CategoryId,
             Name = viewModel.Name,
             CreatedAt = viewModel.CreatedAt
         };
@@ -168,7 +168,7 @@ public class CategoryRepository(AppDbContext context) : ICategoryRepository
             .OrderBy(c => c.Name)
             .Select(c => new IdNameViewModel
             {
-                Id = c.CategoryId,
+                Id = c.Id,
                 Name = c.Name
             })
         .ToListAsync();

@@ -1,5 +1,5 @@
 ﻿global using E_CommerceProject.Entities.Data;
-global using E_CommerceProject.Repositories.Interfaces;
+global using E_CommerceProject.Repositories.Repositories;
 global using Microsoft.EntityFrameworkCore;
 global using System.Linq.Expressions;
 global using E_CommerceProject.Entities.Models;

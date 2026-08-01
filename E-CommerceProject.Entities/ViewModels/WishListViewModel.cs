@@ -1,6 +1,10 @@
 ﻿namespace E_CommerceProject.Entities.ViewModels;
 
-public class WishListViewModel(List<Wishlist> wishListItem)
+public class WishListViewModel
 {
-    public List<Wishlist> WishListItem { get; } = wishListItem;
+    public int ProductId { get; set; }
+    public string ProductName { get; set; } = string.Empty;
+    public string ProductCover { get; set; } = string.Empty;
+    public decimal ProductPrice { get; set; }
+    public decimal ProductDiscount { get; set; }
 }

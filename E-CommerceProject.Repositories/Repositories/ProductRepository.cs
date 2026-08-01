@@ -74,7 +74,7 @@ public class ProductRepository(AppDbContext context
     {
         var cols = new Dictionary<string, Expression<Func<Product, object>>>
         {
-            { nameof(ProductViewModel.ProductId), model => model.ProductId},
+            { nameof(ProductViewModel.ProductId), model => model.Id},
             { nameof(ProductViewModel.Name), model => model.Name },
             { nameof(ProductViewModel.Description), model => model.Description },
             { nameof(ProductViewModel.Price), model => model.Price },
@@ -97,7 +97,7 @@ public class ProductRepository(AppDbContext context
         }
         else
         {
-            lst = lst.OrderByDescending(a => a.ProductId);
+            lst = lst.OrderByDescending(a => a.Id);
         }
 
         if (!string.IsNullOrEmpty(dataTableParams.SearchValue))
@@ -116,7 +116,7 @@ public class ProductRepository(AppDbContext context
         var data = await lst
             .Select(a => new ProductViewModel
             {
-                ProductId = a.ProductId,
+                ProductId = a.Id,
                 Name = a.Name,
                 Description = a.Description,
                 Price = a.Price,
@@ -169,7 +169,7 @@ public class ProductRepository(AppDbContext context
         var data = await lst
             .Select(a => new ProductDetailsViewModel
             {
-                ProductId = a.ProductId,
+                ProductId = a.Id,
                 Name = a.Name,
                 Description = a.Description,
                 Price = a.Price,
@@ -201,11 +201,11 @@ public class ProductRepository(AppDbContext context
             .Include(p => p.Category)
             .Include(p => p.Discount)
             .AsNoTracking()
-            .FirstOrDefaultAsync(p => p.ProductId == productId, token);
+            .FirstOrDefaultAsync(p => p.Id == productId, token);
 
         return product == null ? throw new InvalidOperationException($"Product with ID {productId} not found.") : new ProductDetailsViewModel
         {
-            ProductId = product.ProductId,
+            ProductId = product.Id,
             Name = product.Name,
             Description = product.Description,
             Price = product.Price,

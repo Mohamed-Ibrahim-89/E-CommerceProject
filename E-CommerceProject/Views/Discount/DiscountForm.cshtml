@@ -5,14 +5,14 @@
     Layout = "_AdminLayout";
 }
 
-<h1>@(Model.DiscountId > 0 ? $"Edit {Model.Name} discount" : "Add new Discount")</h1>
+<h1>@(Model.Id > 0 ? $"Edit {Model.Name} discount" : "Add new Discount")</h1>
 <hr />
 
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="@(Model.DiscountId > 0 ? "Edit" : "Create")">
+        <form asp-action="@(Model.Id > 0 ? "Edit" : "Create")">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="DiscountId" />
+            <input type="hidden" asp-for="Id" />
 
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>

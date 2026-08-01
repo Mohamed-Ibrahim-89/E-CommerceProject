@@ -2,10 +2,11 @@
 
 [Authorize(Roles = Constants.Roles.Admin)]
 public class ProductController(IProductRepository productRepository
-    , ICategoryRepository categoryRepository
-    , IDiscountRepository discountRepository
-    , IToastNotification toastNotification
-    ) : BaseController
+    ,ICategoryRepository categoryRepository
+    ,IDiscountRepository discountRepository
+    ,IToastNotification toastNotification
+    ,IHttpContextAccessor contextAccessor) 
+    :BaseController(contextAccessor)
 {
     private readonly IProductRepository  _repository         = productRepository;
     private readonly ICategoryRepository _categoryRepository = categoryRepository;
@@ -109,7 +110,7 @@ public class ProductController(IProductRepository productRepository
 
             return View(new EditProductViewModel
             {
-                ProductId = viewModel.ProductId,
+                ProductId = viewModel.Id,
                 Name = viewModel.Name,
                 Description = viewModel.Description,
                 Price = viewModel.Price,

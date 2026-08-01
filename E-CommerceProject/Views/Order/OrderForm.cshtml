@@ -5,23 +5,23 @@
     Layout = "_CustomLayout";
 }
 
-@if(Model.OrderId > 0)
+@if(Model.Id > 0)
 {
     <h4>Edit Order</h4>
     <hr />
 }
 
-<form asp-action="@(Model.OrderId > 0 ? "Edit" : "Checkout")">
+<form asp-action="@(Model.Id > 0 ? "Edit" : "Checkout")">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    @if (Model.OrderId > 0)
+    @if (Model.Id > 0)
     {
-        <input type="hidden" asp-for="OrderId" />
-        <input type="hidden" asp-for="CustomerInfo!.CustomerInfoId" />
-        <input type="hidden" asp-for="CustomerInfo!.AppUserId" />
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="CustomerInfo!.Id" />
+        <input type="hidden" asp-for="CustomerInfo!.UserId" />
         <input type="hidden" asp-for="TotalPrice" />
         <input type="hidden" asp-for="OrderDate" />
     }
-    @if (Model.OrderId == 0)
+    @if (Model.Id == 0)
     {
         <h3 class="text-center mb-3">
             You're just one step away from your order
@@ -31,7 +31,7 @@
     <div class="col-6">
         <div class="row g-2">
 
-            @if(Model.OrderId > 0)
+            @if(Model.Id > 0)
             {
                 <div class="col-12">
                     <label asp-for="Status" class="form-label">Status:</label>
