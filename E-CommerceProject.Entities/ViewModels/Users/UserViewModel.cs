@@ -1,4 +1,4 @@
-﻿namespace E_CommerceProject.Entities.ViewModels;
+﻿namespace E_CommerceProject.Entities.ViewModels.Users;
 
 public class UserViewModel
 {

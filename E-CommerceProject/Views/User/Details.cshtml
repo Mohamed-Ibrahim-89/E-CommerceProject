@@ -1,99 +1,108 @@
-﻿@model CustomerInfoViewModel
+@model UserDetailsViewModel
 
 @{
-    ViewData["Title"] = "Customer Information";
-    Layout = "_CustomLayout";
+    ViewData["Title"] = "User Details";
+    Layout = "_AdminLayout";
 }
 
-<!-- Custom Styles -->
+<!-- Custom Micro-Polish -->
 <style>
-    .info-card {
-        background: #ffffff;
-        border-radius: 1rem;
-        border: 1px solid #edf2f7;
-    }
-
     .info-label {
         font-weight: 600;
         color: #6c757d;
-        font-size: 0.825rem;
+        font-size: 0.875rem;
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
-
     .info-value {
         font-size: 0.975rem;
         color: #212529;
         font-weight: 500;
     }
-
     .btn-hover-lift {
         transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
-
-        .btn-hover-lift:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-        }
+    .btn-hover-lift:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    }
 </style>
 
-<div class="container py-4">
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+}
 
-    <!-- Navigation Breadcrumb -->
+<div class="container-fluid px-4 py-4">
+    
+    <!-- Navigation & Page Header -->
     <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between pb-3 mb-4 border-bottom">
         <div>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-1 small text-muted">
-                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-decoration-none">Home</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Customer Info</li>
+                    <li class="breadcrumb-item"><a asp-controller="User" asp-action="Index" class="text-decoration-none">Users</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Details</li>
                 </ol>
             </nav>
-            <h1 class="h3 fw-bold text-dark mb-0">Your Information</h1>
-            <p class="text-muted small mb-0">Manage your personal information and default shipping details.</p>
+            <div class="d-flex align-items-center gap-3">
+                <h1 class="h3 fw-bold text-dark mb-0">@(Model.FullName ?? Model.Username)</h1>
+                <span class="badge bg-light text-dark border font-monospace">@@@Model.Username</span>
+            </div>
         </div>
 
-        <!-- Action Header Buttons -->
+        <!-- Action Buttons -->
         <div class="d-flex align-items-center gap-2 mt-3 mt-md-0">
-            <a asp-controller="CustomerInfo" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary btn-hover-lift rounded-3 px-3">
-                <span class="bi bi-pencil me-1" aria-hidden="true"></span> Edit Info
+            <a asp-action="Index" class="btn btn-secondary btn-hover-lift rounded-3 px-3">
+                <span class="bi bi-arrow-left me-1"></span> Back to List
             </a>
-            <a asp-controller="Account" asp-action="Profile" class="btn btn-success btn-hover-lift rounded-3 px-3">
-                <span class="bi bi-person me-1" aria-hidden="true"></span> View Profile
-            </a>
-            <a asp-controller="User" asp-action="ChangePassword" class="btn btn-secondary btn-hover-lift rounded-3 px-3">
-                <span class="bi bi-key me-1" aria-hidden="true"></span> Change Password
-            </a>
+            <button type="button" class="btn btn-danger btn-hover-lift rounded-3 px-3" onclick="confirmDelete('@Model.Username')">
+                <span class="bi bi-trash me-1"></span> Delete
+            </button>
         </div>
     </div>
 
-    <!-- Content Sections -->
+    <!-- Main Content Cards -->
     <div class="row g-4">
-
-        <!-- Personal Information Section -->
-        <div class="col-lg-5">
-            <div class="card info-card border-0 shadow-sm rounded-4 h-100 w-100">
+        
+        <!-- Account Details -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4 h-100 w-100">
                 <div class="card-header bg-transparent border-bottom py-3 px-4 d-flex align-items-center gap-2">
-                    <span class="bi bi-person-lines-fill text-primary fs-5" aria-hidden="true"></span>
-                    <h5 class="card-title fw-bold text-dark mb-0">Personal Info</h5>
+                    <span class="bi bi-person-vcard text-primary fs-5" aria-hidden="true"></span>
+                    <h5 class="card-title fw-bold text-dark mb-0">Account Profile</h5>
                 </div>
                 <div class="card-body p-4">
                     <div class="row g-3">
                         <div class="col-sm-6">
-                            <span class="info-label d-block mb-1">@Html.DisplayNameFor(model => model.FirstName)</span>
+                            <span class="info-label d-block mb-1">@Html.DisplayNameFor(m => m.Username)</span>
+                            <span class="info-value">@Html.DisplayFor(m => m.Username)</span>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <span class="info-label d-block mb-1">@Html.DisplayNameFor(m => m.FullName)</span>
                             <span class="info-value">
-                                @(string.IsNullOrWhiteSpace(Model.FirstName) ? "—" : Model.FirstName)
+                                @(string.IsNullOrWhiteSpace(Model.FullName) ? "—" : Model.FullName)
                             </span>
                         </div>
 
                         <div class="col-sm-6">
-                            <span class="info-label d-block mb-1">@Html.DisplayNameFor(model => model.LastName)</span>
+                            <span class="info-label d-block mb-1">@Html.DisplayNameFor(m => m.Email)</span>
                             <span class="info-value">
-                                @(string.IsNullOrWhiteSpace(Model.LastName) ? "—" : Model.LastName)
+                                @if (!string.IsNullOrWhiteSpace(Model.Email))
+                                {
+                                    <a href="mailto:@Model.Email" class="text-decoration-none" style="color: #4138b7;">
+                                        <span class="bi bi-envelope me-1" aria-hidden="true"></span>@Model.Email
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">—</span>
+                                }
                             </span>
                         </div>
 
-                        <div class="col-12">
-                            <span class="info-label d-block mb-1">@Html.DisplayNameFor(model => model.PhoneNumber)</span>
+                        <div class="col-sm-6">
+                            <span class="info-label d-block mb-1">@Html.DisplayNameFor(m => m.PhoneNumber)</span>
                             <span class="info-value">
                                 @if (!string.IsNullOrWhiteSpace(Model.PhoneNumber))
                                 {
@@ -108,8 +117,8 @@
                             </span>
                         </div>
 
-                        <div class="col-12">
-                            <span class="info-label d-block mb-1">@Html.DisplayNameFor(model => model.DateOfBirth)</span>
+                        <div class="col-sm-6">
+                            <span class="info-label d-block mb-1">@Html.DisplayNameFor(m => m.DateOfBirth)</span>
                             <span class="info-value">
                                 @if (Model.DateOfBirth.HasValue)
                                 {
@@ -127,17 +136,17 @@
             </div>
         </div>
 
-        <!-- Address & Shipping Details Section -->
-        <div class="col-lg-7">
-            <div class="card info-card border-0 shadow-sm rounded-4 h-100 w-100">
+        <!-- Address Information -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4 h-100 w-100">
                 <div class="card-header bg-transparent border-bottom py-3 px-4 d-flex align-items-center gap-2">
                     <span class="bi bi-geo-alt text-primary fs-5" aria-hidden="true"></span>
-                    <h5 class="card-title fw-bold text-dark mb-0">Shipping Address</h5>
+                    <h5 class="card-title fw-bold text-dark mb-0">Address Information</h5>
                 </div>
                 <div class="card-body p-4">
                     <div class="row g-3">
                         <div class="col-12">
-                            <span class="info-label d-block mb-1">Street Address</span>
+                            <span class="info-label d-block mb-1">Address Lines</span>
                             <div class="info-value">
                                 @if (!string.IsNullOrWhiteSpace(Model.AddressLine1))
                                 {
@@ -155,29 +164,29 @@
                         </div>
 
                         <div class="col-sm-6">
-                            <span class="info-label d-block mb-1">@Html.DisplayNameFor(model => model.City)</span>
+                            <span class="info-label d-block mb-1">@Html.DisplayNameFor(m => m.City)</span>
                             <span class="info-value">@(string.IsNullOrWhiteSpace(Model.City) ? "—" : Model.City)</span>
                         </div>
 
                         <div class="col-sm-6">
-                            <span class="info-label d-block mb-1">@Html.DisplayNameFor(model => model.State)</span>
+                            <span class="info-label d-block mb-1">@Html.DisplayNameFor(m => m.State)</span>
                             <span class="info-value">@(string.IsNullOrWhiteSpace(Model.State) ? "—" : Model.State)</span>
                         </div>
 
                         <div class="col-sm-6">
-                            <span class="info-label d-block mb-1">@Html.DisplayNameFor(model => model.ZipCode)</span>
+                            <span class="info-label d-block mb-1">@Html.DisplayNameFor(m => m.ZipCode)</span>
                             <span class="info-value font-monospace">@(string.IsNullOrWhiteSpace(Model.ZipCode) ? "—" : Model.ZipCode)</span>
                         </div>
 
                         <div class="col-sm-6">
-                            <span class="info-label d-block mb-1">@Html.DisplayNameFor(model => model.Country)</span>
+                            <span class="info-label d-block mb-1">@Html.DisplayNameFor(m => m.Country)</span>
                             <span class="info-value">@(string.IsNullOrWhiteSpace(Model.Country) ? "—" : Model.Country)</span>
                         </div>
 
                         @if (!string.IsNullOrWhiteSpace(Model.Landmark))
                         {
                             <div class="col-12">
-                                <span class="info-label d-block mb-1">@Html.DisplayNameFor(model => model.Landmark)</span>
+                                <span class="info-label d-block mb-1">@Html.DisplayNameFor(m => m.Landmark)</span>
                                 <span class="info-value">
                                     <span class="bi bi-pin-map me-1" aria-hidden="true"></span>@Model.Landmark
                                 </span>
@@ -189,12 +198,29 @@
         </div>
 
     </div>
-
-    <!-- Bottom Action Navigation -->
-    <div class="mt-4">
-        <a asp-controller="Home" asp-action="Index" class="btn btn-light btn-hover-lift border rounded-3 px-4">
-            <span class="bi bi-arrow-left me-1" aria-hidden="true"></span> Back to Home
-        </a>
-    </div>
-
 </div>
+
+@section Scripts {
+    <script>
+        function confirmDelete(username) {
+            if (confirm(`Are you sure you want to delete user "${username}"?`)) {
+                const csrfToken = $('input[name="__RequestVerificationToken"]').val();
+                $.ajax({
+                    url: '@Url.Action("Delete", "User")',
+                    type: 'POST',
+                    data: { 
+                        id: username, 
+                        __RequestVerificationToken: csrfToken 
+                    },
+                    success: function () {
+                        window.location.href = '@Url.Action("Index", "User")';
+                    },
+                    error: function (xhr) {
+                        const msg = xhr.responseJSON?.message ?? 'Failed to delete user.';
+                        toastr.error(msg);
+                    }
+                });
+            }
+        }
+    </script>
+}

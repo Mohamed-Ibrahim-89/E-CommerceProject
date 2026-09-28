@@ -63,12 +63,12 @@ public interface IProductRepository
 
 public class ProductRepository(AppDbContext context
     , IUploadFile uploadFile
-    , IHostingEnvironment hostingEnvironment
+    , IWebHostEnvironment hostingEnvironment
     ) : IProductRepository
 {
     private readonly AppDbContext _context = context;
     private readonly IUploadFile _uploadFile = uploadFile;
-    private readonly IHostingEnvironment _hostingEnvironment = hostingEnvironment;
+    private readonly IWebHostEnvironment _hostingEnvironment = hostingEnvironment;
 
     public async Task<DatatableResult> GetListAsync(DataTableParamsViewModel dataTableParams, CancellationToken token = default)
     {

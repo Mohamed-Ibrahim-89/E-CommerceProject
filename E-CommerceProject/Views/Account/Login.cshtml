@@ -1,84 +1,164 @@
-﻿@model AccountViewModel
+﻿@model LoginViewModel
 @{
+    ViewData["Title"] = "Sign In";
     Layout = "_LoginLayout";
 }
 
-<div class="wrapper">
-    <div class="form-wrapper sign-up">
-        <form asp-action="Register" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<style>
+    /* Auth Card Container */
+    .auth-card {
+        background: #ffffff;
+        border-radius: 1.25rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        border: 1px solid #edf2f7;
+        max-width: 460px;
+        margin: 3rem auto;
+        padding: 2.5rem 2rem;
+    }
 
-            <h2>Sign Up</h2>
-            <div class="input-group">
-                <input asp-for="Username" type="text" required>
-                <label asp-for="Username">Username</label>
-                <span asp-validation-for="Username" class="text-danger"></span>
-            </div>
-            <div class="input-group">
-                <input asp-for="Email" type="text" required>
-                <label asp-for="Email">Email</label>
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="input-group">
-                <input asp-for="Password" type="password" required>
-                <label asp-for="Password">Password</label>
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-            <button type="submit" class="btn">Sign Up</button>
-            <div class="sign-link">
-                <p>Already have an account? <a href="#" class="signIn-link">Sign In</a></p>
-            </div>
-        </form>
-    </div>
+    /* Floating Input Styling */
+    .form-floating > .form-control {
+        border-radius: 0.75rem;
+        border: 1px solid #dee2e6;
+        padding-right: 2.75rem;
+    }
 
-    <div class="form-wrapper sign-in">
-        <form asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input asp-for="Email" value="test@test.com" hidden />
+        .form-floating > .form-control:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+        }
 
-            <h2>Login</h2>
-            <div class="input-group">
-                <input asp-for="Username" type="text" required>
-                <label asp-for="Username">Username</label>
-                <span asp-validation-for="Username" class="text-danger"></span>
+    .form-floating > label {
+        color: #6c757d;
+    }
+
+    /* Password Show/Hide Toggle */
+    .password-toggle-btn {
+        position: absolute;
+        top: 50%;
+        right: 1rem;
+        transform: translateY(-50%);
+        z-index: 5;
+        border: none;
+        background: transparent;
+        color: #6c757d;
+        cursor: pointer;
+        padding: 0;
+    }
+
+        .password-toggle-btn:hover {
+            color: #0d6efd;
+        }
+
+    /* Remember Me Checkbox */
+    .form-check-input:checked {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    }
+
+    .btn-auth-primary {
+        border-radius: 50rem;
+        padding: 0.8rem 1.5rem;
+        font-weight: 600;
+        letter-spacing: 0.025em;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .btn-auth-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.25);
+        }
+</style>
+
+<div class="container py-4">
+    <div class="auth-card">
+
+        <!-- Header -->
+        <div class="text-center mb-4">
+            <h2 class="fw-bold text-dark mb-1">Welcome Back</h2>
+            <p class="text-muted small">Sign in to access your account</p>
+        </div>
+
+        <form asp-controller="Account" asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
+
+            <!-- Global Model Validation Summary -->
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger border-0 rounded-3 mb-3 small" role="alert"></div>
+
+            <!-- Email Address -->
+            <div class="mb-3">
+                <div class="form-floating">
+                    <input asp-for="Username" class="form-control" placeholder="name Or name@example.com" />
+                    <label asp-for="Username">Username Or Email</label>
+                </div>
+                <span asp-validation-for="Username" class="text-danger small d-block mt-1"></span>
             </div>
-            <div class="input-group">
-                <input asp-for="Password" type="password" required>
-                <label asp-for="Password">Password</label>
-                <span asp-validation-for="Password" class="text-danger"></span>
+
+            <!-- Password -->
+            <div class="mb-3">
+                <div class="form-floating position-relative">
+                    <input asp-for="Password" type="password" id="loginPassword" class="form-control" placeholder="Password" autocomplete="current-password" />
+                    <label asp-for="Password">Password</label>
+
+                    <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('loginPassword', 'toggleIcon')">
+                        <i class="bi bi-eye-slash" id="toggleIcon"></i>
+                    </button>
+                </div>
+                <span asp-validation-for="Password" class="text-danger small d-block mt-1"></span>
             </div>
-            <div class="form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="RememberMe" /> @Html.DisplayNameFor(model => model.RememberMe)
-                </label>
+
+            <!-- Remember Me & Forgot Password Bar -->
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div class="form-check">
+                    <input asp-for="RememberMe" class="form-check-input" type="checkbox" id="rememberMeCheck" />
+                    <label class="form-check-label small text-muted user-select-none" for="rememberMeCheck">
+                        Remember me
+                    </label>
+                </div>
+
+                <a asp-controller="Account" asp-action="ForgotPassword" class="small text-primary text-decoration-none fw-semibold">
+                    Forgot Password?
+                </a>
             </div>
-            <button type="submit" class="btn">Login</button>
-            <div class="sign-link">
-                <p>Don't have an account? <a href="#" class="signUp-link">Sign Up</a></p>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary btn-auth-primary w-100 mb-3">
+                Sign In
+            </button>
+
+            <!-- Sign Up Link -->
+            <div class="text-center mt-3 pt-2 border-top">
+                <p class="text-muted small mb-0">
+                    Don't have an account?
+                    <a asp-controller="Account" asp-action="Register" asp-route-returnUrl="@ViewData["ReturnUrl"]" class="fw-semibold text-primary text-decoration-none">
+                        Create one
+                    </a>
+                </p>
             </div>
+
         </form>
     </div>
 </div>
 
-@section Scripts
-{
+@section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 
     <script>
-        const wrapper = document.querySelector('.wrapper');
-        const signUpLink = document.querySelector('.signUp-link');
-        const signInLink = document.querySelector('.signIn-link');
+        // Password Visibility Toggle Utility
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
 
-        signUpLink.addEventListener('click', () => {
-            wrapper.classList.add('animate-signIn');
-            wrapper.classList.remove('animate-signUp');
-        });
-
-        signInLink.addEventListener('click', () => {
-            wrapper.classList.add('animate-signUp');
-            wrapper.classList.remove('animate-signIn');
-        });
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            }
+        }
     </script>
 }

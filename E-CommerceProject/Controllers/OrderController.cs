@@ -1,18 +1,57 @@
 ﻿namespace E_CommerceProject.Controllers;
 
 [Authorize]
-public class OrderController(IBaseRepository<Order> orderRepository, CartRepository cartRepository, IToastNotification toastNotification, IBaseRepository<OrderDetail> orderDetailRepository, IBaseRepository<CustomerInfo> customerInfoRepository, IHttpContextAccessor contextAccessor, UserManager<User> userManager , IBaseRepository<Shipment> shipmentRepository) : BaseController(contextAccessor)
+public class OrderController(IOrderRepository repository
+    , IBaseRepository<Order> orderRepository
+    ,ICartRepository cartRepository
+    ,IToastNotification toastNotification
+    ,IBaseRepository<OrderDetail> orderDetailRepository
+    ,IBaseRepository<CustomerInfo> customerInfoRepository
+    ,IHttpContextAccessor contextAccessor
+    ,UserManager<User> userManager
+    ,IBaseRepository<Shipment> shipmentRepository
+    ) : BaseController(contextAccessor)
 {
+    private readonly IOrderRepository  _repository = repository;
     private readonly IBaseRepository<Order> _orderRepository = orderRepository;
     private readonly IBaseRepository<Shipment> _shipmentRepository = shipmentRepository;
     private readonly IBaseRepository<OrderDetail> _orderDetailRepository = orderDetailRepository;
     private readonly IBaseRepository<CustomerInfo> _customerInfoRepository = customerInfoRepository;
-    private readonly CartRepository _cartRepository = cartRepository;
+    private readonly ICartRepository _cartRepository = cartRepository;
     private readonly IToastNotification _toastNotification = toastNotification;
     private readonly UserManager<User> _userManager = userManager;
     private readonly IHttpContextAccessor _contextAccessor = contextAccessor;
 
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = Constants.Roles.Admin)]
+    public IActionResult  Index()
+    {
+        try
+        {
+            return View();
+        }
+        catch (Exception ex)
+        {
+            _toastNotification.AddErrorToastMessage(ex.Message);
+            return View("Error");
+        }
+    }
+
+    public async Task<string> GetList(CancellationToken token)
+    {
+        try
+        {
+            var dataTableParams = GetDatatableParamsFromRequest();
+            var result = await _repository.GetOrderListAsync(dataTableParams, token);
+            return JsonConvert.SerializeObject(result);
+        }
+        catch (Exception ex)
+        {
+            _toastNotification.AddErrorToastMessage(ex.Message);
+            return JsonConvert.SerializeObject(new { error = ex.Message });
+        }
+    }
+
+    [Authorize(Roles = Constants.Roles.Admin)]
     public async Task<ActionResult> List()
     {
         var orders = await _orderRepository.GetAll(null, ["CustomerInfo"]);
@@ -110,7 +149,7 @@ public class OrderController(IBaseRepository<Order> orderRepository, CartReposit
 
     public async Task<ActionResult> Edit(int orderId)
     {
-        var order = await _orderRepository.GetById(o => o.Id == orderId, ["CustomerInfo", "CustomerInfo.AppUser"]);
+        var order = await _orderRepository.GetById(o => o.Id == orderId, ["CustomerInfo", "CustomerInfo.User"]);
         if (order == null)
         {
             return NotFound();
@@ -139,7 +178,7 @@ public class OrderController(IBaseRepository<Order> orderRepository, CartReposit
         return View("OrderForm", order);
     }
 
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = Constants.Roles.Admin)]
     public async Task<IActionResult> Delete(int id)
     {
         try

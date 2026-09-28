@@ -24,5 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\E-CommerceProject.Entities\E-CommerceProject.Entities.csproj" />
   </ItemGroup>
-
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
 </Project>

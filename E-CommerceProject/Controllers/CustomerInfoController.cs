@@ -1,15 +1,20 @@
 ﻿namespace E_CommerceProject.Controllers;
 
-public class CustomerInfoController(IBaseRepository<CustomerInfo> customerInfoRepository, UserManager<User> userManager, IHttpContextAccessor contextAccessor) : Controller
+public class CustomerInfoController(ICustomerInfoRepository repository
+    , IBaseRepository<CustomerInfo> customerInfoRepository
+    , UserManager<User> userManager
+    , IHttpContextAccessor contextAccessor
+    ) : BaseController(contextAccessor)
 {
+    private readonly ICustomerInfoRepository _repository = repository;
     private readonly IBaseRepository<CustomerInfo> _customerInfoRepository = customerInfoRepository;
     private readonly UserManager<User> _userManager = userManager;
     private readonly IHttpContextAccessor _contextAccessor = contextAccessor;
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(CancellationToken token)
     {
         var appUserId = await GetSignedUserId();
-        var customerInfo = await _customerInfoRepository.GetById(ci => ci.UserId == appUserId);
+        var customerInfo = await _repository.GetByIdAsync(appUserId, token);
 
         if(customerInfo == null)
         {
@@ -26,23 +31,22 @@ public class CustomerInfoController(IBaseRepository<CustomerInfo> customerInfoRe
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(CustomerInfo model)
+    public async Task<IActionResult> Create(CustomerInfoViewModel model, CancellationToken token)
     {
         if (ModelState.IsValid)
         {
-            var appUser = await _userManager.GetUserAsync(User);
-            model.UserId = appUser.Id;
+            var userId = await GetSignedUserId();
 
-            await _customerInfoRepository.AddItem(model);
+            await _repository.AddAsync(model, userId, token);
             return RedirectToAction(nameof(Index));
         }
         return View(model);
     }
 
-    public async Task<IActionResult> Edit()
+    public async Task<IActionResult> Edit(int id)
     {
-        var appUserId = await GetSignedUserId();
-        var customerInfo = await _customerInfoRepository.GetById(ci => ci.UserId == appUserId);
+        var userId = await GetSignedUserId();
+        var customerInfo = await _repository.GetByIdAsync(userId, CancellationToken.None);
 
         if (customerInfo == null)
         {
@@ -54,13 +58,13 @@ public class CustomerInfoController(IBaseRepository<CustomerInfo> customerInfoRe
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(CustomerInfo model)
+    public async Task<IActionResult> Edit(CustomerInfoViewModel model)
     {
         if (ModelState.IsValid)
         {
             try
             {
-                await _customerInfoRepository.UpdateItem(model);
+                //await _customerInfoRepository.UpdateItem(model);
             }
             catch
             {
@@ -69,11 +73,5 @@ public class CustomerInfoController(IBaseRepository<CustomerInfo> customerInfoRe
             return RedirectToAction(nameof(Index));
         }
         return View(model);
-    }
-
-    public async Task<string> GetSignedUserId()
-    {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException("User not found");
-        return userId;
     }
 }

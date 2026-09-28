@@ -5,10 +5,10 @@ public interface IUploadFile
     Task<string> UploadFileAsync(string filePath, IFormFile file);
 }
 
-public class UploadFile(IHostingEnvironment hostingEnvironment) : IUploadFile
+public class UploadFile(IWebHostEnvironment hostingEnvironment) : IUploadFile
 {
 
-    private readonly IHostingEnvironment _hostingEnvironment = hostingEnvironment;
+    private readonly IWebHostEnvironment _hostingEnvironment = hostingEnvironment;
 
     public async Task<string> UploadFileAsync(string path, IFormFile file)
     {

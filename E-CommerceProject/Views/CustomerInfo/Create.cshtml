@@ -1,4 +1,4 @@
-﻿@model CustomerInfo
+﻿@model CustomerInfoViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -62,7 +62,7 @@
                 <span asp-validation-for="Country" class="text-danger"></span>
             </div>
             <div class="col-12">
-                <label asp-for="Landmark" class="form-label">Email:</label>
+                <label asp-for="Landmark" class="form-label"></label>
                 <input asp-for="Landmark" class="form-control" />
                 <span asp-validation-for="Landmark" class="text-danger"></span>
             </div>

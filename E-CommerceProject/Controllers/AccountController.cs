@@ -1,39 +1,41 @@
 ﻿namespace E_CommerceProject.Controllers;
 
-public class AccountController(UserManager<User> userManager, SignInManager<User> signInManager) : Controller
+public class AccountController(
+    IAccountRepository repository
+    ,IToastNotification toastNotification
+    ,IHttpContextAccessor contextAccessor
+    ) : BaseController(contextAccessor)
 {
-    private readonly UserManager<User> _userManager = userManager;
-    private readonly SignInManager<User> _signInManager = signInManager;
+    private readonly IAccountRepository _repository = repository;
+    private readonly IToastNotification _toastNotification = toastNotification;
 
+    public IActionResult Register()
+    {
+        return View();
+    }
 
     [HttpPost]
-    public async Task<IActionResult> Register(AccountViewModel model)
+    public async Task<IActionResult> Register(RegisterViewModel model, CancellationToken token)
     {
-        if (ModelState.IsValid)
+        try
         {
-            var user = new User
+            if (ModelState.IsValid)
             {
-                UserName = model.Username,
-                Email = model.Email
-            };
-
-            var result = await _userManager.CreateAsync(user, model.Password);
-
-            if (result.Succeeded)
-            {
-                await _userManager.AddToRoleAsync(user, Constants.Roles.User);
-                await _signInManager.SignInAsync(user, isPersistent: false);
-
-                return RedirectToAction(nameof(HomeController.Index), "Home");
+                await _repository.RegisterAsync(model, token);
+                _toastNotification.AddSuccessToastMessage("Registration successful, you can now log in.");
+                return RedirectToAction(nameof(Login));
             }
-
-            foreach (var error in result.Errors)
+            else 
             {
-                ModelState.AddModelError(string.Empty, error.Description);
+                _toastNotification.AddErrorToastMessage("Please check your inputs.");
+                return View(model);
             }
         }
-
-        return View(nameof(Login), model);
+        catch (Exception ex)
+        {
+            _toastNotification.AddErrorToastMessage(ex.Message);
+            return View(model);
+        }
     }
 
     public IActionResult Login()
@@ -41,49 +43,46 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
         return View();
     }
     [HttpPost]
-    public async Task<IActionResult> Login(AccountViewModel model, string? returnUrl = null)
+    public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null, CancellationToken token = default)
     {
-        if (ModelState.IsValid)
-        {
-            var user = await _userManager.FindByNameAsync(model.Username);
-            if (user == null)
+        try 
+        { 
+            returnUrl ??= Url.Action("Index", "Home");
+
+            if (ModelState.IsValid)
             {
-                user = await _userManager.FindByEmailAsync(model.Username);
-                if (user == null)
-                {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                    return View(nameof(Login), model);
-                }
+                await _repository.LoginAsync(model, token);
+                return LocalRedirect(returnUrl!);
             }
 
-            var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
-
-            if (result.Succeeded)
-            {
-                var roles = await _userManager.GetRolesAsync(user);
-
-                if (string.IsNullOrEmpty(returnUrl) && !Url.IsLocalUrl(returnUrl))
-                    return RedirectToAction(nameof(HomeController.Index), "Home");
-
-                else
-                {
-                    if (roles.Contains(Constants.Roles.Admin))
-                        return RedirectToAction(nameof(ProductController.Index), "Home");
-
-                    return Redirect(returnUrl);
-                }
-            }
-
-            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+            ViewData["ReturnUrl"] = returnUrl;
+            return View(nameof(Login), model);
         }
-        ViewData["ReturnUrl"] = returnUrl;
-        return View(nameof(Login), model);
+        catch(Exception ex) 
+        {
+            ModelState.AddModelError(string.Empty, ex.Message);
+            return View(nameof(Login), model);
+        }
     }
-
+    [Authorize]
+    public async Task<IActionResult> Profile(CancellationToken token)
+    {
+        try
+        {
+            var userId = await GetSignedUserId();
+            var user = await _repository.GetUserProfileAsync(userId, token);
+            return View(user);
+        }
+        catch (Exception ex)
+        {
+            _toastNotification.AddErrorToastMessage(ex.Message);
+            return RedirectToAction("Index", "Home");
+        }
+    }
     [HttpPost]
     public async Task<IActionResult> Logout()
     {
-        await _signInManager.SignOutAsync();
+        await _repository.LogoutAsync();
         return RedirectToAction(nameof(HomeController.Index), "Home");
     }
 

@@ -13,7 +13,7 @@ public class ProductController(IProductRepository productRepository
     private readonly IDiscountRepository _discountRepository = discountRepository;
     private readonly IToastNotification  _toastNotification  = toastNotification;
 
-    public async Task<IActionResult> Index()
+    public IActionResult Index()
     {
         try
         {

@@ -1,0 +1,154 @@
+﻿@model UserProfileViewModel
+
+@{
+    ViewData["Title"] = "Your Profile";
+    Layout = "_CustomLayout";
+}
+
+<!-- Custom Styles -->
+<style>
+    .profile-card {
+        background: #ffffff;
+        border-radius: 1rem;
+        border: 1px solid #edf2f7;
+    }
+
+    .profile-avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background-color: #0d6efd;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: #6c757d;
+        font-size: 0.825rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .info-value {
+        font-size: 1rem;
+        color: #212529;
+        font-weight: 500;
+    }
+
+    .btn-hover-lift {
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+        .btn-hover-lift:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+</style>
+
+<div class="container py-4">
+
+    <!-- Navigation Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb small text-muted">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-decoration-none">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Account Profile</li>
+        </ol>
+    </nav>
+
+    <!-- Main Profile Card -->
+    <div class="profile-card border-0 shadow-sm overflow-hidden mb-4">
+
+        <!-- Profile Banner Header -->
+        <div class="card-header bg-light border-bottom p-4">
+            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+
+                <div class="d-flex align-items-center gap-3">
+                    @{
+                        var initial = !string.IsNullOrWhiteSpace(Model.FirstName)
+                            ? Model.FirstName.Substring(0, 1).ToUpper()
+                            : (!string.IsNullOrWhiteSpace(Model.Username) ? Model.Username.Substring(0, 1).ToUpper() : "U");
+                    }
+                    <div class="profile-avatar shadow-sm">
+                        @initial
+                    </div>
+                    <div>
+                        <h2 class="h4 fw-bold text-dark mb-0">@(Model.FirstName ?? "") @(Model.LastName ?? "")</h2>
+                        <span class="text-muted small">@Model.Username</span>
+                    </div>
+                </div>
+
+                <!-- Action Buttons Header Bar -->
+                <div class="d-flex align-items-center gap-2">
+                    <a asp-controller="CustomerInfo" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary btn-hover-lift rounded-3 px-3">
+                        <span class="bi bi-pencil me-1" aria-hidden="true"></span> Edit Info
+                    </a>
+                    <a asp-controller="User" asp-action="ChangePassword" class="btn btn-outline-secondary btn-hover-lift rounded-3 px-3">
+                        <span class="bi bi-key me-1" aria-hidden="true"></span> Change Password
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Profile Details Body -->
+        <div class="card-body p-4">
+            <div class="row g-4">
+
+                <!-- First Name -->
+                <div class="col-sm-6 col-md-3">
+                    <span class="info-label d-block mb-1">@Html.DisplayNameFor(model => model.FirstName)</span>
+                    <span class="info-value">
+                        @(string.IsNullOrWhiteSpace(Model.FirstName) ? "—" : Model.FirstName)
+                    </span>
+                </div>
+
+                <!-- Last Name -->
+                <div class="col-sm-6 col-md-3">
+                    <span class="info-label d-block mb-1">@Html.DisplayNameFor(model => model.LastName)</span>
+                    <span class="info-value">
+                        @(string.IsNullOrWhiteSpace(Model.LastName) ? "—" : Model.LastName)
+                    </span>
+                </div>
+
+                <!-- Username -->
+                <div class="col-sm-6 col-md-3">
+                    <span class="info-label d-block mb-1">@Html.DisplayNameFor(model => model.Username)</span>
+                    <span class="info-value font-monospace">
+                        @Model.Username
+                    </span>
+                </div>
+
+                <!-- Email -->
+                <div class="col-sm-6 col-md-3">
+                    <span class="info-label d-block mb-1">@Html.DisplayNameFor(model => model.Email)</span>
+                    <span class="info-value">
+                        @if (!string.IsNullOrWhiteSpace(Model.Email))
+                        {
+                            <a href="mailto:@Model.Email" class="text-decoration-none">
+                                <span class="bi bi-envelope me-1 text-muted" aria-hidden="true"></span>@Model.Email
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="text-muted">—</span>
+                        }
+                    </span>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="d-flex align-items-center">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-light btn-hover-lift border rounded-3 px-4">
+            <span class="bi bi-arrow-left me-1" aria-hidden="true"></span> Back to Home
+        </a>
+    </div>
+
+</div>

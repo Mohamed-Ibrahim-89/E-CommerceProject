@@ -1,7 +1,9 @@
-﻿global using E_CommerceProject.Entities.Models;
-global using Microsoft.AspNetCore.Identity;
-global using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-global using Microsoft.EntityFrameworkCore;
-global using System.ComponentModel.DataAnnotations;
+﻿global using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 global using System.ComponentModel.DataAnnotations.Schema;
+global using System.ComponentModel.DataAnnotations;
+global using Microsoft.AspNetCore.Identity;
+global using Microsoft.EntityFrameworkCore;
 global using Microsoft.AspNetCore.Http;
+global using E_CommerceProject.Entities.Models;
+global using E_CommerceProject.Entities.Constants;
+global using E_CommerceProject.Entities.ViewModels.Users;

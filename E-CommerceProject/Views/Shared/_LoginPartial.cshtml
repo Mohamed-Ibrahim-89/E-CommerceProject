@@ -4,9 +4,18 @@
 
 @if(_signInManager.IsSignedIn(User))
 {
-    <a asp-controller="CustomerInfo" asp-action="Index" class="product-link text-dark">
-        <h4>Hello, @User.Identity!.Name</h4>
-    </a>
+    if(User.IsInRole(Constants.Roles.Admin))
+    {
+        <a asp-controller="Account" asp-action="Profile" class="product-link text-dark">
+            <h4><i class="fa fa-user m-2"></i>Hello, Admin</h4>
+        </a>
+    }
+    else
+    {
+        <a asp-controller="CustomerInfo" asp-action="Index" class="product-link text-dark">
+            <h4><i class="fa fa-user m-2"></i>Hello, @User.Identity!.Name</h4>
+        </a>
+    }
 
     <form asp-controller="Account" asp-action="Logout" method="post">
         <button type="submit" class="btn btn-danger" ><i class="fa fa-sign-out"></i>Logout</button>

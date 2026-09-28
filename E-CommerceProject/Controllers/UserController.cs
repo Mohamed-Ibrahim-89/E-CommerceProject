@@ -1,32 +1,67 @@
 ﻿namespace E_CommerceProject.Controllers;
 
 [Authorize(Roles = Constants.Roles.Admin)]
-public class UserController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IHttpContextAccessor contextAccessor) : Controller
+public class UserController(IUserRepository repository
+    ,UserManager<User> userManager
+    ,RoleManager<IdentityRole> roleManager
+    ,IHttpContextAccessor contextAccessor
+    ,IToastNotification toastNotification
+    ) : BaseController(contextAccessor)
 {
+    private readonly IUserRepository _repository = repository;
     private readonly UserManager<User> _userManager = userManager;
     private readonly RoleManager<IdentityRole> _roleManager = roleManager;
-    private readonly IHttpContextAccessor _contextAccessor = contextAccessor;
+    private readonly IToastNotification _toastNotification = toastNotification;
 
-    public async Task<IActionResult> UsersList()
+
+    public IActionResult Index()
     {
-        var users = await _userManager.Users.ToListAsync();
-
-        var userViewModels = new List<UserViewModel>();
-
-        foreach (var user in users)
+        try
         {
-            var roles = await _userManager.GetRolesAsync(user);
-            userViewModels.Add(new UserViewModel
-            {
-                Id = user.Id,
-                Username = user.UserName!,
-                Email = user.Email!,
-                Roles = roles
-            });
+            return View();
         }
-
-        return View(userViewModels);
+        catch (Exception ex)
+        {
+            _toastNotification.AddErrorToastMessage(ex.Message);
+            return View("Error");
+        }
     }
+
+    public async Task<string> GetUsersList(CancellationToken token)
+    {
+        try
+        {
+            var dtParams = GetDatatableParamsFromRequest();
+            var jsonData = await _repository.GetList(dtParams, token);
+            return JsonConvert.SerializeObject(jsonData);
+
+        }
+        catch (Exception ex)
+        {
+            _toastNotification.AddErrorToastMessage(ex.Message);
+            return JsonConvert.SerializeObject(new { error = ex.Message });
+        }
+    }
+
+    public async Task<IActionResult> Details(string userId, CancellationToken token)
+    {
+        try
+        {
+            var user = await _repository.GetById(userId, token);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return View(user);
+        }
+        catch (Exception ex)
+        {
+            _toastNotification.AddErrorToastMessage(ex.Message);
+            return View("Error");
+        }
+    }
+
+
 
     public async Task<IActionResult> ManageRole(string userId)
     {
@@ -42,11 +77,11 @@ public class UserController(UserManager<User> userManager, RoleManager<IdentityR
             UserId = user.Id,
             Username = user.UserName!,
             Email = user.Email!,
-            Roles = userRoles.Select(r => new RolesCheckedViewModel()
+            Roles = [.. userRoles.Select(r => new RolesCheckedViewModel()
             {
                 RoleName = r.Name!,
                 IsSelected = _userManager.IsInRoleAsync(user, r.Name!).Result
-            }).ToList()
+            })]
         };
 
         return View(userRolesViewModel);
@@ -69,20 +104,18 @@ public class UserController(UserManager<User> userManager, RoleManager<IdentityR
     }
 
     [AllowAnonymous]
-    [Authorize]
     public IActionResult ChangePassword()
     {
         return View();
     }
     [AllowAnonymous]
-    [Authorize]
     [HttpPost]
     public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
     {
         if (ModelState.IsValid)
         {
-            string Username = _contextAccessor.HttpContext!.User.Identity!.Name!;
-            var user = await _userManager.FindByNameAsync(Username);
+            var UserId = await GetSignedUserId();
+            var user = await _userManager.FindByIdAsync(UserId);
             var result = await _userManager.ChangePasswordAsync(user!, model.CurrentPassword, model.NewPassword);
             if (result.Succeeded)
             {
