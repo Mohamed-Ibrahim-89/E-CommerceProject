@@ -1,4 +1,6 @@
-﻿namespace E_CommerceProject.Repositories.Repositories;
+﻿using E_CommerceProject.Entities.ViewModels.WishLists;
+
+namespace E_CommerceProject.Repositories.Repositories;
 
 public interface IWishListRepository
 {

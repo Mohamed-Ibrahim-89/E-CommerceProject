@@ -1,4 +1,6 @@
-﻿namespace E_CommerceProject.Repositories.Repositories;
+﻿using E_CommerceProject.Entities.ViewModels.Carts;
+
+namespace E_CommerceProject.Repositories.Repositories;
 
 public interface ICartRepository
 {

@@ -3,7 +3,7 @@
 public class Shipment : BaseEntity
 {
     [MaxLength(50)]
-    public string Carrieer { get; set; } = string.Empty;
+    public string Carrier { get; set; } = string.Empty;
     [MaxLength(50), Display(Name = "Tracking Number")]
     public string TrackingNumber { get; set; } = string.Empty;
     [Display(Name = "Shipping Date")]

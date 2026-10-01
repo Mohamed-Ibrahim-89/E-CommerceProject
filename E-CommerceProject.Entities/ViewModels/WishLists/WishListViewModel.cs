@@ -1,4 +1,4 @@
-﻿namespace E_CommerceProject.Entities.ViewModels;
+﻿namespace E_CommerceProject.Entities.ViewModels.WishLists;
 
 public class WishListViewModel
 {

@@ -1,11 +1,52 @@
-﻿@model Shipment
+﻿@model ShipmentDetailsViewModel
 
 @{
     ViewData["Title"] = "Details";
     Layout = "_CustomLayout";
 }
 
-<h4>Details of Shipment</h4>
+<style>
+    .card {
+        background-color: #343a40;
+        color: #fff;
+    }
+
+    .card-header {
+        background-color: #5cb85c;
+        color: #fff;
+    }
+
+    .card-body {
+        padding: 1.25rem 2rem;
+    }
+
+    .table {
+    color: #000; 
+    }
+
+    .table th,
+    .table td {
+        border-top-color: #000; 
+        color: #000; 
+    }
+</style>
+
+<div class="container mt-2 d-flex justify-content-between align-items-center">
+    <h3 class="mt-3 mb-3">Details of Shipment</h3>
+    @if (User.Identity!.IsAuthenticated && User.IsInRole(Constants.Roles.Admin))
+    {
+        <a asp-action="List" class="btn btn-secondary btn-sm rounded-pill px-3">
+            <i class="bi bi-arrow-left me-1"></i>back
+        </a>
+    }
+    else
+    {
+        <a asp-action="Index" class="btn btn-secondary btn-sm rounded-pill px-3">
+            <i class="bi bi-arrow-left me-1"></i>back
+        </a>
+    }
+    </div>
+</div>
 <hr />
 
 <div class="container">
@@ -18,12 +59,12 @@
                             Shipment Information
                         </div>
                         <div class="card-body">
-                            <dl class="row">
+                            <dl class="row" style="color:black">
                                 <dt class="col-sm-4">
-                                    @Html.DisplayNameFor(model => model.Carrieer)
+                                    @Html.DisplayNameFor(model => model.Carrier)
                                 </dt>
                                 <dd class="col-sm-8">
-                                    @Html.DisplayFor(model => model.Carrieer)
+                                    @Html.DisplayFor(model => model.Carrier)
                                 </dd>
                                 <dt class="col-sm-4">
                                     @Html.DisplayNameFor(model => model.TrackingNumber)
@@ -59,24 +100,24 @@
                             Order Information
                         </div>
                         <div class="card-body">
-                            <dl class="row">
+                            <dl class="row" style="color:black">
                                 <dt class="col-sm-4">
-                                    @Html.DisplayNameFor(model => model.Order.Status)
+                                    @Html.DisplayNameFor(model => model.Status)
                                 </dt>
                                 <dd class="col-sm-8">
-                                    @Html.DisplayFor(model => model.Order.Status)
+                                    @Html.DisplayFor(model => model.Status)
                                 </dd>
                                 <dt class="col-sm-4">
-                                    @Html.DisplayNameFor(model => model.Order.OrderDate)
+                                    @Html.DisplayNameFor(model => model.OrderDate)
                                 </dt>
                                 <dd class="col-sm-8">
-                                    @Model.Order.OrderDate.ToShortDateString()
+                                    @Model.OrderDate.ToShortDateString()
                                 </dd>
                                 <dt class="col-sm-4">
-                                    @Html.DisplayNameFor(model => model.Order.TotalPrice)
+                                    @Html.DisplayNameFor(model => model.TotalPrice)
                                 </dt>
                                 <dd class="col-sm-8">
-                                    @Html.DisplayFor(model => model.Order.TotalPrice)
+                                    @Html.DisplayFor(model => model.TotalPrice)
                                 </dd>
                             </dl>
                         </div>
@@ -88,30 +129,30 @@
                             Customer Information
                         </div>
                         <div class="card-body">
-                            <dl class="row">
+                            <dl class="row" style="color:black">
                                 <dt class="col-sm-4">
-                                    @Html.DisplayNameFor(model => model.Order.CustomerInfo!.FirstName)
+                                    @Html.DisplayNameFor(model => model.CustomerName)
                                 </dt>
                                 <dd class="col-sm-8">
-                                    @Html.DisplayFor(model => model.Order.CustomerInfo!.FirstName)
+                                    @Html.DisplayFor(model => model.CustomerName)
                                 </dd>
                                 <dt class="col-sm-4">
-                                    @Html.DisplayNameFor(model => model.Order.CustomerInfo!.LastName)
+                                    @Html.DisplayNameFor(model => model.PhoneNumber)
                                 </dt>
                                 <dd class="col-sm-8">
-                                    @Html.DisplayFor(model => model.Order.CustomerInfo!.LastName)
+                                    @Html.DisplayFor(model => model.PhoneNumber)
                                 </dd>
                                 <dt class="col-sm-4">
-                                    @Html.DisplayNameFor(model => model.Order.CustomerInfo!.PhoneNumber)
+                                    @Html.DisplayNameFor(model => model.AddressLine1)
                                 </dt>
                                 <dd class="col-sm-8">
-                                    @Html.DisplayFor(model => model.Order.CustomerInfo!.PhoneNumber)
+                                    @Html.DisplayFor(model => model.AddressLine1)
                                 </dd>
                                 <dt class="col-sm-4">
-                                    @Html.DisplayNameFor(model => model.Order.CustomerInfo!.AddressLine1)
+                                    @Html.DisplayNameFor(model => model.AddressLine2)
                                 </dt>
                                 <dd class="col-sm-8">
-                                    @Html.DisplayFor(model => model.Order.CustomerInfo!.AddressLine1)
+                                    @Html.DisplayFor(model => model.AddressLine2)
                                 </dd>
                             </dl>
                         </div>
@@ -132,60 +173,20 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var item in Model.Order.OrderDetails!)
+                                    @foreach (var item in Model.OrderDetails!)
                                     {
                                         <tr>
-                                            <td>@item.Product!.Name</td>
+                                            <td>@item.ProductName</td>
                                             <td>@item.Quantity</td>
-                                            <td>@(item.Price - ((item.Price * item.Product.Discount.Percentage) / 100))</td>
+                                            <td>@item.Price</td>
                                         </tr>
                                     }
                                 </tbody>
                             </table>
                         </div>
                     </div>
+                </div>
             </div>
-            </div>
-
-            <div class="row mt-3">
-                <div class="col-md-12">
-                    @if (User.Identity!.IsAuthenticated && User.IsInRole("Admin"))
-                    {
-                        <a asp-action="List" class="btn btn-secondary">Back to Order</a>
-                    }
-                    else
-                    {
-                        <a asp-action="Index" class="btn btn-secondary">Back to Order</a>
-                    }
-                    </div>
-            </div>
-
         </div>
     </div>
 </div>
-
-<style>
-    .card {
-        background-color: #343a40;
-        color: #fff;
-    }
-
-    .card-header {
-        background-color: #5cb85c;
-        color: #fff;
-    }
-
-    .card-body {
-        padding: 1.25rem 2rem;
-    }
-
-    .table {
-        color: #fff;
-    }
-
-        .table th,
-        .table td {
-            border-top-color: #555;
-            color: aliceblue;
-        }
-</style>

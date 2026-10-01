@@ -19,3 +19,4 @@ global using E_CommerceProject.Entities.ViewModels.Users;
 global using E_CommerceProject.Entities.ViewModels.Products;
 global using E_CommerceProject.Entities.ViewModels.Categories;
 global using E_CommerceProject.Entities.ViewModels.Customers;
+global using E_CommerceProject.Entities.ViewModels.Shipments;

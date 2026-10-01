@@ -9,6 +9,7 @@ public interface IOrderRepository
     /// <param name="token"></param>
     /// <returns></returns>
     Task<DatatableResult> GetOrderListAsync(DataTableParamsViewModel dataTableParams, CancellationToken token);
+    Task<OrderDetailsViewModel> GetOrderDetailsAsync(int orderId, CancellationToken token);
 }
 
 public class  OrderRepository(AppDbContext context) : IOrderRepository
@@ -75,5 +76,33 @@ public class  OrderRepository(AppDbContext context) : IOrderRepository
         oResult.recordsTotal = count;
         oResult.recordsFiltered = count;
         return oResult;
+    }
+    public async Task<OrderDetailsViewModel> GetOrderDetailsAsync(int orderId, CancellationToken token)
+    {
+        var order = await _context.Orders
+            .AsNoTracking()
+            .FirstOrDefaultAsync(o => o.Id == orderId, token);
+
+        if (order == null)
+            throw new InvalidOperationException("Order not found");
+
+        return new OrderDetailsViewModel
+        {
+            Status = order.Status,
+            OrderDate = order.OrderDate,
+            TotalPrice = order.TotalPrice,
+
+            Name = $"{order.CustomerInfo!.FirstName} {order.CustomerInfo!.LastName}",
+            PhoneNumber = order.CustomerInfo!.PhoneNumber!,
+            AddressLine1 = order.CustomerInfo!.AddressLine1!,
+            AddressLine2 = order.CustomerInfo!.AddressLine2!,
+
+            OrderDetails = order.OrderDetails!.Select(o => new OrderDetailViewModel
+            {
+                ProductName = o.Product!.Name,
+                Quantity = o.Quantity,
+                Price = o.Price
+            })
+        };
     }
 }

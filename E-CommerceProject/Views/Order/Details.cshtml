@@ -1,4 +1,4 @@
-﻿@model Order
+﻿@model OrderDetailsViewModel
 
 @{
     ViewData["Title"] = "Order Details";
@@ -17,7 +17,7 @@
                             Order Information
                         </div>
                         <div class="card-body">
-                            <dl class="row">
+                            <dl class="row" style="color: black">
                                 <dt class="col-sm-4">
                                     @Html.DisplayNameFor(model => model.Status)
                                 </dt>
@@ -46,30 +46,30 @@
                             Customer Information
                         </div>
                         <div class="card-body">
-                            <dl class="row">
+                            <dl class="row" style="color: black">
                                 <dt class="col-sm-4">
-                                    @Html.DisplayNameFor(model => model.CustomerInfo!.FirstName)
+                                    @Html.DisplayNameFor(model => model.Name)
                                 </dt>
                                 <dd class="col-sm-8">
-                                    @Html.DisplayFor(model => model.CustomerInfo!.FirstName)
+                                    @Html.DisplayFor(model => model.Name)
                                 </dd>
                                 <dt class="col-sm-4">
-                                    @Html.DisplayNameFor(model => model.CustomerInfo!.LastName)
+                                    @Html.DisplayNameFor(model => model.PhoneNumber)
                                 </dt>
                                 <dd class="col-sm-8">
-                                    @Html.DisplayFor(model => model.CustomerInfo!.LastName)
+                                    @Html.DisplayFor(model => model.PhoneNumber)
                                 </dd>
                                 <dt class="col-sm-4">
-                                    @Html.DisplayNameFor(model => model.CustomerInfo!.PhoneNumber)
+                                    @Html.DisplayNameFor(model => model.AddressLine1)
                                 </dt>
                                 <dd class="col-sm-8">
-                                    @Html.DisplayFor(model => model.CustomerInfo!.PhoneNumber)
+                                    @Html.DisplayFor(model => model.AddressLine1)
                                 </dd>
                                 <dt class="col-sm-4">
-                                    @Html.DisplayNameFor(model => model.CustomerInfo!.AddressLine1)
+                                    @Html.DisplayNameFor(model => model.AddressLine2)
                                 </dt>
                                 <dd class="col-sm-8">
-                                    @Html.DisplayFor(model => model.CustomerInfo!.AddressLine1)
+                                    @Html.DisplayFor(model => model.AddressLine2)
                                 </dd>
                             </dl>
                         </div>
@@ -95,9 +95,9 @@
                                     @foreach (var item in Model.OrderDetails!)
                                     {
                                         <tr>
-                                            <td>@item.Product!.Name</td>
+                                            <td>@item.ProductName</td>
                                             <td>@item.Quantity</td>
-                                            <td>@(item.Price - ((item.Price * item.Product.Discount.Percentage) / 100))</td>
+                                            <td>@(item.Price)</td>
                                         </tr>
                                     }
                                 </tbody>
@@ -130,13 +130,13 @@
         padding: 1.25rem 2rem;
     }
 
-    .table {
-        color: #fff;
+    .table-black-text {
+    color: #000;
     }
 
-        .table th,
-        .table td {
-            border-top-color: #555;
-            color: aliceblue;
-        }
+    .table-black-text th,
+    .table-black-text td {
+        border-top-color: #000;
+        color: #000;
+    }
 </style>

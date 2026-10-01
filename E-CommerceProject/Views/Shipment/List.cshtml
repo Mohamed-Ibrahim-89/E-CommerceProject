@@ -1,119 +1,309 @@
-﻿@model IEnumerable<E_CommerceProject.Entities.Models.Shipment>
-
-@{
+﻿@{
     ViewData["Title"] = "List";
-    Layout = "_CustomLayout";
+    Layout = "_AdminLayout";
 }
 
-<h1>Shipment List</h1>
-<hr>
+<!-- DataTables & Custom Styles -->
+<link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap5.min.css" rel="stylesheet" />
 
-<table class ="table table-info">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Carrieer)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TrackingNumber)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ShippingDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EstimatedDeliveryDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ShippingCost)
-            </th>
-            <th style="text-align:center">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr class="data">
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Carrieer)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TrackingNumber)
-            </td>
-            <td>
-                @item.ShippingDate.ToShortDateString()
-            </td>
-            <td>
-                    @item.EstimatedDeliveryDate.ToShortDateString()
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ShippingCost)
-            </td>
-            <td style="text-align:right">
-                <div class="btn-group">
-                        <a asp-controller="Shipment" asp-action="Details" asp-route-ShipmentId="@item.Id" class="btn btn-info">
-                        <i class="bi bi-info-circle"></i>
-                        Details
-                    </a>
-                        <a asp-controller="Shipment" asp-action="Edit" asp-route-ShipmentId="@item.Id" class="btn btn-warning">
-                        <i class="bi bi-pencil"></i>
-                        Edit
-                    </a>
-                    <a href="javascript:;" class="btn btn-danger js-delete" data-id="@item.Id">
-                        <i class="bi bi-trash"></i>
-                        Delete
-                    </a>
-                </div>
-            </td>
-        </tr>
+<style>
+    /* DataTables Custom Polish */
+    .table > :not(caption) > * > * {
+        padding: 0.85rem 1rem;
+        vertical-align: middle;
+    }
+
+    .dataTables_wrapper .dataTables_filter input {
+        border-radius: 0.5rem;
+        padding: 0.375rem 0.75rem;
+        border: 1px solid #dee2e6;
+    }
+
+    .dataTables_wrapper .dataTables_length select {
+        border-radius: 0.5rem;
+        padding: 0.375rem 2rem 0.375rem 0.75rem;
+        border: 1px solid #dee2e6;
+    }
+
+    .btn-hover-lift {
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+        .btn-hover-lift:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+</style>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
 }
-    </tbody>
-</table>
+
+<div class="container-fluid px-4 py-4">
+
+    <!-- Header Section -->
+    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between pb-3 mb-4 border-bottom">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1 small text-muted">
+                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Home" class="text-decoration-none">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Shipments</li>
+                </ol>
+            </nav>
+            <h1 class="h3 fw-bold text-dark mb-0">Shipment Management</h1>
+            <p class="text-muted small mb-0">Track customer shipments, check details, and manage shipment statuses.</p>
+        </div>
+    </div>
+
+    <!-- Main Data Table Container -->
+    <div class="border-0 shadow-sm rounded-4 overflow-hidden" style="background-color:beige">
+        <div class="card-body p-4">
+            <div class="table-responsive">
+                <table id="ShipmentsTbl" class="table table-hover align-middle w-100 border-top-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th class="fw-semibold text-secondary" style="width: 50px;">#</th>
+                            <th class="fw-semibold text-secondary">Carrier</th>
+                            <th class="fw-semibold text-secondary">Tracking Number</th>
+                            <th class="fw-semibold text-secondary">Shipping Date</th>
+                            <th class="fw-semibold text-secondary">Estimated Delivery Date</th>
+                            <th class="fw-semibold text-secondary">Shipping Cost</th>
+                            <th class="fw-semibold text-secondary">Status</th>
+                            <th class="fw-semibold text-secondary">Customer Name</th>
+                            <th class="fw-semibold text-secondary">Phone Number</th>
+                            <th class="fw-semibold text-secondary text-center" style="width: 130px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
 
     <script>
-        $(document).ready(function () {
-            $('.js-delete').on('click', function () {
-                var btn = $(this);
-                var shipmentId = btn.data('id');
+        const urls = {
+            list:    '@Url.Action("GetList", "Shipment")',
+            details: '@Url.Action("Details", "Shipment")',
+            edit:    '@Url.Action("Edit", "Shipment")',
+            delete:  '@Url.Action("Delete", "Shipment")'
+        };
 
-                bootbox.confirm({
-                    message: "Are you sure that you need to delete this item?",
-                    buttons: {
-                        confirm: {
-                            label: 'Yes',
-                            className: 'btn-danger'
-                        },
-                        cancel: {
-                            label: 'No',
-                            className: 'btn-outline-secondary'
+        const csrfToken = $('input[name="__RequestVerificationToken"]').val();
+
+        function esc(value) {
+            return $('<div>').text(value ?? '').html();
+        }
+
+        $(function () {
+            const table = $('#ShipmentsTbl').DataTable({
+                processing: true,
+                serverSide: true,
+                destroy:    true,
+                responsive: false,
+                scrollX:    true,
+                stateSave:  true,
+                order:      [[1, 'desc']],
+                lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+                language: {
+                    emptyTable:  'No shipments available.',
+                    zeroRecords: 'No matching shipments found.',
+                    processing:  '<span class="spinner-border spinner-border-sm text-primary me-2" role="status"></span>Loading shipments...',
+                    search:      "_INPUT_",
+                    searchPlaceholder: "Search shipments..."
+                },
+                ajax: {
+                    url:   urls.list,
+                    type:  'GET',
+                    error: function () {
+                        toastr.error('Could not load shipments. Please refresh the page.');
+                    }
+                },
+                columns: [
+                    // Row Index Counter (#)
+                    {
+                        data: null,
+                        orderable: false,
+                        searchable: false,
+                        width: '50px',
+                        render: function (data, type, row, meta) {
+                            return `<span class="text-muted small">${meta.row + meta.settings._iDisplayStart + 1}</span>`;
                         }
                     },
-                    callback: function (result) {
-                        if (result) {
-                            $.ajax({
-                                url: '/Shipment/Delete/' + shipmentId,
-                                success: function () {
-                                    btn.parents('.data').fadeOut();
 
-                                    toastr.success('Item deleted successfully');
-                                },
-                                error: function () {
-                                    toastr.error('Something went wrong!');
-                                }
-                            });
+                    // Carrier
+                    {
+                        data: 'Carrier',
+                        width: '140px',
+                        render: function(data) {
+                            return `<span class="fw-medium text-dark">${esc(data ?? '')}</span>`;
+                        }
+                    },
+
+                    // Tracking Number
+                    {
+                        data: 'TrackingNumber',
+                        width: '140px',
+                        render: function(data) {
+                            return `<span class="fw-medium text-dark">${esc(data ?? '')}</span>`;
+                        }
+                    },
+
+                    // Shipping Date
+                    {
+                        data: 'ShippingDate',
+                        width: '140px',
+                        render: function(data) {
+                            if (!data) return '<span class="text-muted">—</span>';
+                            const date = new Date(data);
+                            return `<span class="fw-medium text-dark">${date.toLocaleDateString()}</span>`;
+                        }
+                    },
+
+                    // Estimated Delivery Date
+                    {
+                        data: 'EstimatedDeliveryDate',
+                        width: '140px',
+                        render: function(data) {
+                            if (!data) return '<span class="text-muted">—</span>';
+                            const date = new Date(data);
+                            return `<span class="fw-medium text-dark">${date.toLocaleDateString()}</span>`;
+                        }
+                    },
+
+                    // Shipping Cost
+                    {
+                        data: 'ShippingCost',
+                        width: '140px',
+                        render: function(data) {
+                            return `<span class="fw-medium text-dark">${data != null ? '$' + parseFloat(data).toFixed(2) : '<span class="text-muted">—</span>'}</span>`;
+                        }
+                    },
+
+                    // Status
+                    {
+                        data: 'StatusName',
+                        width: '140px',
+                        render: function(data) {
+                            if  (data === 'Pending') {
+                                return `<span class="badge bg-warning">${esc(data ?? '')}</span>`;
+                            }
+                            else if (data === 'Processing') {
+                                return `<span class="badge bg-info">${esc(data ?? '')}</span>`;
+                            }
+                            else if (data === 'Shipped') {
+                                return `<span class="badge bg-info">${esc(data ?? '')}</span>`;
+                            }
+                            else if (data === 'Delivered') {
+                                return `<span class="badge bg-success">${esc(data ?? '')}</span>`;
+                            }
+                            else if (data === 'Cancelled') {
+                                return `<span class="badge bg-danger">${esc(data ?? '')}</span>`;
+                            }
+                            else {
+                                return `<span class="fw-medium text-dark">${esc(data ?? '')}</span>`;
+                            }
+                        }
+                    },
+
+                    // Customer Name
+                    {
+                        data: 'CustomerName',
+                        width: '140px',
+                        render: function(data) {
+                            return `<span class="fw-medium text-dark">${esc(data ?? '')}</span>`;
+                        }
+                    },
+
+                    // Phone Number
+                    {
+                        data: 'PhoneNumber',
+                        width: '140px',
+                        render: function(data) {
+                            return `<span class="fw-medium text-dark">${esc(data ?? '')}</span>`;
+                        }
+                    },
+
+                    // Actions
+                    {
+                        data:       null,
+                        orderable:  false,
+                        searchable: false,
+                        width:      '130px',
+                        className:  'text-center',
+                        render: function (data, type, row) {
+                            const id = esc(String(row.OrderId ?? row.Id));
+                            return `
+                                <div class="btn-group btn-group-sm" role="group" aria-label="Order Actions">
+                                    <a href="${urls.details}?shipmentId=${id}" class="btn btn-outline-info" title="View Order Details">
+                                        <span class="bi bi-eye" aria-hidden="true"></span>
+                                    </a>
+                                    <a href="${urls.edit}?shipmentId=${id}" class="btn btn-outline-primary" title="Edit Order">
+                                        <span class="bi bi-pencil" aria-hidden="true"></span>
+                                    </a>
+                                    <button type="button" class="btn btn-outline-danger js-dt-delete" data-id="${id}" title="Delete Order">
+                                        <span class="bi bi-trash" aria-hidden="true"></span>
+                                    </button>
+                                </div>`;
                         }
                     }
-                });
+                ],
+
+                dom: '<"d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-3"B<"ms-auto"f>>rt<"d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mt-3"lip>',
+                buttons: [
+                    {
+                        extend:    'excelHtml5',
+                        text:      '<span class="bi bi-file-earmark-spreadsheet me-2" aria-hidden="true"></span>Export Excel',
+                        title:     '@ViewData["Title"]',
+                        className: 'btn btn-success btn-sm rounded-3 shadow-sm px-3',
+                        exportOptions: { modifier: { page: 'current' } }
+                    },
+                    {
+                        text: '<span class="bi bi-arrow-clockwise me-2" aria-hidden="true"></span>Reset Table',
+                        className: 'btn btn-secondary btn-sm rounded-3 shadow-sm px-3 ms-2',
+                        action: function (e, dt) {
+                            dt.state.clear();
+                            window.location.reload();
+                        }
+                    }
+                ],
+
+                initComplete: function () {
+                    $('#ShipmentsTbl tbody').on('click', '.js-dt-delete', function () {
+                        const $btn = $(this);
+                        const id   = $btn.data('id');
+
+                        if (!confirm(`Delete shipment #${id}?\nThis action cannot be undone.`)) return;
+
+                        $btn.prop('disabled', true);
+
+                        $.ajax({
+                            url:  `${urls.delete}/${id}`,
+                            type: 'POST',
+                            data: { __RequestVerificationToken: csrfToken },
+                            success: function () {
+                                table.ajax.reload(null, false);
+                                toastr.success('Shipment deleted successfully.');
+                            },
+                            error: function (xhr) {
+                                const msg = xhr.responseJSON?.message ?? 'Failed to delete shipment. Please try again.';
+                                toastr.error(msg);
+                                $btn.prop('disabled', false);
+                            }
+                        });
+                    });
+                }
             });
         });
     </script>
-    }
+}

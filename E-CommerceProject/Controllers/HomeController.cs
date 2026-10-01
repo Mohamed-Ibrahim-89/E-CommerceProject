@@ -38,4 +38,9 @@ public class HomeController(IProductRepository repository
             return JsonConvert.SerializeObject(new { error = ex.Message });
         }
     }
+
+    public IActionResult Error()
+    {
+        return View();
+    }
 }

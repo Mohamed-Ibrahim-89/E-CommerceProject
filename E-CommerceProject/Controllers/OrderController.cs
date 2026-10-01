@@ -51,21 +51,22 @@ public class OrderController(IOrderRepository repository
         }
     }
 
-    [Authorize(Roles = Constants.Roles.Admin)]
-    public async Task<ActionResult> List()
-    {
-        var orders = await _orderRepository.GetAll(null, ["CustomerInfo"]);
-        return View(orders);
-    }
-
     public async Task<ActionResult> Details(int orderId)
     {
-        var order = await _orderRepository.GetById(o => o.Id == orderId, ["CustomerInfo", "OrderDetails", "OrderDetails.Product", "OrderDetails.Product.Discount"]);
-        if (order == null)
+        try
         {
-            return NotFound();
+            var orderDetails = await _repository.GetOrderDetailsAsync(orderId, CancellationToken.None);
+            if (orderDetails == null)
+                return NotFound();
+
+            return View(orderDetails);
+
         }
-        return View(order);
+        catch (Exception ex)
+        {
+            _toastNotification.AddErrorToastMessage(ex.Message);
+            return View("Error");
+        }
     }
 
     public async Task<ActionResult> Checkout(CancellationToken token)
@@ -129,7 +130,7 @@ public class OrderController(IOrderRepository repository
                     OrderId = order.Id,
                     ShippingDate = DateTime.Now,
                     EstimatedDeliveryDate = DateTime.Now.AddDays(new Random().Next(1, 5)),
-                    Carrieer = "Default",
+                    Carrier = "Default",
                     TrackingNumber = "01000050050",
                     ShippingCost = new Random().Next(40,100)
                 };

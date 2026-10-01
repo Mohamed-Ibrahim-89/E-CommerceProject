@@ -1,0 +1,158 @@
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "_AdminLayout";
+}
+
+<style>
+    .kpi-card {
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+        .kpi-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.10);
+        }
+
+    .kpi-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+    }
+</style>
+
+<div class="container-fluid px-4 py-4">
+    <!-- Header Section -->
+    <div class="dashboard-header d-flex flex-column flex-md-row align-items-md-center justify-content-between">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1 small">
+                    <li class="breadcrumb-item active" aria-current="page">Admin</li>
+                </ol>
+            </nav>
+            <h1 class="h1 fw-bold mb-0">Admin Dashboard</h1>
+            <p class="small">Welcome back, <strong>@User.Identity.Name</strong>. Here’s a quick overview of your store’s performance.</p>
+        </div>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="row g-4">
+
+        <!-- Total Revenue -->
+        <div class="col-sm-6 col-xl-4">
+            <div class="card kpi-card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body d-flex align-items-center gap-3 p-4">
+                    <div class="kpi-icon bg-success-subtle text-success">
+                        <span class="bi bi-cash-stack" aria-hidden="true"></span>
+                    </div>
+                    <div>
+                        <p class="small mb-1">Total Revenue</p>
+                        <h3 class="fw-bold text-dark mb-0">@Model.TotalRevenue.ToString("C")</h3>
+                        <p class="small mb-0">From delivered orders</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Orders -->
+        <div class="col-sm-6 col-xl-4">
+            <div class="card kpi-card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body d-flex align-items-center gap-3 p-4">
+                    <div class="kpi-icon bg-primary-subtle text-primary">
+                        <span class="bi bi-bag-check" aria-hidden="true"></span>
+                    </div>
+                    <div>
+                        <p class="small mb-1">Total Orders</p>
+                        <h3 class="fw-bold text-dark mb-0">@Model.TotalOrders</h3>
+                        <a asp-controller="Order" asp-action="Index" class="small text-decoration-none" style="color: blueviolet">Manage orders</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Orders -->
+        <div class="col-sm-6 col-xl-4">
+            <div class="card kpi-card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body d-flex align-items-center gap-3 p-4">
+                    <div class="kpi-icon bg-warning-subtle text-warning">
+                        <span class="bi bi-hourglass-split" aria-hidden="true"></span>
+                    </div>
+                    <div>
+                        <p class="small mb-1">Pending Orders</p>
+                        <h3 class="fw-bold text-dark mb-0">@Model.PendingOrders</h3>
+                        <p class="small mb-0">Awaiting processing</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Products -->
+        <div class="col-sm-6 col-xl-4">
+            <div class="card kpi-card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body d-flex align-items-center gap-3 p-4">
+                    <div class="kpi-icon bg-info-subtle text-info">
+                        <span class="bi bi-box-seam" aria-hidden="true"></span>
+                    </div>
+                    <div>
+                        <p class="small mb-1">Products</p>
+                        <h3 class="fw-bold text-dark mb-0">@Model.TotalProducts</h3>
+                        <a asp-controller="Product" asp-action="Index" class="small text-decoration-none" style="color: blueviolet">Manage products</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Low Stock Alerts -->
+        <div class="col-sm-6 col-xl-4">
+            <div class="card kpi-card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body d-flex align-items-center gap-3 p-4">
+                    <div class="kpi-icon bg-danger-subtle text-danger">
+                        <span class="bi bi-exclamation-triangle" aria-hidden="true"></span>
+                    </div>
+                    <div>
+                        <p class="small mb-1">Low Stock Alerts</p>
+                        <h3 class="fw-bold text-dark mb-0">@Model.LowStockProducts</h3>
+                        <p class="small mb-0">Products with 5 or fewer in stock</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Users -->
+        <div class="col-sm-6 col-xl-4">
+            <div class="card kpi-card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body d-flex align-items-center gap-3 p-4">
+                    <div class="kpi-icon bg-secondary-subtle text-secondary">
+                        <span class="bi bi-people" aria-hidden="true"></span>
+                    </div>
+                    <div>
+                        <p class="small mb-1">Total Users</p>
+                        <h3 class="fw-bold text-dark mb-0">@Model.TotalUsers</h3>
+                        <a asp-controller="User" asp-action="Index" class="small text-decoration-none" style="color: blueviolet">Manage users</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Categories -->
+        <div class="col-sm-6 col-xl-4">
+            <div class="card kpi-card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body d-flex align-items-center gap-3 p-4">
+                    <div class="kpi-icon bg-dark-subtle text-dark">
+                        <span class="bi bi-tags" aria-hidden="true"></span>
+                    </div>
+                    <div>
+                        <p class="small mb-1">Categories</p>
+                        <h3 class="fw-bold text-dark mb-0">@Model.TotalCategories</h3>
+                        <a asp-controller="Category" asp-action="Index" class="small text-decoration-none" style="color: blueviolet">Manage categories</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,4 +1,6 @@
-﻿namespace E_CommerceProject.Entities.ViewModels.Users;
+﻿using E_CommerceProject.Entities.ViewModels.Accounts;
+
+namespace E_CommerceProject.Entities.ViewModels.Users;
 
 public class UserRolesViewModel
 {
