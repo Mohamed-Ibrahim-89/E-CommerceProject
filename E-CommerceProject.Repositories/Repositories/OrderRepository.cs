@@ -10,11 +10,18 @@ public interface IOrderRepository
     /// <returns></returns>
     Task<DatatableResult> GetOrderListAsync(DataTableParamsViewModel dataTableParams, CancellationToken token);
     Task<OrderDetailsViewModel> GetOrderDetailsAsync(int orderId, CancellationToken token);
+    Task<int> CreateOrderAsync(CreateOrderViewModel model, string userId, CancellationToken token);
+    Task DeleteAsync(int orderId, CancellationToken token);
 }
 
-public class  OrderRepository(AppDbContext context) : IOrderRepository
+public class  OrderRepository(
+    AppDbContext context,
+    ICustomerInfoRepository customerInfoRepo
+    ) : IOrderRepository
 {
     private readonly AppDbContext _context = context;
+    private readonly ICustomerInfoRepository _customerInfoRepo = customerInfoRepo;
+
     public async Task<DatatableResult> GetOrderListAsync(DataTableParamsViewModel dataTableParams, CancellationToken token)
     {
         var cols = new Dictionary<string, Expression<Func<Order, object>>>
@@ -59,7 +66,7 @@ public class  OrderRepository(AppDbContext context) : IOrderRepository
                 TotalPrice = a.TotalPrice,
                 FirstName = a.User!.FirstName,
                 LastName = a.User!.LastName,
-                PhoneNumber = a.User!.PhoneNumber!
+                PhoneNumber = a.CustomerInfo!.PhoneNumber!
             })
             .Take(dataTableParams.PageSize)
             .Skip(dataTableParams.Skip)
@@ -77,32 +84,94 @@ public class  OrderRepository(AppDbContext context) : IOrderRepository
         oResult.recordsFiltered = count;
         return oResult;
     }
+
     public async Task<OrderDetailsViewModel> GetOrderDetailsAsync(int orderId, CancellationToken token)
     {
         var order = await _context.Orders
+            .Include(c => c.CustomerInfo)
+            .Include(o => o.OrderDetails)
+            .ThenInclude(od => od.Product)
             .AsNoTracking()
             .FirstOrDefaultAsync(o => o.Id == orderId, token);
 
-        if (order == null)
-            throw new InvalidOperationException("Order not found");
-
-        return new OrderDetailsViewModel
-        {
-            Status = order.Status,
-            OrderDate = order.OrderDate,
-            TotalPrice = order.TotalPrice,
-
-            Name = $"{order.CustomerInfo!.FirstName} {order.CustomerInfo!.LastName}",
-            PhoneNumber = order.CustomerInfo!.PhoneNumber!,
-            AddressLine1 = order.CustomerInfo!.AddressLine1!,
-            AddressLine2 = order.CustomerInfo!.AddressLine2!,
-
-            OrderDetails = order.OrderDetails!.Select(o => new OrderDetailViewModel
+        return order == null
+            ? throw new InvalidOperationException("Order not found")
+            : new OrderDetailsViewModel
             {
-                ProductName = o.Product!.Name,
-                Quantity = o.Quantity,
-                Price = o.Price
-            })
+                Status = order.Status,
+                OrderDate = order.OrderDate,
+                TotalPrice = order.TotalPrice,
+
+                Name = $"{order.CustomerInfo!.FirstName} {order.CustomerInfo!.LastName}",
+                PhoneNumber = order.CustomerInfo!.PhoneNumber!,
+                AddressLine1 = order.CustomerInfo!.AddressLine1!,
+                AddressLine2 = order.CustomerInfo!.AddressLine2!,
+
+                OrderDetails = [.. order.OrderDetails!.Select(o => new OrderDetailViewModel
+                {
+                    ProductName = o.Product!.Name,
+                    Quantity = o.Quantity,
+                    Price = o.Price
+                })]
+            };
+    }
+
+    public async Task<int> CreateOrderAsync(CreateOrderViewModel model, string userId, CancellationToken token)
+    {
+        var cartItems = await _context.Carts
+            .AsNoTracking()
+            .Include(p => p.Product)
+            .ThenInclude(d => d!.Discount)
+            .Where(c => c.UserId == userId)
+            .ToListAsync(token);
+
+        if(cartItems.Count == 0)
+            throw new InvalidOperationException("Your cart is empty, add some items first.");
+
+        var customerInfoId = 0;
+        if ( await _customerInfoRepo.ExistsAsync(userId, token))
+        {
+            customerInfoId =  await _customerInfoRepo.UpdateAsync(model, userId, token);
+        }
+        else
+        {
+            customerInfoId = await _customerInfoRepo.AddAsync(model, userId, token);
+        }
+
+        var order = new Order
+        {
+            Status = OrderStatus.Pending,
+            OrderDate = DateTime.UtcNow,
+            UserId = userId,
+            CustomerInfoId = customerInfoId,
+            OrderDetails = []
         };
+
+        foreach (var item in cartItems)
+        {
+            order.OrderDetails.Add(new OrderDetail
+            {
+                ProductId = item.ProductId,
+                Quantity = item.Amount,
+                Price = item.Product!.Discount!.Percentage > 0 
+                    ? item.Product!.Price - (item.Product!.Price * (item.Product.Discount.Percentage / 100))
+                    : item.Product!.Price
+            });
+        }
+        order.TotalPrice = order.OrderDetails.Sum(od => od.Price * od.Quantity);
+
+        await _context.Orders.AddAsync(order, token);
+        await _context.SaveChangesAsync(token);
+        return order.Id;
+    }
+
+    public async Task DeleteAsync(int orderId, CancellationToken token)
+    {
+        var order = await _context.Orders.FindAsync(orderId, token) ?? throw new InvalidOperationException("Order not found");
+        var orderDetails = await _context.OrderIDetails.Where(od => od.OrderId == orderId).ToListAsync(token);
+
+        _context.Orders.Remove(order);
+        _context.OrderIDetails.RemoveRange(orderDetails);
+        await _context.SaveChangesAsync(token);
     }
 }

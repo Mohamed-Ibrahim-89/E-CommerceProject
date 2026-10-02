@@ -5,7 +5,7 @@ namespace E_CommerceProject.Controllers;
 [Authorize]
 public class ShipmentController(IShipmentRepository repo,
     IToastNotification toastNotification,
-    IHttpContextAccessor contextAccessor,
+    IHttpContextAccessor contextAccessor
     ) : BaseController(contextAccessor)
 {
     private readonly IShipmentRepository _repo = repo;
@@ -61,19 +61,6 @@ public class ShipmentController(IShipmentRepository repo,
         {
             _toastNotification.AddErrorToastMessage(ex.Message);
             return View("Error");
-        }
-    }
-
-    [Authorize(Roles = Constants.Roles.Admin)]
-    public async void Create(Shipment shipment)
-    {
-        try
-        {
-            await _shipmentRepository.AddItem(shipment);
-        }
-        catch (Exception ex)
-        {
-            ViewBag.Error = ex.Message;
         }
     }
 

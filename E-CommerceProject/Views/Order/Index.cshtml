@@ -70,6 +70,7 @@
                             <th class="fw-semibold text-secondary">First Name</th>
                             <th class="fw-semibold text-secondary">Last Name</th>
                             <th class="fw-semibold text-secondary">Phone Number</th>
+                            <th class="fw-semibold text-secondary">Status</th>
                             <th class="fw-semibold text-secondary text-center" style="width: 130px;">Actions</th>
                         </tr>
                     </thead>
@@ -194,6 +195,34 @@
                         }
                     },
 
+                    // Status
+                    {
+                        data: 'Status',
+                        width: '120px',
+                        render: function(data) {
+                            const status = (data ?? '').toLowerCase();
+                            let badgeClass = 'bg-secondary';
+                            switch (status) {
+                                case 'pending':
+                                    badgeClass = 'bg-warning text-dark';
+                                    break;
+                                case 'processing':
+                                    badgeClass = 'bg-info text-dark';
+                                    break;
+                                case 'shipped':
+                                    badgeClass = 'bg-primary text-white';
+                                    break;
+                                case 'delivered':
+                                    badgeClass = 'bg-success text-white';
+                                    break;
+                                case 'cancelled':
+                                    badgeClass = 'bg-danger text-white';
+                                    break;
+                            }
+                            return `<span class="badge ${badgeClass} small">${esc(data ?? '')}</span>`;
+                        }
+                    },
+
                     // Actions
                     {
                         data:       null,
@@ -207,9 +236,6 @@
                                 <div class="btn-group btn-group-sm" role="group" aria-label="Order Actions">
                                     <a href="${urls.details}?OrderId=${id}" class="btn btn-outline-info" title="View Order Details">
                                         <span class="bi bi-eye" aria-hidden="true"></span>
-                                    </a>
-                                    <a href="${urls.edit}?OrderId=${id}" class="btn btn-outline-primary" title="Edit Order">
-                                        <span class="bi bi-pencil" aria-hidden="true"></span>
                                     </a>
                                     <button type="button" class="btn btn-outline-danger js-dt-delete" data-id="${id}" title="Delete Order">
                                         <span class="bi bi-trash" aria-hidden="true"></span>
@@ -233,7 +259,7 @@
                         className: 'btn btn-secondary btn-sm rounded-3 shadow-sm px-3 ms-2',
                         action: function (e, dt) {
                             dt.state.clear();
-                            window.location.reload();
+                            dt.ajax.reload(null, false);
                         }
                     }
                 ],

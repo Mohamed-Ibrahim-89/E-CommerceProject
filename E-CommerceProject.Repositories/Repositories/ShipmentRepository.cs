@@ -9,6 +9,7 @@ public interface IShipmentRepository
     Task<List<ShipmentViewModel>> GetCustomerListAsync(string customerId, CancellationToken token);
     Task<ShipmentDetailsViewModel> GetByIdAsync(int shipmentId, CancellationToken token);
     Task<UpdateShipmentViewModel> GetForUpdate(int shipmentId, CancellationToken token);
+    Task CreateAsync(CreateShipmentViewModel model, CancellationToken token);
     Task Update(UpdateShipmentViewModel model, CancellationToken token);
     Task Delete(int shipmentId, CancellationToken token);
 }
@@ -158,6 +159,21 @@ public class ShipmentRepository(AppDbContext context) : IShipmentRepository
             })
             .FirstOrDefaultAsync(token);
         return shipment ?? throw new InvalidOperationException("Shipment not found");
+    }
+
+    public async Task CreateAsync(CreateShipmentViewModel model, CancellationToken token)
+    {
+        var shipment = new Shipment
+        {
+            Carrier = model.Carrier,
+            TrackingNumber = model.TrackingNumber,
+            ShippingDate = model.ShippingDate,
+            EstimatedDeliveryDate = model.EstimatedDeliveryDate,
+            ShippingCost = model.ShippingCost,
+            OrderId = model.OrderId
+        };
+        await _context.Shipments.AddAsync(shipment, token);
+        await _context.SaveChangesAsync(token);
     }
 
     public async Task Update(UpdateShipmentViewModel model, CancellationToken token)

@@ -1,26 +1,26 @@
-﻿namespace E_CommerceProject.Controllers;
+﻿using E_CommerceProject.Entities.ViewModels.Orders;
+
+namespace E_CommerceProject.Controllers;
 
 [Authorize]
-public class OrderController(IOrderRepository repository
-    , IBaseRepository<Order> orderRepository
+public class OrderController(
+    IOrderRepository repository,
+    ICartRepository cartRepo,
+    ICustomerInfoRepository CustomerRepo,
+    IShipmentRepository shipmentRepo
     ,ICartRepository cartRepository
     ,IToastNotification toastNotification
-    ,IBaseRepository<OrderDetail> orderDetailRepository
-    ,IBaseRepository<CustomerInfo> customerInfoRepository
     ,IHttpContextAccessor contextAccessor
-    ,UserManager<User> userManager
-    ,IBaseRepository<Shipment> shipmentRepository
     ) : BaseController(contextAccessor)
 {
     private readonly IOrderRepository  _repository = repository;
-    private readonly IBaseRepository<Order> _orderRepository = orderRepository;
-    private readonly IBaseRepository<Shipment> _shipmentRepository = shipmentRepository;
-    private readonly IBaseRepository<OrderDetail> _orderDetailRepository = orderDetailRepository;
-    private readonly IBaseRepository<CustomerInfo> _customerInfoRepository = customerInfoRepository;
+    private readonly ICartRepository _cartRepo = cartRepo;
+    private readonly ICustomerInfoRepository _customerRepo = CustomerRepo;
+    private readonly IShipmentRepository _shipmentRepo = shipmentRepo;
+
     private readonly ICartRepository _cartRepository = cartRepository;
     private readonly IToastNotification _toastNotification = toastNotification;
-    private readonly UserManager<User> _userManager = userManager;
-    private readonly IHttpContextAccessor _contextAccessor = contextAccessor;
+
 
     [Authorize(Roles = Constants.Roles.Admin)]
     public IActionResult  Index()
@@ -72,69 +72,62 @@ public class OrderController(IOrderRepository repository
     public async Task<ActionResult> Checkout(CancellationToken token)
     {
         var userId = await GetSignedUserId();
-        var cartItems = await _cartRepository.GetCartItems(userId, token);
+        var cartItems = await _cartRepo.GetCartItems(userId, token);
         if (cartItems.Count == 0)
         {
             _toastNotification.AddErrorToastMessage("Your cart is empty, add some items first");
-            return RedirectToAction("Index", "Cart");
+            return RedirectToAction(nameof(Index), "Cart");
         }
         else
         {
             if (userId != null)
             {
-                var customerInfo = await _customerInfoRepository.GetById(ci => ci.UserId == userId);
-                var order = new Order
+                var customerInfo = await _customerRepo.GetByIdAsync(userId, token);
+                if(customerInfo == null)
+                    return View(new CreateOrderViewModel());
+
+                var viewModel = new CreateOrderViewModel
                 {
-                    CustomerInfo = customerInfo,
+                    FirstName = customerInfo.FirstName,
+                    LastName = customerInfo.LastName,
+                    DateOfBirth = customerInfo.DateOfBirth,
+                    AddressLine1 = customerInfo.AddressLine1,
+                    AddressLine2 = customerInfo.AddressLine2,
+                    City = customerInfo.City,
+                    State = customerInfo.State,
+                    ZipCode = customerInfo.ZipCode,
+                    Country = customerInfo.Country,
+                    Landmark = customerInfo.Landmark,
+                    PhoneNumber = customerInfo.PhoneNumber
                 };
-                return View("OrderForm", order);
+                return View(viewModel);
             }
 
-            return View("OrderForm", new Order());
+            return NotFound();
         }
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<ActionResult> Checkout(Order order, CancellationToken token)
+    public async Task<ActionResult> Checkout(CreateOrderViewModel model, CancellationToken token)
     {
-        var userId = await GetSignedUserId();
-        var cartItems = await _cartRepository.GetCartItems(userId, token);
-
         if (ModelState.IsValid)
         {
             try
             {
-                order.TotalPrice = cartItems.Sum(c => (c.ProductPrice - (c.ProductPrice *(c.ProductDiscount / 100))) * c.Amount);
-                order.OrderDetails = [];
-                foreach (var item in cartItems)
-                {
-                    order.OrderDetails.Add(new OrderDetail
-                    {
-                        ProductId = item.ProductId,
-                        Quantity = item.Amount,
-                        Price = item.ProductPrice
-                    });
-                }
+                var userId = await GetSignedUserId();
 
-                if (userId != null)
+                var orderId = await _repository.CreateOrderAsync(model, userId, token);
+                await _cartRepository.ClearCart(userId, token);
+                await _shipmentRepo.CreateAsync(new CreateShipmentViewModel
                 {
-                    order.CustomerInfo!.UserId = userId;
-
-                    await _orderRepository.AddItem(order);
-                    await _cartRepository.ClearCart(userId, token);
-                }
-
-                var shipment = new Shipment
-                {
-                    OrderId = order.Id,
+                    OrderId = orderId,
                     ShippingDate = DateTime.Now,
                     EstimatedDeliveryDate = DateTime.Now.AddDays(new Random().Next(1, 5)),
                     Carrier = "Default",
                     TrackingNumber = "01000050050",
                     ShippingCost = new Random().Next(40,100)
-                };
-                await _shipmentRepository.AddItem(shipment);
+                }, token);
 
                 _toastNotification.AddSuccessToastMessage("Thanks for your order. You'll get it soon");
                 return RedirectToAction("Index", "Home");
@@ -142,41 +135,10 @@ public class OrderController(IOrderRepository repository
             catch (Exception ex)
             {
                 _toastNotification.AddErrorToastMessage(ex.Message);
-                return View("OrderForm");
+                return View();
             }
         }
-        return View("OrderForm");
-    }
-
-    public async Task<ActionResult> Edit(int orderId)
-    {
-        var order = await _orderRepository.GetById(o => o.Id == orderId, ["CustomerInfo", "CustomerInfo.User"]);
-        if (order == null)
-        {
-            return NotFound();
-        }
-        return View("OrderForm", order);
-
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(Order order)
-    {
-
-        if (ModelState.IsValid)
-        {
-            try
-            {
-                await _orderRepository.UpdateItem(order);
-            }
-            catch
-            {
-                return View("OrderForm", order);
-            }
-            return RedirectToAction(nameof(List));
-        }
-        return View("OrderForm", order);
+        return View();
     }
 
     [Authorize(Roles = Constants.Roles.Admin)]
@@ -184,15 +146,7 @@ public class OrderController(IOrderRepository repository
     {
         try
         {
-
-            var orderDetailId = await _orderDetailRepository.GetById(od => od.OrderId == id);
-            await _orderDetailRepository.DeleteItem(orderDetailId.Id);
-
-            var order = await _orderRepository.GetById(c => c.Id == id);
-            await _orderRepository.DeleteItem(id);
-
-            await _customerInfoRepository.DeleteItem(order.CustomerInfoId);
-
+            await _repository.DeleteAsync(id, CancellationToken.None);
             return Ok();
         }
         catch (Exception ex)

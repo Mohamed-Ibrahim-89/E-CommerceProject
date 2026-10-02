@@ -19,5 +19,5 @@ public class OrderDetailsViewModel
     [Display(Name = "Address Line 2")]
     public string AddressLine2 { get; set; } = string.Empty;
     // Order Details
-    public List<OrderDetailViewModel> OrderDetails { get; set; }
+    public List<OrderDetailViewModel> OrderDetails { get; set; } = [];
 }

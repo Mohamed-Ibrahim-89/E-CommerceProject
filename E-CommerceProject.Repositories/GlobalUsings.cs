@@ -4,6 +4,7 @@ global using System.Linq.Expressions;
 global using Microsoft.AspNetCore.Http;
 global using Microsoft.AspNetCore.Hosting;
 global using Microsoft.AspNetCore.Identity;
+global using E_CommerceProject.Entities.Constants;
 global using E_CommerceProject.Entities.Data;
 global using E_CommerceProject.Entities.Models;
 global using E_CommerceProject.Entities.ViewModels;

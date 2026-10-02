@@ -6,4 +6,5 @@ global using Microsoft.EntityFrameworkCore;
 global using Microsoft.AspNetCore.Http;
 global using E_CommerceProject.Entities.Models;
 global using E_CommerceProject.Entities.Constants;
-global using E_CommerceProject.Entities.ViewModels.Users;
+global using E_CommerceProject.Entities.ViewModels.Customers;
+global using E_CommerceProject.Entities.ViewModels.Shipments;
