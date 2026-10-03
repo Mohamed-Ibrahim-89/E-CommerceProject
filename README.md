@@ -1,6 +1,1 @@
-After downloading the project, you need to do the following steps:
-
-1- Edit the server name in the ConnectionStrings section of the appsettings.json file.
-2- Add migration.
-3- Update database
-4- Run the code.
+E-Commerce Project is a practice-based internship project developed to learn and demonstrate the core concepts of building an online shopping application. The project focuses on creating a simple e-commerce system with product-related functionality and database connectivity, helping to understand how a real online store works behind the scenes. It is designed as a foundation for learning backend development, application configuration, and data management in a web-based commercial system.
